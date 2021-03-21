@@ -1,0 +1,19 @@
+
+.topMenu{
+  position: fixed;
+  background-color: rgba(255, 255, 255, 0.5);
+  width: 100%;
+  text-align: center;
+  font-size: 104px;
+  color: black;
+  font-weight: 900;
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+.videoClass{
+  position: fixed;
+  z-index:-999;
+  top: 0;
+  width: 100vw;
+}
