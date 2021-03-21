@@ -17,8 +17,9 @@ function App() {
   useEffect(()=>{
     var msg = new SpeechSynthesisUtterance();
     msg.lang = 'ru-RU';
-    if (count>0){
-      msg.text=count;
+    var total = count.bothTotal + count.leftTotal+count.rightTotal;
+    if (total>0){
+      msg.text=total;
     } else {
       msg.text = 'welcome my friend!';
     }
@@ -27,9 +28,11 @@ function App() {
 
   const renderWorkout = ()=>{
     return (
-      <div>
-        <div className="topMenu">{`Reps: ${count}`}</div>
-
+      <div className="topMenu">
+        <div className="topMenuMiddle">{`Reps: ${count.bothTotal + count.leftTotal+count.rightTotal}`}</div>
+        <div className="topMenuLeft">Left: ${count.leftTotal}</div>
+        <div className="topMenuLeft">Right: ${count.rightTotal}</div>
+        <div className="topMenuRight">Double: ${count.bothTotal}</div>
       </div>
     )
   };

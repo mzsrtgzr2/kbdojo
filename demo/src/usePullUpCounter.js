@@ -7,12 +7,19 @@ function getKeypointsObject(pose) {
   }, {})
 }
 
-function reducer(count, action) {
-  if (action === "reset") {
-    return 0
+function reducer(count, {type, currentSide}) {
+  switch (type){
+    case 'both':
+      count.bothTotal += 1;
+    break;
+    case 'left':
+      count.leftTotal += 1;
+    break;
+    case 'right':
+      count.rightTotal += 1;
+    break;
   }
-  count = count + 1;
-
+  
   return count
 }
 
@@ -35,7 +42,13 @@ function checkBallDown(shoulder, elbow, wrist, sensitivity=0){
 }
 
 export default function(sensitivity = 10) {
-  const [count, dispatch] = useReducer(reducer, 0)
+  const [count, dispatch] = useReducer(reducer, {
+    leftTotal: 0,
+    rightTotal: 0,
+    bothTotal: 0,
+    currentSide: null
+  });
+
   const state = useRef('down')
   const downCounter = useRef(0);
   const upCounter = useRef(0);
@@ -54,8 +67,6 @@ export default function(sensitivity = 10) {
         rightWrist,
       } = getKeypointsObject(poses[0])
 
-      // console.log(getKeypointsObject(poses[0]))
-
       const isDown = 
         checkBallDown(
           rightShoulder,
@@ -70,7 +81,7 @@ export default function(sensitivity = 10) {
       
       if (isDown){
         if (state.current === 'up' && downCounter.current<=0){
-          downCounter.current = 20;
+          downCounter.current = 10;
         }
         downCounter.current--;
         
@@ -115,7 +126,7 @@ export default function(sensitivity = 10) {
       if (isLeftSnatch || isRightSnatch){
         
         if (state.current === 'down' && upCounter.current <= 0){
-          upCounter.current = 20;
+          upCounter.current = 5;
           
         }
         upCounter.current--;
@@ -123,7 +134,19 @@ export default function(sensitivity = 10) {
         if (upCounter.current==0){
           state.current = 'up';
           downCounter.current = 0;
-          dispatch("increment");
+
+          var currentSide = null;
+          if (isLeftSnatch && isRightSnatch){
+            isLeftSnatch = 'both';
+          } else if (isLeftSnatch){
+            isLeftSnatch = 'left';
+          } else if (isRightSnatch){
+            isLeftSnatch = 'right';
+          }
+          dispatch({
+            type: 'increment',
+            currentSide,
+          });
           console.log('up')
         }      
       }      
