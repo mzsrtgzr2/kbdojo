@@ -29,10 +29,10 @@ function App() {
   const renderWorkout = ()=>{
     return (
       <div className="topMenu">
-        <div className="topMenuMiddle">{`Reps: ${count.bothTotal + count.leftTotal+count.rightTotal}`}</div>
-        <div className="topMenuLeft">Left: ${count.leftTotal}</div>
-        <div className="topMenuLeft">Right: ${count.rightTotal}</div>
-        <div className="topMenuRight">Double: ${count.bothTotal}</div>
+        <div className="topMenuMiddle">Total: {count.bothTotal + count.leftTotal+count.rightTotal}</div>
+        <div className="topMenuLeft">Left: {count.leftTotal}</div>
+        <div className="topMenuLeft">Right: {count.rightTotal}</div>
+        <div className="topMenuRight">Double: {count.bothTotal}</div>
       </div>
     )
   };
@@ -50,6 +50,7 @@ function App() {
         facingMode="environment"
         inferenceConfig={inferenceConfig}
         onEstimate={onEstimate}
+        frameRate={20}
       />
 
       {/* {!!workout ? renderWorkout(): renderWorkoutSetup()} */}
