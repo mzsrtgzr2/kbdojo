@@ -16,7 +16,7 @@ function App() {
 
   useEffect(()=>{
     var msg = new SpeechSynthesisUtterance();
-    msg.lang = 'ru-RU';
+    msg.lang = 'he-HE';
     var total = count.bothTotal + count.leftTotal+count.rightTotal;
     if (total>0){
       msg.text=total;
