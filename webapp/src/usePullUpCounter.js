@@ -1,5 +1,7 @@
 import { useRef, useReducer, useCallback } from "react"
 
+const TICK_MS = 100;
+
 function getKeypointsObject(pose) {
   return pose.keypoints.reduce((acc, { part, position }) => {
     acc[part] = position
@@ -23,7 +25,7 @@ function reducer(count, {type, currentSide}) {
   return count
 }
 
-function checkSnatchPisition(shoulder, elbow, wrist, sensitivity=50){
+function checkSnatchPisition(shoulder, elbow, wrist, sensitivity=100){
   // console.log(wrist.y, elbow.y, shoulder.y, (wrist.y < elbow.y) && (wrist.y < shoulder.y) && (elbow.y < shoulder.y));
   // console.log(wrist.x, elbow.x, shoulder.x, Math.abs(wrist.x-elbow.x)<=sensitivity, Math.abs(wrist.x-shoulder.x)<=sensitivity);
   return(
@@ -57,7 +59,7 @@ export default function(sensitivity = 10) {
   
   const checkPoses = useCallback(
     pose => {
-
+      const now = Date.now()
       const {
         leftShoulder,
         rightShoulder,
@@ -80,15 +82,19 @@ export default function(sensitivity = 10) {
         )
       
       if (isDown){
-        console.log('moshe', state.current, downCounter.current)
+        const prev = downLastTimestamp.current
+
+
         if (state.current === 'up'){
           if (downCounter.current<=0){
             console.log('down counter started')
-            downCounter.current = 2;
+            downCounter.current = 10;
             upCounter.current = -1;
           } else {
-
-            downCounter.current--;
+            
+            if (prev && 0<(now-prev)<=2*TICK_MS){
+              downCounter.current--;
+            }
         
             if (downCounter.current==0){
               state.current = 'down';
@@ -97,6 +103,8 @@ export default function(sensitivity = 10) {
             }
           }
         }
+        // update time stamp of down event
+        downLastTimestamp.current = now
         return
       }
       
@@ -131,14 +139,18 @@ export default function(sensitivity = 10) {
 
       // console.log((isLeftSnatch || isRightSnatch), state.current)
       if (isLeftSnatch || isRightSnatch){
-        
+        const prev = upLastTimestamp.current
+
         if (state.current === 'down'){
           if (upCounter.current <= 0){
             console.log('up counter started')
             upCounter.current = 2;
             downCounter.current = -1;
           } else {
-            upCounter.current--;
+
+            if (prev && 0<(now-prev)<=2*TICK_MS){
+              upCounter.current--;
+            }
         
             if (upCounter.current==0){
               state.current = 'up';
@@ -161,6 +173,9 @@ export default function(sensitivity = 10) {
           }
           
         }
+
+        // update time stamp of down event
+        upLastTimestamp.current = now
             
       }      
     },
