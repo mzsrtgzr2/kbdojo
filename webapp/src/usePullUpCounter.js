@@ -1,5 +1,7 @@
 import { useRef, useReducer, useCallback } from "react"
 
+const TICK_MS = 100;
+
 function getKeypointsObject(pose) {
   return pose.keypoints.reduce((acc, { part, position }) => {
     acc[part] = position
@@ -8,22 +10,22 @@ function getKeypointsObject(pose) {
 }
 
 function reducer(count, {type, currentSide}) {
-  switch (type){
+  switch (currentSide){
     case 'both':
-      count.bothTotal += 1;
-    break;
+      count = {...count, bothTotal: count.bothTotal + 1};
+      break;
     case 'left':
-      count.leftTotal += 1;
-    break;
+      count = {...count, leftTotal: count.leftTotal + 1};
+      break;
     case 'right':
-      count.rightTotal += 1;
-    break;
+      count = {...count, rightTotal: count.rightTotal + 1};
+      break;
   }
   
   return count
 }
 
-function checkSnatchPisition(shoulder, elbow, wrist, sensitivity=50){
+function checkSnatchPisition(shoulder, elbow, wrist, sensitivity=100){
   // console.log(wrist.y, elbow.y, shoulder.y, (wrist.y < elbow.y) && (wrist.y < shoulder.y) && (elbow.y < shoulder.y));
   // console.log(wrist.x, elbow.x, shoulder.x, Math.abs(wrist.x-elbow.x)<=sensitivity, Math.abs(wrist.x-shoulder.x)<=sensitivity);
   return(
@@ -52,12 +54,15 @@ export default function(sensitivity = 10) {
   const state = useRef('down')
   const downCounter = useRef(0);
   const upCounter = useRef(0);
+  const downLastTimestamp = useRef(0);
+  const upLastTimestamp = useRef(0);
+  
   const checkPoses = useCallback(
-    poses => {
-      if (poses.length !== 1) {
-        return
+    pose => {
+      if (pose.score<0.5){
+        return;
       }
-
+      const now = Date.now()
       const {
         leftShoulder,
         rightShoulder,
@@ -65,7 +70,7 @@ export default function(sensitivity = 10) {
         rightElbow,
         leftWrist,
         rightWrist,
-      } = getKeypointsObject(poses[0])
+      } = getKeypointsObject(pose)
 
       const isDown = 
         checkBallDown(
@@ -80,16 +85,31 @@ export default function(sensitivity = 10) {
         )
       
       if (isDown){
-        if (state.current === 'up' && downCounter.current<=0){
-          downCounter.current = 10;
-        }
-        downCounter.current--;
+        const prev = downLastTimestamp.current
+
+
+        if (state.current === 'up'){
+          if (downCounter.current<=0){
+            console.log('down counter started')
+            downCounter.current = 5;
+            upCounter.current = -1;
+          } else {
+            const diff = now-prev
+            if (prev && 0<diff<=2*TICK_MS){
+              console.log('down counter advanced')
+              downCounter.current-=diff/TICK_MS;
+            }
         
-        if (downCounter.current==0){
-          state.current = 'down';
-          upCounter.current = 0;
-          console.log('down')
+            if (downCounter.current<=0){
+              state.current = 'down';
+              upCounter.current = -1;
+              console.log('down')
+            }
+          }
         }
+        // update time stamp of down event
+        downLastTimestamp.current = now
+        upLastTimestamp.current = 0; //zero other option
         return
       }
       
@@ -101,11 +121,11 @@ export default function(sensitivity = 10) {
           rightElbow,
           rightWrist
           )
-          if (isRightSnatch){
-            console.log('right snatch!', rightShoulder,
-            rightElbow,
-            rightWrist)
-          }
+          // if (isRightSnatch){
+          //   console.log('right snatch!', rightShoulder,
+          //   rightElbow,
+          //   rightWrist)
+          // }
       }
 
       // check left
@@ -115,40 +135,56 @@ export default function(sensitivity = 10) {
           leftElbow,
           leftWrist
         )
-        if (isLeftSnatch){
-          console.log('left snatch!', leftShoulder,
-          leftElbow,
-          leftWrist)
-        }
+        // if (isLeftSnatch){
+        //   console.log('left snatch!', leftShoulder,
+        //   leftElbow,
+        //   leftWrist)
+        // }
       }
 
       // console.log((isLeftSnatch || isRightSnatch), state.current)
       if (isLeftSnatch || isRightSnatch){
+        const prev = upLastTimestamp.current
+
+        if (state.current === 'down'){
+          if (upCounter.current <= 0){
+            console.log('up counter started')
+            upCounter.current = 2;
+            downCounter.current = -1;
+          } else {
+
+            const diff = now-prev
+            if (prev && 0<diff<=2*TICK_MS){
+              console.log('up counter advanced')
+              upCounter.current-=diff/TICK_MS;
+            }
         
-        if (state.current === 'down' && upCounter.current <= 0){
-          upCounter.current = 5;
+            if (upCounter.current<=0){
+              state.current = 'up';
+              downCounter.current = -1;
+
+              var currentSide = null;
+              if (isLeftSnatch && isRightSnatch){
+                currentSide = 'both';
+              } else if (isLeftSnatch){
+                currentSide = 'left';
+              } else if (isRightSnatch){
+                currentSide = 'right';
+              }
+              dispatch({
+                type: 'increment',
+                currentSide,
+              });
+              console.log('up')
+            }  
+          }
           
         }
-        upCounter.current--;
-        
-        if (upCounter.current==0){
-          state.current = 'up';
-          downCounter.current = 0;
 
-          var currentSide = null;
-          if (isLeftSnatch && isRightSnatch){
-            isLeftSnatch = 'both';
-          } else if (isLeftSnatch){
-            isLeftSnatch = 'left';
-          } else if (isRightSnatch){
-            isLeftSnatch = 'right';
-          }
-          dispatch({
-            type: 'increment',
-            currentSide,
-          });
-          console.log('up')
-        }      
+        // update time stamp of down event
+        upLastTimestamp.current = now;
+        downLastTimestamp.current = 0; //zero other option
+            
       }      
     },
     [sensitivity]

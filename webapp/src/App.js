@@ -1,12 +1,12 @@
+
 import React, { useCallback, useEffect, useState } from "react"
-import PoseNet from "react-posenet"
+// import PoseNet from "react-posenet"
 import usePullUpCounter from "./usePullUpCounter"
+import Timer from './components/Timer/Timer';
+import PoseNet from './components/PoseNet'
+
 
 import './App.css';
-
-const inferenceConfig = {
-  decodingMethod: "single-person"
-}
 
 
 function App() {
@@ -15,24 +15,43 @@ function App() {
   const [workout, setWorkout] = useState(null);
 
   useEffect(()=>{
-    var msg = new SpeechSynthesisUtterance();
-    msg.lang = 'he-HE';
     var total = count.bothTotal + count.leftTotal+count.rightTotal;
     if (total>0){
+      var msg = new SpeechSynthesisUtterance();
+      msg.lang = 'he-HE';
       msg.text=total;
-    } else {
-      msg.text = 'welcome my friend!';
-    }
-    window.speechSynthesis.speak(msg);
+      window.speechSynthesis.speak(msg);
+    } 
+    
   }, [count]);
 
   const renderWorkout = ()=>{
     return (
+      <div>
       <div className="topMenu">
-        <div className="topMenuMiddle">Total: {count.bothTotal + count.leftTotal+count.rightTotal}</div>
-        <div className="topMenuLeft">Left: {count.leftTotal}</div>
-        <div className="topMenuLeft">Right: {count.rightTotal}</div>
-        <div className="topMenuRight">Double: {count.bothTotal}</div>
+        <span className="topMenuCell topMenuMiddle">
+          <div>Total</div>
+          <div>{count.bothTotal + count.leftTotal+count.rightTotal}</div>
+          </span>
+        <span className="topMenuCell topMenuLeft">
+          <div>Left</div>
+          <div>{count.leftTotal}</div>
+        </span>
+        <span className="topMenuCell topMenuLeft">
+
+          <div>Right</div>
+          <div>{count.rightTotal}</div>
+
+        </span>
+        <span className="topMenuCell topMenuRight">
+          <div>Double</div>
+          <div>{count.bothTotal}</div>
+
+        </span>
+      </div>
+      <div className="bottomMenu">
+          <Timer options={{delay:2}}/>
+      </div>
       </div>
     )
   };
@@ -43,14 +62,12 @@ function App() {
 
   return (
     <div className="App">
-      
-      {/* <h1>{`Snatch Pace/Minute: ${count}`}</h1> */}
-      <PoseNet
+
+      <PoseNet 
         className="videoClass"
-        facingMode="environment"
-        inferenceConfig={inferenceConfig}
         onEstimate={onEstimate}
-        frameRate={20}
+        videoWidth={window.innerWidth/3}
+        videoHeight={window.innerHeight/3}
       />
 
       {/* {!!workout ? renderWorkout(): renderWorkoutSetup()} */}
