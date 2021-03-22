@@ -40,7 +40,7 @@ export default class Timer extends Component {
   play() {
     if (!interval) {
       offset = Date.now()
-      interval = setInterval(this.update.bind(this), 1)
+      interval = setInterval(this.update.bind(this), 1000)
       this.setState({active: true})
     }
   }

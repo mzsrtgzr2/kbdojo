@@ -54,7 +54,7 @@ function App() {
         </span>
       </div>
       <div className="bottomMenu">
-        v0.2
+        v0.3
           <Timer
             onMinute={(minute)=>{
               if (!!minute){
