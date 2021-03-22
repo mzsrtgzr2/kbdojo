@@ -21,11 +21,11 @@
 }
 
 .topMenuCell > div:first-child {
-  font-size: 4.2vw;
+  font-size: 6vw;
 }
 
 .topMenuCell > div:nth-child(2) {
-  font-size: 6.2vw;
+  font-size: 10vw;
   font-weight: 900;
 }
 
@@ -35,14 +35,18 @@
   background-color: rgba(255, 255, 255, 0.5);
   width: 100%;
   text-align: center;
-  font-size: 6.2vw;
+
   color: black;
-  font-weight: 900;
   padding-top: 10px;
   padding-bottom: 0px;
   flex-direction: row;
   flex: 1;
   display: flex;
+}
+
+.timer{
+  font-size: 10vw;
+  font-weight: 900;
 }
 
 .videoClass{

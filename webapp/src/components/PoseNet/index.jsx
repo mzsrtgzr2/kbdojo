@@ -12,21 +12,21 @@ export default class PoseNet extends React.Component {
   static defaultProps = {
     videoWidth: 600,
     videoHeight: 500,
-    flipHorizontal: true,
+    flipHorizontal: false,
     algorithm: 'single-pose',
     mobileNetArchitecture: isMobile() ? 'MobileNetV1' : 'MobileNetV1',
     showVideo: true,
     showSkeleton: true,
-    showPoints: true,
+    showPoints: false,
     minPoseConfidence: 0.1,
     minPartConfidence: 0.5,
     maxPoseDetections: 2,
     nmsRadius: 20.0,
     outputStride: 16,
     imageScaleFactor: 0.5,
-    skeletonColor: 'aqua',
-    skeletonLineWidth: 2,
-    loadingText: 'Loading pose detector...',
+    skeletonColor: 'rgba(66,135,246,0.6)',
+    skeletonLineWidth: isMobile() ? 5: 15,
+    loadingText: 'Loading...',
     className: '',
     onEstimate: null
   }
@@ -46,7 +46,6 @@ export default class PoseNet extends React.Component {
 
   async componentWillMount() {
     // Loads the pre-trained PoseNet model
-    // this.net = await posenet.load(this.props.mobileNetArchitecture);
     this.net = await posenet.load({
       architecture: this.props.mobileNetArchitecture,
     });

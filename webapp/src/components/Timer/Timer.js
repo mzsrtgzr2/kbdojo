@@ -11,17 +11,18 @@ let offset = null, interval = null
 export default class Timer extends Component {
   static get propTypes () {
     return {
-      options: PropTypes.object
+      className: PropTypes.string,
+      options: PropTypes.object,
+      onMinute: PropTypes.func
     }
   }
 
   constructor(props) {
     super(props)
-    this.state = { clock: 0, time: '', active: false }
+    this.state = { clock: 0, time: '00:00:00', active: false }
   }
 
   componentDidMount() {
-    this.play();
   }
 
   componentWillUnmount() {
@@ -38,25 +39,30 @@ export default class Timer extends Component {
 
   play() {
     if (!interval) {
-      offset = Date.now()
-      interval = setInterval(this.update.bind(this), this.props.options.delay)
+      interval = setInterval(this.update.bind(this), 1000)
       this.setState({active: true})
     }
   }
 
   reset() {
-    let clockReset = 0
-    this.setState({clock: clockReset })
-    let time = SecondsTohhmmss(clockReset / 1000)
+    this.setState({clock: 0 })
+    let time = SecondsTohhmmss(0 / 1000)
     this.setState({time: time })
   }
 
   update() {
     let clock = this.state.clock
-    clock += this.calculateOffset()
+    clock += 1
     this.setState({clock: clock })
-    let time = SecondsTohhmmss(clock / 1000)
+    let time = SecondsTohhmmss(clock)
     this.setState({time: time })
+    // notify for 1 minute threshold
+    if (!!this.props.onMinute){
+      const seconds = parseInt(clock);
+      if (seconds%60 == 0){
+        this.props.onMinute(seconds/60);
+      }
+    }
   }
 
   calculateOffset() {
@@ -72,13 +78,14 @@ export default class Timer extends Component {
       textAlign: "center",
       width: "100%",
       display: 'flex',
-      flexDirection: 'row',
+      flexDirection: 'column',
       justifyContent: 'center',
     };
 
     const buttonStyle = {
-      background: "#fff",
-      color: "#666",
+      background: "black",
+      color: "white",
+      fontSize: "3vw",
       border: "1px solid #ddd",
       marginRight: "5px",
       padding: "10px",
@@ -90,14 +97,16 @@ export default class Timer extends Component {
     };
 
     return (
-      <div style={timerStyle}>
+      <div style={timerStyle} className={this.props.className}>
         <div style={secondsStyles} className="seconds"> {this.state.time}</div>
-        {active ? <>
-          <button onClick={this.reset.bind(this)} style={buttonStyle} >reset</button>
-          <button onClick={this.pause.bind(this)} style={buttonStyle} >pause</button>
-        </> : <>
-          <button onClick={this.play.bind(this)} style={buttonStyle} >play</button>
-        </>}
+        <div>
+          {active ? <>
+            <button onClick={this.reset.bind(this)} style={buttonStyle} >reset</button>
+            <button onClick={this.pause.bind(this)} style={buttonStyle} >pause</button>
+          </> : <>
+            <button onClick={this.play.bind(this)} style={buttonStyle} >play</button>
+          </>}
+        </div>
         
       </div>
     )
