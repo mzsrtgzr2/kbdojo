@@ -14,7 +14,11 @@
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.3",
     "react-timer": "^1.1.1",
-    "web-vitals": "^1.1.1"
+    "web-vitals": "^1.1.1",
+    "firebase": "^7.17.1",
+    "react-firebase-file-uploader": "^2.4.3",
+    "react-firestore": "salesflow-digital/react-firestore",
+    "react-i18next": "^11.7.0"
   },
   "scripts": {
     "start": "react-scripts start",
