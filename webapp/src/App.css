@@ -7,8 +7,8 @@
   
   color: black;
   
-  padding-top: 40px;
-  padding-bottom: 40px;
+  padding-top: 30px;
+  padding-bottom: 10px;
   flex-direction: row;
   flex: 1;
   display: flex;
@@ -21,14 +21,13 @@
 }
 
 .topMenuCell > div:first-child {
-  font-size: 2.2vw;
+  font-size: 4.2vw;
 }
 
 .topMenuCell > div:nth-child(2) {
-  font-size: 4.2vw;
+  font-size: 6.2vw;
   font-weight: 900;
 }
-
 
 .bottomMenu{
   position: fixed;
@@ -39,8 +38,8 @@
   font-size: 6.2vw;
   color: black;
   font-weight: 900;
-  padding-top: 40px;
-  padding-bottom: 40px;
+  padding-top: 10px;
+  padding-bottom: 0px;
   flex-direction: row;
   flex: 1;
   display: flex;

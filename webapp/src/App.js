@@ -78,6 +78,8 @@ function App() {
       <PoseNet 
         className="videoClass"
         onEstimate={onEstimate}
+        videoWidth={window.screen.width}
+        videoHeight={window.screen.height}
       />
 
       {/* {!!workout ? renderWorkout(): renderWorkoutSetup()} */}
