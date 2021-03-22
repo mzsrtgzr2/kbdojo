@@ -52,6 +52,9 @@ export default function(sensitivity = 10) {
   const state = useRef('down')
   const downCounter = useRef(0);
   const upCounter = useRef(0);
+  const downLastTimestamp = useRef(0);
+  const upLastTimestamp = useRef(0);
+  
   const checkPoses = useCallback(
     pose => {
 
@@ -81,9 +84,10 @@ export default function(sensitivity = 10) {
         if (state.current === 'up'){
           if (downCounter.current<=0){
             console.log('down counter started')
-            downCounter.current = 15;
+            downCounter.current = 2;
             upCounter.current = -1;
           } else {
+
             downCounter.current--;
         
             if (downCounter.current==0){
@@ -131,7 +135,7 @@ export default function(sensitivity = 10) {
         if (state.current === 'down'){
           if (upCounter.current <= 0){
             console.log('up counter started')
-            upCounter.current = 15;
+            upCounter.current = 2;
             downCounter.current = -1;
           } else {
             upCounter.current--;
