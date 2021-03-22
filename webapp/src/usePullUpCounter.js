@@ -59,6 +59,9 @@ export default function(sensitivity = 10) {
   
   const checkPoses = useCallback(
     pose => {
+      if (pose.score<0.5){
+        return;
+      }
       const now = Date.now()
       const {
         leftShoulder,
@@ -88,15 +91,16 @@ export default function(sensitivity = 10) {
         if (state.current === 'up'){
           if (downCounter.current<=0){
             console.log('down counter started')
-            downCounter.current = 10;
+            downCounter.current = 5;
             upCounter.current = -1;
           } else {
-            
-            if (prev && 0<(now-prev)<=2*TICK_MS){
-              downCounter.current--;
+            const diff = now-prev
+            if (prev && 0<diff<=2*TICK_MS){
+              console.log('down counter advanced')
+              downCounter.current-=diff/TICK_MS;
             }
         
-            if (downCounter.current==0){
+            if (downCounter.current<=0){
               state.current = 'down';
               upCounter.current = -1;
               console.log('down')
@@ -105,6 +109,7 @@ export default function(sensitivity = 10) {
         }
         // update time stamp of down event
         downLastTimestamp.current = now
+        upLastTimestamp.current = 0; //zero other option
         return
       }
       
@@ -116,11 +121,11 @@ export default function(sensitivity = 10) {
           rightElbow,
           rightWrist
           )
-          if (isRightSnatch){
-            console.log('right snatch!', rightShoulder,
-            rightElbow,
-            rightWrist)
-          }
+          // if (isRightSnatch){
+          //   console.log('right snatch!', rightShoulder,
+          //   rightElbow,
+          //   rightWrist)
+          // }
       }
 
       // check left
@@ -130,11 +135,11 @@ export default function(sensitivity = 10) {
           leftElbow,
           leftWrist
         )
-        if (isLeftSnatch){
-          console.log('left snatch!', leftShoulder,
-          leftElbow,
-          leftWrist)
-        }
+        // if (isLeftSnatch){
+        //   console.log('left snatch!', leftShoulder,
+        //   leftElbow,
+        //   leftWrist)
+        // }
       }
 
       // console.log((isLeftSnatch || isRightSnatch), state.current)
@@ -148,11 +153,13 @@ export default function(sensitivity = 10) {
             downCounter.current = -1;
           } else {
 
-            if (prev && 0<(now-prev)<=2*TICK_MS){
-              upCounter.current--;
+            const diff = now-prev
+            if (prev && 0<diff<=2*TICK_MS){
+              console.log('up counter advanced')
+              upCounter.current-=diff/TICK_MS;
             }
         
-            if (upCounter.current==0){
+            if (upCounter.current<=0){
               state.current = 'up';
               downCounter.current = -1;
 
@@ -175,7 +182,8 @@ export default function(sensitivity = 10) {
         }
 
         // update time stamp of down event
-        upLastTimestamp.current = now
+        upLastTimestamp.current = now;
+        downLastTimestamp.current = 0; //zero other option
             
       }      
     },

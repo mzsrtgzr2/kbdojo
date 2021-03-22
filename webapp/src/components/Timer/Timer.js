@@ -17,7 +17,7 @@ export default class Timer extends Component {
 
   constructor(props) {
     super(props)
-    this.state = { clock: 0, time: '' }
+    this.state = { clock: 0, time: '', active: false }
   }
 
   componentDidMount() {
@@ -32,6 +32,7 @@ export default class Timer extends Component {
     if (interval) {
       clearInterval(interval)
       interval = null
+      this.setState({active: false})
     }
   }
 
@@ -39,6 +40,7 @@ export default class Timer extends Component {
     if (!interval) {
       offset = Date.now()
       interval = setInterval(this.update.bind(this), this.props.options.delay)
+      this.setState({active: true})
     }
   }
 
@@ -65,9 +67,13 @@ export default class Timer extends Component {
   }
 
   render() {
+    const {active} = this.state;
     const timerStyle = {
       textAlign: "center",
-      width: "100%"
+      width: "100%",
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
     };
 
     const buttonStyle = {
@@ -86,9 +92,13 @@ export default class Timer extends Component {
     return (
       <div style={timerStyle}>
         <div style={secondsStyles} className="seconds"> {this.state.time}</div>
-        <button onClick={this.reset.bind(this)} style={buttonStyle} >reset</button>
-        <button onClick={this.play.bind(this)} style={buttonStyle} >play</button>
-        <button onClick={this.pause.bind(this)} style={buttonStyle} >pause</button>
+        {active ? <>
+          <button onClick={this.reset.bind(this)} style={buttonStyle} >reset</button>
+          <button onClick={this.pause.bind(this)} style={buttonStyle} >pause</button>
+        </> : <>
+          <button onClick={this.play.bind(this)} style={buttonStyle} >play</button>
+        </>}
+        
       </div>
     )
   }

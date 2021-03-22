@@ -9,10 +9,6 @@ import PoseNet from './components/PoseNet'
 
 import './App.css';
 
-const inferenceConfig = {
-  decodingMethod: "single-person"
-}
-
 
 function App() {
   const [count, checkPoses] = usePullUpCounter()
@@ -20,15 +16,14 @@ function App() {
   const [workout, setWorkout] = useState(null);
 
   useEffect(()=>{
-    var msg = new SpeechSynthesisUtterance();
-    msg.lang = 'ru-RU';
     var total = count.bothTotal + count.leftTotal+count.rightTotal;
     if (total>0){
+      var msg = new SpeechSynthesisUtterance();
+      msg.lang = 'he-HE';
       msg.text=total;
-    } else {
-      msg.text = 'welcome my friend!';
-    }
-    window.speechSynthesis.speak(msg);
+      window.speechSynthesis.speak(msg);
+    } 
+    
   }, [count]);
 
   const renderWorkout = ()=>{
@@ -68,18 +63,12 @@ function App() {
 
   return (
     <div className="App">
-      
-      {/* <PoseNet
-        className="videoClass"
-        facingMode="user"
-        inferenceConfig={inferenceConfig}
-        onEstimate={onEstimate}
-      /> */}
+
       <PoseNet 
         className="videoClass"
         onEstimate={onEstimate}
-        videoWidth={window.screen.width}
-        videoHeight={window.screen.height}
+        videoWidth={window.innerWidth/3}
+        videoHeight={window.innerHeight/3}
       />
 
       {/* {!!workout ? renderWorkout(): renderWorkoutSetup()} */}
