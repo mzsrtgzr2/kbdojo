@@ -21,7 +21,13 @@ function reducer(count, {type, currentSide}) {
       count = {...count, rightTotal: count.rightTotal + 1};
       break;
   }
-  
+  if (type=='increment'){
+    count = {...count, reps: [...count.reps, {
+      side: currentSide,
+      timestamp: Date.now()
+    }]};
+  }
+
   return count
 }
 
@@ -31,9 +37,9 @@ function checkSnatchPisition(shoulder, elbow, wrist, nose, sensitivity=50){
   console.log('x', wrist.x, elbow.x, shoulder.x, Math.abs(wrist.x-elbow.x)<=sensitivity, Math.abs(wrist.x-shoulder.x)<=sensitivity);
   return(
     (sensitivity <= (nose.y-wrist.y)) &&
-    (wrist.y < elbow.y) && (wrist.y < shoulder.y) && (elbow.y < shoulder.y)  &&
-    (Math.abs(wrist.x-elbow.x)<=sensitivity) &&
-    (Math.abs(wrist.x-shoulder.x)<=sensitivity))
+    (wrist.y < elbow.y) && (wrist.y < shoulder.y) && (elbow.y < shoulder.y))
+    // (Math.abs(wrist.x-elbow.x)<=2*sensitivity) &&
+    // (Math.abs(wrist.x-shoulder.x)<=2*sensitivity))
 }
 
 function checkBallDown(shoulder, elbow, wrist){
@@ -50,7 +56,8 @@ export default function(sensitivity = 10) {
     leftTotal: 0,
     rightTotal: 0,
     bothTotal: 0,
-    currentSide: null
+    currentSide: null,
+    reps: []
   });
 
   const state = useRef('down')
@@ -163,7 +170,7 @@ export default function(sensitivity = 10) {
         if (state.current === 'down'){
           if (upCounter.current <= 0){
             console.log('up counter started')
-            upCounter.current = 3;
+            upCounter.current = 2;
             downCounter.current = -1;
           } else {
 
