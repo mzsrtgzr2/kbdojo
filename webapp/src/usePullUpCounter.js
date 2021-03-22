@@ -53,10 +53,7 @@ export default function(sensitivity = 10) {
   const downCounter = useRef(0);
   const upCounter = useRef(0);
   const checkPoses = useCallback(
-    poses => {
-      if (poses.length !== 1) {
-        return
-      }
+    pose => {
 
       const {
         leftShoulder,
@@ -65,7 +62,7 @@ export default function(sensitivity = 10) {
         rightElbow,
         leftWrist,
         rightWrist,
-      } = getKeypointsObject(poses[0])
+      } = getKeypointsObject(pose)
 
       const isDown = 
         checkBallDown(

@@ -75,7 +75,10 @@ function App() {
         inferenceConfig={inferenceConfig}
         onEstimate={onEstimate}
       /> */}
-      <PoseNet />
+      <PoseNet 
+        className="videoClass"
+        onEstimate={onEstimate}
+      />
 
       {/* {!!workout ? renderWorkout(): renderWorkoutSetup()} */}
       {renderWorkout()}

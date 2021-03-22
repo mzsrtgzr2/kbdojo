@@ -26,7 +26,9 @@ export default class PoseNet extends React.Component {
     imageScaleFactor: 0.5,
     skeletonColor: 'aqua',
     skeletonLineWidth: 2,
-    loadingText: 'Loading pose detector...'
+    loadingText: 'Loading pose detector...',
+    className: '',
+    onEstimate: null
   }
 
   constructor(props) {
@@ -127,7 +129,6 @@ export default class PoseNet extends React.Component {
       skeletonLineWidth,
     } = this.props
 
-    const net = this.net
     const video = this.video
 
     const poseDetectionFrameInner = async () => {
@@ -136,14 +137,14 @@ export default class PoseNet extends React.Component {
       switch (algorithm) {
         case 'single-pose':
 
-          if (!!net){
-            const pose = await net.estimateSinglePose(
+          if (!!this.net){
+            const pose = await this.net.estimateSinglePose(
               video,
               imageScaleFactor,
               flipHorizontal,
               outputStride
             )
-
+            this.props.onEstimate(pose);
             poses.push(pose)
           }
           break
@@ -166,8 +167,8 @@ export default class PoseNet extends React.Component {
 
       if (showVideo) {
         ctx.save()
-        ctx.scale(-1, 1)
-        ctx.translate(-videoWidth, 0)
+        // ctx.scale(-1, 1)
+        // ctx.translate(-videoWidth, 0)
         ctx.drawImage(video, 0, 0, videoWidth, videoHeight)
         ctx.restore()
       }
@@ -200,7 +201,9 @@ export default class PoseNet extends React.Component {
       <div className="PoseNet">
         { loading }
         <video playsInline ref={ this.getVideo }></video>
-        <canvas className={className} ref={ this.getCanvas }></canvas>
+        <canvas 
+          className={this.props.className}
+          ref={ this.getCanvas }></canvas>
       </div>
     )
   }
