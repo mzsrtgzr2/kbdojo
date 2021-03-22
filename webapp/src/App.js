@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react"
 import PoseNet from "react-posenet"
 import usePullUpCounter from "./usePullUpCounter"
+import Timer from './components/Timer/Timer';
+
 
 import './App.css';
 
@@ -28,11 +30,31 @@ function App() {
 
   const renderWorkout = ()=>{
     return (
+      <div>
       <div className="topMenu">
-        <div className="topMenuMiddle">Total: {count.bothTotal + count.leftTotal+count.rightTotal}</div>
-        <div className="topMenuLeft">Left: {count.leftTotal}</div>
-        <div className="topMenuLeft">Right: {count.rightTotal}</div>
-        <div className="topMenuRight">Double: {count.bothTotal}</div>
+        <span className="topMenuCell topMenuMiddle">
+          <div>Total</div>
+          <div>{count.bothTotal + count.leftTotal+count.rightTotal}</div>
+          </span>
+        <span className="topMenuCell topMenuLeft">
+          <div>Left</div>
+          <div>{count.leftTotal}</div>
+        </span>
+        <span className="topMenuCell topMenuLeft">
+
+          <div>Right</div>
+          <div>{count.rightTotal}</div>
+
+        </span>
+        <span className="topMenuCell topMenuRight">
+          <div>Double</div>
+          <div>{count.bothTotal}</div>
+
+        </span>
+      </div>
+      <div className="bottomMenu">
+          <Timer options={{delay:2}}/>
+      </div>
       </div>
     )
   };
@@ -44,13 +66,11 @@ function App() {
   return (
     <div className="App">
       
-      {/* <h1>{`Snatch Pace/Minute: ${count}`}</h1> */}
       <PoseNet
         className="videoClass"
-        facingMode="environment"
+        facingMode="user"
         inferenceConfig={inferenceConfig}
         onEstimate={onEstimate}
-        frameRate={20}
       />
 
       {/* {!!workout ? renderWorkout(): renderWorkoutSetup()} */}

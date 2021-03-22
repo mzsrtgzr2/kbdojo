@@ -8,16 +8,16 @@ function getKeypointsObject(pose) {
 }
 
 function reducer(count, {type, currentSide}) {
-  switch (type){
+  switch (currentSide){
     case 'both':
-      count.bothTotal += 1;
-    break;
+      count = {...count, bothTotal: count.bothTotal + 1};
+      break;
     case 'left':
-      count.leftTotal += 1;
-    break;
+      count = {...count, leftTotal: count.leftTotal + 1};
+      break;
     case 'right':
-      count.rightTotal += 1;
-    break;
+      count = {...count, rightTotal: count.rightTotal + 1};
+      break;
   }
   
   return count
@@ -80,15 +80,21 @@ export default function(sensitivity = 10) {
         )
       
       if (isDown){
-        if (state.current === 'up' && downCounter.current<=0){
-          downCounter.current = 10;
-        }
-        downCounter.current--;
+        console.log('moshe', state.current, downCounter.current)
+        if (state.current === 'up'){
+          if (downCounter.current<=0){
+            console.log('down counter started')
+            downCounter.current = 15;
+            upCounter.current = -1;
+          } else {
+            downCounter.current--;
         
-        if (downCounter.current==0){
-          state.current = 'down';
-          upCounter.current = 0;
-          console.log('down')
+            if (downCounter.current==0){
+              state.current = 'down';
+              upCounter.current = -1;
+              console.log('down')
+            }
+          }
         }
         return
       }
@@ -125,30 +131,36 @@ export default function(sensitivity = 10) {
       // console.log((isLeftSnatch || isRightSnatch), state.current)
       if (isLeftSnatch || isRightSnatch){
         
-        if (state.current === 'down' && upCounter.current <= 0){
-          upCounter.current = 5;
+        if (state.current === 'down'){
+          if (upCounter.current <= 0){
+            console.log('up counter started')
+            upCounter.current = 15;
+            downCounter.current = -1;
+          } else {
+            upCounter.current--;
+        
+            if (upCounter.current==0){
+              state.current = 'up';
+              downCounter.current = -1;
+
+              var currentSide = null;
+              if (isLeftSnatch && isRightSnatch){
+                currentSide = 'both';
+              } else if (isLeftSnatch){
+                currentSide = 'left';
+              } else if (isRightSnatch){
+                currentSide = 'right';
+              }
+              dispatch({
+                type: 'increment',
+                currentSide,
+              });
+              console.log('up')
+            }  
+          }
           
         }
-        upCounter.current--;
-        
-        if (upCounter.current==0){
-          state.current = 'up';
-          downCounter.current = 0;
-
-          var currentSide = null;
-          if (isLeftSnatch && isRightSnatch){
-            isLeftSnatch = 'both';
-          } else if (isLeftSnatch){
-            isLeftSnatch = 'left';
-          } else if (isRightSnatch){
-            isLeftSnatch = 'right';
-          }
-          dispatch({
-            type: 'increment',
-            currentSide,
-          });
-          console.log('up')
-        }      
+            
       }      
     },
     [sensitivity]
