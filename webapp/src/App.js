@@ -1,7 +1,10 @@
+import 'babel-polyfill'
+
 import React, { useCallback, useEffect, useState } from "react"
-import PoseNet from "react-posenet"
+// import PoseNet from "react-posenet"
 import usePullUpCounter from "./usePullUpCounter"
 import Timer from './components/Timer/Timer';
+import PoseNet from './components/PoseNet'
 
 
 import './App.css';
@@ -66,12 +69,13 @@ function App() {
   return (
     <div className="App">
       
-      <PoseNet
+      {/* <PoseNet
         className="videoClass"
         facingMode="user"
         inferenceConfig={inferenceConfig}
         onEstimate={onEstimate}
-      />
+      /> */}
+      <PoseNet />
 
       {/* {!!workout ? renderWorkout(): renderWorkoutSetup()} */}
       {renderWorkout()}
