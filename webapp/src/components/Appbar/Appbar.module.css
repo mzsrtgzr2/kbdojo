@@ -1,0 +1,22 @@
+.root {
+    width: 100%;
+}
+
+.contentWrapper{
+    margin-top: 75px;
+    display: grid;
+    min-height: 100vh;
+}
+
+.title{
+    flex-grow: 1
+}
+
+.drawerList{
+    width: 400px;
+}
+
+.sideActionArea{
+    display: grid;
+    grid-auto-flow: column;
+}

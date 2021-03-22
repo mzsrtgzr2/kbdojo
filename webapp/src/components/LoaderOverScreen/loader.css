@@ -1,0 +1,9 @@
+.loaderContainer{
+    min-height: 100vh;
+    z-index: 999;
+}
+
+
+.loaderTypography{
+    padding-top: 20px;
+}

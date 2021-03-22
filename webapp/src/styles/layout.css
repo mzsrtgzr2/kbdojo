@@ -1,0 +1,9 @@
+.full-page-container{
+    display: grid;
+    width: 100%;
+    min-height: 100vh;
+}
+
+.centerText{
+    text-align: center;
+}

@@ -1,0 +1,101 @@
+{
+  "translation": {
+    "HOME_BUTTON": "DOM routing",
+    "TEST_TRANSLATE": "i18n Translated",
+    "TEST_TRANSLATEA": "i18n TranslatedA",
+    "SIGNIN": "Login",
+    "SIGNOUT": "Logout",
+    "RESTRICTED_TO_STORE_OWNER": "This is a restricted area",
+    "REDIRECT_TO_AUTH": "Login again",
+    "ORDERS_TAB": "Orders Fulfillment",
+    "STORE_SETTINGS_TAB": "Store Settings",
+    "ADMIN_DASHBOARD_TAB": "Admin Dashboard",
+    "INENTORY_TAB": "Products & Inventory",
+    "ORDER_TAB": "Order from {{name}}",
+    "LOADER_PAGE_LABEL": "Loading...",
+    "SEARCH_PLACEHOLDER": "Search...",
+    "SEARCH_NONE_SELECTED": "Active",
+    "BACK": "Back",
+    "ERROR": "Unknown Error",
+    "ARE_YOU_SURE": "Pay Attention",
+    "YES": "Yes",
+    "NO": "No",
+    "ARCHIVE": "Archive",
+    "ORDER_STATUS": {
+      "PENDING": "Pending",
+      "IN_PROGRESS": "In Progress",
+      "DONE": "Done",
+      "PICKED_UP": "Pickup up",
+      "ACCEPTED": "Accepted by Customer",
+      "IN_TRANSIT": "Shipped",
+      "READY_TO_BE_PICKED": "Ready for pick up"
+    },
+    "ORDER_TYPE": {
+      "PICKUP": "Pickup",
+      "SHIPMENT": "Delivery"
+    },
+    "ORDERS": {
+      "NO_ORDERS_AT_ALL": "Woohoo! all done!",
+      "NO_ORDERS_FOUND": "No Orders found"
+    },
+    "ORDER": {
+      "COPIED_MESSAGE": "Order Copied!",
+      "CANT_FIND_ORDER": "Oops.. Can't find Order {{orderId}}",
+      "SEE_ALL_YOUR_ORDERS": "All my Orders",
+      "TITLE": "Order for {{userName}} ({{userPhone}})",
+      "SHIPMENT_TO": "Delivery to {{userAddress}}",
+      "TO_PAY": "Payment {{price}} {{currency}}",
+      "PRODUCTS": {
+        "TITLE": "Products",
+        "NAME": "Name",
+        "HOW_MUCH": "How much?",
+        "PRICE": "Price"
+      },
+      "CUSTOMER_WILL_PAY_WITH": "Preffered payment method",
+      "STATUS_TITLE": "Status",
+      "PAYMENT_TITLE": "Payment",
+      "IS_PAID": "Payment Status",
+      "PAID": "Paid",
+      "NOT_PAID": "Not Paid",
+      "PAID_WITH_CASH": "Paid with Cash",
+      "PAID_WITH_CREDITCARD": "Paid with CreditCard",
+      "PAYMENT_METHOD": {
+        "CASH": "Cash",
+        "CREDITCARD": "Credit Card"
+      },
+      "DELETE": "Delete this Order",
+      "RECOVER": "Recover this Order",
+      "DELETED": "Deleted Order",
+      "DELETE_APPROVAL": "Are you sure you want to delete this order?",
+      "RECOVER_APPROVAL": "Are you sure you want to recover this order?",
+      "ORDER_RECOVERED": "Order successfully recovered",
+      "ORDER_DELETED": "Order deleted"
+    },
+    "ADD_TO_CART": "Add",
+    "MEASURES": {
+      "KG": "Kg",
+      "GR": "Gr",
+      "UNIT": "Unit"
+    },
+    "SEARCH_BAR": {
+      "IN": "In"
+    },
+    "STORESETTINGS": {
+      "DISPLAY_NAME": "Name",
+      "DISPLAY_NAME_HELP": "What is the official name?",
+      "PHONE": "Phone number",
+      "ADDRESS": "Store Full Address",
+      "DESCRIPTION": "Description",
+      "DESCRIPTION_HELP": "Describe your store in a few words",
+      "DELETE": "Deactivate Store",
+      "RECOVER": "Activate Store",
+      "DELETE_APPROVAL": "Sure to deactivate this store?",
+      "RECOVER_APPROVAL": "Sure to activate this store?",
+      "STORE_DELETED": "Store deactivated",
+      "STORE_RECOVERED": "Store activated",
+      "SAVED": "Saved Successfully",
+      "SAVE": "Update",
+      "LOGO_UPDATE_TITLE": "Logo update"
+    }
+  }
+}

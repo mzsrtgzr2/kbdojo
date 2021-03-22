@@ -1,0 +1,11 @@
+.restrictedContainer{
+    min-height: 100vh;
+}
+
+.restrictedTypography{
+    padding-top: 20px;
+}
+
+.restrictedActions{
+    padding-top: 20px;
+}

@@ -1,0 +1,101 @@
+{
+  "translation": {
+    "HOME_BUTTON": "עמוד הבית",
+    "TEST_TRANSLATE": "תרגום נחמד",
+    "START_DEMO_AUTH": "כנס כנס נשמה",
+    "SIGNIN": "כניסה",
+    "SIGNOUT": "יציאה",
+    "RESTRICTED_TO_STORE_OWNER": "זהו אזור מוגן",
+    "REDIRECT_TO_AUTH": "כניסה חוזרת",
+    "ORDERS_TAB": "מרכז ההזמנות",
+    "STORE_SETTINGS_TAB": "הגדרות החנות",
+    "ADMIN_DASHBOARD_TAB": "ראשי",
+    "INENTORY_TAB": "מוצרים ומלאי",
+    "ORDER_TAB": "הזמנת לקוח - {{name}}",
+    "LOADER_PAGE_LABEL": "בטעינה...",
+    "SEARCH_PLACEHOLDER": "חיפוש...",
+    "SEARCH_NONE_SELECTED": "פעילים",
+    "BACK": "חזרה",
+    "ERROR": "בעיה לא מזוהה",
+    "ARE_YOU_SURE": "שימו לב",
+    "YES": "כן",
+    "NO": "לא",
+    "ARCHIVE": "ארכיון",
+    "ORDER_STATUS": {
+      "PENDING": "חדש",
+      "IN_PROGRESS": "בטיפול",
+      "DONE": "הסתיים",
+      "PICKED_UP": "נאסף בהצלחה",
+      "ACCEPTED": "התקבל על ידי הלקוח/ה",
+      "IN_TRANSIT": "נשלח",
+      "READY_TO_BE_PICKED": "מוכן לאיסוף בחנות"
+    },
+    "ORDER_TYPE": {
+      "PICKUP": "איסוף מהחנות",
+      "SHIPMENT": "משלוח"
+    },
+    "ORDERS": {
+      "NO_ORDERS_AT_ALL": "ישש סיימתם את כל ההזמנות",
+      "NO_ORDERS_FOUND": "לא נמצאו הזמנות"
+    },
+    "ORDER": {
+      "COPIED_MESSAGE": "הזמנה הועתקה!",
+      "CANT_FIND_ORDER": "אוי לא... לא מצאנו את הזמנה  {{orderId}}",
+      "SEE_ALL_YOUR_ORDERS": "לרשימת ההזמנות המלאה",
+      "TITLE": "הזמנה של {{userName}} בטלפון {{userPhone}}",
+      "SHIPMENT_TO": "משלוח לכתובת {{userAddress}}",
+      "TO_PAY": "לתשלום {{price}} {{currency}}",
+      "PRODUCTS": {
+        "TITLE": "מוצרים",
+        "NAME": "שם",
+        "HOW_MUCH": "כמה?",
+        "PRICE": "מחיר"
+      },
+      "CUSTOMER_WILL_PAY_WITH": "אופן תשלום מועדף",
+      "STATUS_TITLE": "סטטוס הזמנה",
+      "PAYMENT_TITLE": "תשלום",
+      "PAID": "שולם",
+      "IS_PAID": "מצב תשלום",
+      "NOT_PAID": "לא שולם",
+      "PAID_WITH_CASH": "שולם במזומן",
+      "PAID_WITH_CREDITCARD": "שולם בכרטיס אשראי",
+      "PAYMENT_METHOD": {
+        "CASH": "מזומן",
+        "CREDITCARD": "כרטיס אשראי"
+      },
+      "DELETE": "מחיקת הזמנה",
+      "RECOVER": "שיחזור הזמנה",
+      "DELETED": "הזמנה לא פעילה",
+      "DELETE_APPROVAL": "למחוק את ההזמנה",
+      "RECOVER_APPROVAL": "לשחזר את ההזמנה?",
+      "ORDER_RECOVERED": "ההזמנה שוחזרה בהצלחה",
+      "ORDER_DELETED": "ההזמנה נמחקה"
+    },
+    "ADD_TO_CART": "הוסף לעגלה",
+    "MEASURES": {
+      "KG": "קג",
+      "GR": "גר",
+      "UNIT": "יחידה"
+    },
+    "SEARCH_BAR": {
+      "IN": "מתוך"
+    },
+    "STORESETTINGS": {
+      "DISPLAY_NAME": "שם החנות",
+      "DISPLAY_NAME_HELP": "מה השם הרישמי של חנות?",
+      "PHONE": "טלפון",
+      "ADDRESS": "כתובת מלאה",
+      "DESCRIPTION": "תיאור",
+      "DESCRIPTION_HELP": "כמה מילים על החנות",
+      "DELETE": "ביטול חנות",
+      "RECOVER": "הפעלת חנות",
+      "DELETE_APPROVAL": "להפסיק את פעילות החנות?",
+      "RECOVER_APPROVAL": "להחזיר את פעילות החנות?",
+      "STORE_DELETED": "החנות הפסיקה פעילותה",
+      "STORE_RECOVERED": "החנות חזרה לפעילות",
+      "SAVED": "נשמר בהצלחה",
+      "SAVE": "עדכון",
+      "LOGO_UPDATE_TITLE": "עדכון לוגו"
+    }
+  }
+}

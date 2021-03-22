@@ -1,3 +1,9 @@
 node_modules
+.DS_Store
 build
-.firebase
+coverage
+firebase-debug.log
+ui-debug.log
+firestore-debug.log
+.firebase/
+.env
