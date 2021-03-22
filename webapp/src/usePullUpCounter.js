@@ -25,16 +25,18 @@ function reducer(count, {type, currentSide}) {
   return count
 }
 
-function checkSnatchPisition(shoulder, elbow, wrist, sensitivity=100){
-  // console.log(wrist.y, elbow.y, shoulder.y, (wrist.y < elbow.y) && (wrist.y < shoulder.y) && (elbow.y < shoulder.y));
-  // console.log(wrist.x, elbow.x, shoulder.x, Math.abs(wrist.x-elbow.x)<=sensitivity, Math.abs(wrist.x-shoulder.x)<=sensitivity);
+function checkSnatchPisition(shoulder, elbow, wrist, nose, sensitivity=50){
+  console.log('y', wrist.y, elbow.y, shoulder.y, (wrist.y < elbow.y) && (wrist.y < shoulder.y) && (elbow.y < shoulder.y));
+
+  console.log('x', wrist.x, elbow.x, shoulder.x, Math.abs(wrist.x-elbow.x)<=sensitivity, Math.abs(wrist.x-shoulder.x)<=sensitivity);
   return(
-    (wrist.y < elbow.y) && (sensitivity < shoulder.y-wrist.y) && (elbow.y < shoulder.y)  &&
+    (sensitivity <= (nose.y-wrist.y)) &&
+    (wrist.y < elbow.y) && (wrist.y < shoulder.y) && (elbow.y < shoulder.y)  &&
     (Math.abs(wrist.x-elbow.x)<=sensitivity) &&
     (Math.abs(wrist.x-shoulder.x)<=sensitivity))
 }
 
-function checkBallDown(shoulder, elbow, wrist, sensitivity=0){
+function checkBallDown(shoulder, elbow, wrist){
   
   const arm_edge = elbow
   const arm_base = shoulder
@@ -70,6 +72,7 @@ export default function(sensitivity = 10) {
         rightElbow,
         leftWrist,
         rightWrist,
+        nose,
       } = getKeypointsObject(pose)
 
       const isDown = 
@@ -83,6 +86,13 @@ export default function(sensitivity = 10) {
           leftElbow,
           leftWrist
         )
+
+      if (!leftShoulder || !leftElbow || !rightShoulder || !rightElbow || !nose){
+        console.log('not enough info')
+        return;
+      }
+
+      const chestWidth = Math.abs(leftShoulder.x - rightShoulder.x);
       
       if (isDown){
         const prev = downLastTimestamp.current
@@ -95,7 +105,7 @@ export default function(sensitivity = 10) {
             upCounter.current = -1;
           } else {
             const diff = now-prev
-            if (prev && 0<diff<=2*TICK_MS){
+            if (prev && 0<diff<=10*TICK_MS){
               console.log('down counter advanced')
               downCounter.current-=diff/TICK_MS;
             }
@@ -119,7 +129,9 @@ export default function(sensitivity = 10) {
         isRightSnatch = checkSnatchPisition(
           rightShoulder,
           rightElbow,
-          rightWrist
+          rightWrist,
+          nose,
+          sensitivity = chestWidth/2
           )
           // if (isRightSnatch){
           //   console.log('right snatch!', rightShoulder,
@@ -133,7 +145,9 @@ export default function(sensitivity = 10) {
         isLeftSnatch = checkSnatchPisition(
           leftShoulder,
           leftElbow,
-          leftWrist
+          leftWrist,
+          nose,
+          sensitivity = chestWidth/2
         )
         // if (isLeftSnatch){
         //   console.log('left snatch!', leftShoulder,
@@ -149,12 +163,12 @@ export default function(sensitivity = 10) {
         if (state.current === 'down'){
           if (upCounter.current <= 0){
             console.log('up counter started')
-            upCounter.current = 2;
+            upCounter.current = 3;
             downCounter.current = -1;
           } else {
 
             const diff = now-prev
-            if (prev && 0<diff<=2*TICK_MS){
+            if (prev && 0<diff<=10*TICK_MS){
               console.log('up counter advanced')
               upCounter.current-=diff/TICK_MS;
             }

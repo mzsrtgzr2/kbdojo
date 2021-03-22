@@ -11,7 +11,8 @@ let offset = null, interval = null
 export default class Timer extends Component {
   static get propTypes () {
     return {
-      options: PropTypes.object
+      options: PropTypes.object,
+      onMinute: PropTypes.func
     }
   }
 
@@ -39,7 +40,7 @@ export default class Timer extends Component {
   play() {
     if (!interval) {
       offset = Date.now()
-      interval = setInterval(this.update.bind(this), this.props.options.delay)
+      interval = setInterval(this.update.bind(this), 1)
       this.setState({active: true})
     }
   }
@@ -57,6 +58,13 @@ export default class Timer extends Component {
     this.setState({clock: clock })
     let time = SecondsTohhmmss(clock / 1000)
     this.setState({time: time })
+    // notify for 1 minute threshold
+    if (!!this.props.onMinute){
+      const seconds = parseInt(clock/1000);
+      if (seconds%60 == 0){
+        this.props.onMinute(seconds/60);
+      }
+    }
   }
 
   calculateOffset() {

@@ -26,7 +26,7 @@ export default class PoseNet extends React.Component {
     imageScaleFactor: 0.5,
     skeletonColor: 'aqua',
     skeletonLineWidth: 2,
-    loadingText: 'Loading pose detector...',
+    loadingText: 'Loading...',
     className: '',
     onEstimate: null
   }
@@ -46,7 +46,6 @@ export default class PoseNet extends React.Component {
 
   async componentWillMount() {
     // Loads the pre-trained PoseNet model
-    // this.net = await posenet.load(this.props.mobileNetArchitecture);
     this.net = await posenet.load({
       architecture: this.props.mobileNetArchitecture,
     });

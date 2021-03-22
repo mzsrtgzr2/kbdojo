@@ -9,6 +9,12 @@ import PoseNet from './components/PoseNet'
 
 import './App.css';
 
+const speak = (text)=>{
+  var msg = new SpeechSynthesisUtterance();
+  msg.lang = 'en-EN';
+  msg.text=text;
+  window.speechSynthesis.speak(msg);
+}
 
 function App() {
   const [count, checkPoses] = usePullUpCounter()
@@ -18,10 +24,7 @@ function App() {
   useEffect(()=>{
     var total = count.bothTotal + count.leftTotal+count.rightTotal;
     if (total>0){
-      var msg = new SpeechSynthesisUtterance();
-      msg.lang = 'he-HE';
-      msg.text=total;
-      window.speechSynthesis.speak(msg);
+      speak(total);
     } 
     
   }, [count]);
@@ -51,7 +54,14 @@ function App() {
         </span>
       </div>
       <div className="bottomMenu">
-          <Timer options={{delay:2}}/>
+        v0.2
+          <Timer
+            onMinute={(minute)=>{
+              if (!!minute){
+                speak(`${minute} minute passed`);
+              }
+            }}
+          />
       </div>
       </div>
     )
