@@ -1,4 +1,5 @@
 import { useRef, useReducer, useCallback } from "react"
+import { Mixpanel } from 'mixpanel';
 
 const TICK_MS = 100;
 
@@ -19,6 +20,7 @@ function reducer(count, {type, currentSide}) {
       break;
     case 'right':
       count = {...count, rightTotal: count.rightTotal + 1};
+      
       break;
   }
   if (type=='increment'){
@@ -26,6 +28,13 @@ function reducer(count, {type, currentSide}) {
       side: currentSide,
       timestamp: Date.now()
     }]};
+    Mixpanel.track('count_increase', {
+      bothTotal: count.bothTotal,
+      leftTotal: count.leftTotal,
+      rightTotal: count.rightTotal,
+      side: currentSide,
+      timestamp: Date.now(),
+    })
   }
 
   return count

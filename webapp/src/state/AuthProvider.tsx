@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import FirebaseOps from "helpers/firebaseOps";
 import { isEmpty } from 'helpers/core';
+import { Mixpanel } from 'mixpanel';
 
 
 type ContextProps = {
@@ -26,6 +27,11 @@ export const AuthProvider = ({ children }: { children: any }) => {
     useEffect(() => {
         FirebaseOps.auth.onAuthStateChanged((user: any) => {
             setUser(user);
+            Mixpanel.identify(user.email);
+            Mixpanel.people.set({
+                "$email": user.email,
+                "name": user.displayName
+              });
             setLoadingAuthState(false);
         });
     }, []);

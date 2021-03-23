@@ -4,6 +4,7 @@ import {speak} from './utils';
 import { useParams, useHistory, Redirect } from "react-router-dom";
 import WorkoutApp from './workoutApp';
 import InstructionsImage from 'assets/instructions.jpg';
+import { Mixpanel } from 'mixpanel';
 
 import {
   Grid,
@@ -37,6 +38,7 @@ function App() {
   const start = ()=>{
     speak('Start working out')
     setStage('workout');
+    Mixpanel.track('start_button')
   };
 
   return (

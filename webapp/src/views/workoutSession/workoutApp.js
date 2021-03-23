@@ -6,6 +6,8 @@ import Timer from 'components/Timer/Timer';
 import PoseNet from 'components/PoseNet'
 import { useParams, useHistory, Redirect } from "react-router-dom";
 import {speak} from './utils';
+import { Mixpanel } from 'mixpanel';
+
 
 import './App.css';
 
@@ -21,7 +23,6 @@ function App() {
     var total = count.bothTotal + count.leftTotal+count.rightTotal;
     if (total>0){
       speak(total);
-
     } 
     
   }, [count]);
@@ -91,6 +92,11 @@ function App() {
             onMinute={(minute)=>{
               if (!!minute){
                 speak(`${minute} minute passed`);
+                setTimeout(()=>{
+                  Mixpanel.track('minute_update', {
+                    totalMinutes: minute
+                  })
+                }, 0)
               }
             }}
           />
