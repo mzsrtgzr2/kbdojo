@@ -199,10 +199,11 @@ export default class PoseNet extends React.Component {
     return (
       <div className="PoseNet">
         { loading }
-        <video playsInline ref={ this.getVideo }></video>
+        
         <canvas 
           className={this.props.className}
           ref={ this.getCanvas }></canvas>
+        <video playsInline ref={ this.getVideo }></video>
       </div>
     )
   }

@@ -1,7 +1,6 @@
 import React from "react";
 import { Route as ReactRouterDomRoute, Redirect } from "react-router-dom";
 import { useAuthContext } from "state/AuthProvider";
-import { useStoreContext } from 'state/StoreProvider';
 import LoaderOverScreen from 'components/LoaderOverScreen';
 import AuthHelper from 'helpers/auth';
 
@@ -16,7 +15,6 @@ interface ProtectedRouteType {
     restrictionRedirect?: string,
     errorRedirect?: string,
     restrictionType?: RestrictionType,
-    merchant?: string,
     exact?: boolean,
     path: string
 }
@@ -27,7 +25,6 @@ export const ProtectedRoute = ({
     restrictionRedirect,
     restrictionType,
     errorRedirect,
-    merchant,
     ...rest }: ProtectedRouteType) => {
     /**
      * Manage a Route loading and restriction behavior

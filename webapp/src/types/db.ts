@@ -1,9 +1,6 @@
 
 export enum CollectionsNames {
-    stores = 'stores',
-    products = 'products',
-    orders = 'orders',
-    users = 'users'
+    betaCodes = 'betaCodes'
 }
 
 /**

@@ -12,8 +12,9 @@ export default class Timer extends Component {
   static get propTypes () {
     return {
       className: PropTypes.string,
-      options: PropTypes.object,
-      onMinute: PropTypes.func
+      startAutomatically: PropTypes.bool,
+      onMinute: PropTypes.func,
+      showControllers: PropTypes.bool
     }
   }
 
@@ -27,6 +28,12 @@ export default class Timer extends Component {
 
   componentWillUnmount() {
     this.pause()
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.startAutomatically == true && !this.props.startAutomatically) {
+        this.play();
+    }
   }
 
   pause() {
@@ -74,6 +81,7 @@ export default class Timer extends Component {
 
   render() {
     const {active} = this.state;
+    const {showControllers} = this.props;
     const timerStyle = {
       textAlign: "center",
       width: "100%",
@@ -96,16 +104,20 @@ export default class Timer extends Component {
       
     };
 
+    const renderControllers = ()=>(<>
+      {active ? <>
+          <button onClick={this.reset.bind(this)} style={buttonStyle} >reset</button>
+          <button onClick={this.pause.bind(this)} style={buttonStyle} >pause</button>
+        </> : <>
+          <button onClick={this.play.bind(this)} style={buttonStyle} >play</button>
+        </>}
+    </>);
+    
     return (
       <div style={timerStyle} className={this.props.className}>
         <div style={secondsStyles} className="seconds"> {this.state.time}</div>
         <div>
-          {active ? <>
-            <button onClick={this.reset.bind(this)} style={buttonStyle} >reset</button>
-            <button onClick={this.pause.bind(this)} style={buttonStyle} >pause</button>
-          </> : <>
-            <button onClick={this.play.bind(this)} style={buttonStyle} >play</button>
-          </>}
+          {showControllers && renderControllers()}
         </div>
         
       </div>

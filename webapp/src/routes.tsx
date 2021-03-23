@@ -7,7 +7,6 @@ import WorkoutSession from 'views/workoutSession';
 import { ProtectedRoute, RestrictionType } from 'components/ProtectedRoute';
 import Restricted from "views/Restricted";
 import Error from 'views/Error';
-import LayoutControl from "components/LayoutControl";
 
 
 function Routes() {

@@ -5,7 +5,6 @@ import i18n from "i18n";
 import { create } from 'jss';
 import rtl from 'jss-rtl';
 import { StylesProvider, jssPreset } from '@material-ui/core/styles';
-import { useStoreContext } from 'state/StoreProvider';
 
 // Configure JSS
 const jss = create({ plugins: [...jssPreset().plugins, rtl()] });
@@ -21,18 +20,16 @@ export default function ({ children }: Props) {
      * - change i18n selected language when store selected
      */
 
-    const { store } = useStoreContext();
 
     // needs something more sofisticated later to decide direction
-    const getDirection = (): 'rtl' | 'ltr' =>
-        ((!!store && store.i18n) === 'he' ? 'rtl' : 'ltr');
+    const getDirection = (): 'rtl' | 'ltr' => 'ltr';
 
     React.useEffect(() => {
-        if (!!store) {
-            console.log('changing language to', store.i18n);
-            i18n.changeLanguage(store.i18n);
-        }
-    }, [store])
+        // if (!!store) {
+        //     console.log('changing language to', store.i18n);
+        //     i18n.changeLanguage(store.i18n);
+        // }
+    }, [])
 
     return (
         <StylesProvider jss={jss}>

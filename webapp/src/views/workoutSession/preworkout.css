@@ -1,13 +1,13 @@
-.restrictedContainer{
+.preWorkoutContainer{
     min-height: 100vh;
     background-color: black;
 }
 
-.restrictedTypography{
+.preWorkoutTypography{
     padding-top: 20px;
     color: #EF0B5E;
 }
 
-.restrictedActions{
+.preWorkoutActions{
     padding-top: 20px;
 }
