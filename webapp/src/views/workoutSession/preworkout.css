@@ -3,9 +3,9 @@
     background-color: black;
 }
 
-.preWorkoutTypography{
+.preWorkoutTitle{
     padding-top: 20px;
-    color: #EF0B5E;
+    font-weight: 700!important;
 }
 
 .preWorkoutActions{
@@ -15,4 +15,16 @@
 .instructions {
     padding: 40px;
     text-align: left;
+    line-height: 1.6;
+
+}
+
+.startButton {
+    font-size: 3rem!important;
+    font-weight: 700!important;
+}
+
+.instructionsImage{
+    max-width: 800px;
+    width: 100%;
 }

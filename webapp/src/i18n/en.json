@@ -1,10 +1,12 @@
 {
   "translation": {
-    "APP_NAME": "Kettlebell Snatch/Jerk counter",
+    "APP_NAME": "Kettlebell counter",
     "INSTRUCTIONS": {
+      "LINE0": "How to start?",
       "LINE1": "1. Place phone/laptop in front of body (3m/9ft)",
-      "LINE2": "2. Start doing Snatch/Jerk",
-      "LINE3": "3. The App counts each time your hand above the head" 
+      "LINE2": "2. Click \"START\"",
+      "LINE3": "3. Start doing Snatch/Jerk",
+      "SUBTITLE": "The App counts overhead reps" 
     },
     "START": "Start"
 

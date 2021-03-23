@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import './preworkout.css';
 
 const codes = [
+  'raanana',
   '432521',
   '432522',
   '432523',
@@ -53,11 +54,16 @@ function App() {
               justify="center"
               className="preWorkoutContainer">
 
-                  <Typography className="preWorkoutTypography" variant="h3" >
+                  <Typography className="preWorkoutTitle" variant="h2" color="primary">
                       {t('APP_NAME')}
                   </Typography>
 
+                  <Typography color="primary" variant="h3" >
+                        {t('INSTRUCTIONS.SUBTITLE')}
+                    </Typography>
+
                   <div className="instructions">
+
                     <Typography color="secondary" variant="h4" >
                         {t('INSTRUCTIONS.LINE1')}
                     </Typography>
@@ -69,15 +75,16 @@ function App() {
                     <Typography color="secondary" variant="h4" >
                         {t('INSTRUCTIONS.LINE3')}
                     </Typography>
+
                   </div>
 
-                  <img src={InstructionsImage}/>
+                  <img src={InstructionsImage} className="instructionsImage"/>
 
                   <p className="preWorkoutActions">
                       <Button
+                        className="startButton"
                           variant="contained"
                           color="primary"
-                          size="large"
                           onClick={start}
                           >
                           {t('START')}
