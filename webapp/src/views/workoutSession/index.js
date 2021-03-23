@@ -3,6 +3,8 @@ import React, { useCallback, useEffect, useState } from "react"
 import {speak} from './utils';
 import { useParams, useHistory, Redirect } from "react-router-dom";
 import WorkoutApp from './workoutApp';
+import InstructionsImage from 'assets/instructions.jpg';
+
 import {
   Grid,
   Button,
@@ -31,6 +33,11 @@ function App() {
   const { code } = useParams();
 
   const { t } = useTranslation();
+  const start = ()=>{
+    speak('Start working out')
+    setStage('workout');
+  };
+
   return (
     <div>
       {
@@ -46,16 +53,34 @@ function App() {
               justify="center"
               className="preWorkoutContainer">
 
-                  <Typography className="preWorkoutTypography" variant="h5" >
-                      {t('RESTRICTED_TO_STORE_OWNER')}
+                  <Typography className="preWorkoutTypography" variant="h3" >
+                      {t('APP_NAME')}
                   </Typography>
+
+                  <div className="instructions">
+                    <Typography color="secondary" variant="h4" >
+                        {t('INSTRUCTIONS.LINE1')}
+                    </Typography>
+
+                    <Typography color="secondary" variant="h4" >
+                        {t('INSTRUCTIONS.LINE2')}
+                    </Typography>
+
+                    <Typography color="secondary" variant="h4" >
+                        {t('INSTRUCTIONS.LINE3')}
+                    </Typography>
+                  </div>
+
+                  <img src={InstructionsImage}/>
 
                   <p className="preWorkoutActions">
                       <Button
                           variant="contained"
                           color="primary"
+                          size="large"
+                          onClick={start}
                           >
-                          {t('REDIRECT_TO_AUTH')}
+                          {t('START')}
                       </Button>
                   </p>
 
