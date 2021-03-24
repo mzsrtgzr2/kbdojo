@@ -11,8 +11,18 @@ export default class AuthHelper {
     static async signIn() {
         const provider = new Firebase.auth.GoogleAuthProvider()
 
-        return await FirebaseOps.auth
+        return FirebaseOps.auth
             .signInWithRedirect(provider);
+    }
+    static async signInGoogle() {
+        const provider = new Firebase.auth.GoogleAuthProvider()
+        return await FirebaseOps.auth.signInWithPopup(provider);
+        
+    }
+
+    static async signInFacebook() {
+        const provider = new Firebase.auth.FacebookAuthProvider()
+        return await FirebaseOps.auth.signInWithPopup(provider);
     }
 
     static async signOut() {

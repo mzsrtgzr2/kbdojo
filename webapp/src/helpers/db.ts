@@ -9,6 +9,7 @@ export default class {
     static init() {
         return firebaseOps.init();
     }
+    
     static close() {
         firebaseOps.close();
     }

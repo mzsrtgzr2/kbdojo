@@ -25,12 +25,26 @@
     .instructionsImage{
         width: 100%;
     }
+    .titleImage{
+        width: 100%;
+        margin-bottom: 200px;
+    }
+    .loginImage{
+        width: 60%
+    }
 }
 
 @media only screen and (min-width: 768px) {
     .instructionsImage{
         max-width: 800px;
         width: 100%;
+    }
+    .titleImage{
+        width: 700px;
+        margin-bottom: 100px;
+    }
+    .loginImage{
+        width: 500px;
     }
 }
 

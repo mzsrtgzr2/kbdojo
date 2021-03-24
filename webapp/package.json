@@ -34,7 +34,7 @@
     "react-scripts": "3.4.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "HTTPS=true react-scripts start",
     "build": "GENERATE_SOURCEMAP=false react-scripts build",
     "build:serve": "node_modules/.bin/serve -s build",
     "test-watch": "react-scripts --inspect-brk test --watchAll=false",
