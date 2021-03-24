@@ -35,7 +35,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "GENERATE_SOURCEMAP=false react-scripts build",
     "build:serve": "node_modules/.bin/serve -s build",
     "test-watch": "react-scripts --inspect-brk test --watchAll=false",
     "test": "firebase emulators:exec --only firestore \"react-scripts test --watchAll=false\"",
