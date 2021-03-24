@@ -1,9 +1,9 @@
 import mixpanel from 'mixpanel-browser';
 mixpanel.init(process.env.REACT_APP_MIXPANEL_TOKEN);
 
-let env_check = true; //process.env.NODE_ENV === 'production';
+const env_check = true; //process.env.NODE_ENV === 'production';
 
-let actions = {
+const actions = {
   identify: (id) => {
     if (env_check) mixpanel.identify(id);
   },
