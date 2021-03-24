@@ -91,7 +91,7 @@ export default class Timer extends Component {
     };
 
     const buttonStyle = {
-      background: "black",
+      background: "#EF0B5E",
       color: "white",
       fontSize: "3vw",
       border: "1px solid #ddd",

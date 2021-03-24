@@ -1,16 +1,9 @@
 .preWorkoutContainer{
+    padding: 10px;
     min-height: 100vh;
-    background-color: black;
+    background-color: white;
 }
 
-.preWorkoutTitle{
-    padding-top: 20px;
-    font-weight: 700!important;
-}
-
-.preWorkoutActions{
-    padding-top: 20px;
-}
 
 .instructions {
     padding: 40px;
@@ -25,6 +18,20 @@
 }
 
 .instructionsImage{
-    max-width: 800px;
-    width: 100%;
+    margin-bottom: 60px;
 }
+
+@media only screen and (max-width: 768px) {
+    .instructionsImage{
+        width: 100%;
+    }
+}
+
+@media only screen and (min-width: 768px) {
+    .instructionsImage{
+        max-width: 800px;
+        width: 100%;
+    }
+}
+
+

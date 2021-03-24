@@ -3,7 +3,9 @@ import React, { useCallback, useEffect, useState } from "react"
 import {speak} from './utils';
 import { useParams, useHistory, Redirect } from "react-router-dom";
 import WorkoutApp from './workoutApp';
-import InstructionsImage from 'assets/instructions.jpg';
+
+import MainImage from 'assets/main.png';
+
 import { Mixpanel } from 'mixpanel';
 
 import {
@@ -17,16 +19,26 @@ import './preworkout.css';
 
 const codes = [
   'raanana',
-  '432521',
-  '432522',
-  '432523',
-  '432524',
-  '432525',
-  '432526',
-  '432527',
-  '432528',
-  '432529',
-  '432530'
+  '132521',
+  '132522',
+  '132523',
+  '132524',
+  '132525',
+  '132526',
+  '132527',
+  '132528',
+  '132529',
+  '132530',
+  '232521',
+  '232522',
+  '232523',
+  '232524',
+  '232525',
+  '232526',
+  '232527',
+  '232528',
+  '232529',
+  '232530',
 ]
 
 
@@ -56,31 +68,8 @@ function App() {
               justify="center"
               className="preWorkoutContainer">
 
-                  <Typography className="preWorkoutTitle" variant="h2" color="primary">
-                      {t('APP_NAME')}
-                  </Typography>
-
-                  <Typography color="primary" variant="h3" >
-                        {t('INSTRUCTIONS.SUBTITLE')}
-                    </Typography>
-
-                  <div className="instructions">
-
-                    <Typography color="secondary" variant="h4" >
-                        {t('INSTRUCTIONS.LINE1')}
-                    </Typography>
-
-                    <Typography color="secondary" variant="h4" >
-                        {t('INSTRUCTIONS.LINE2')}
-                    </Typography>
-
-                    <Typography color="secondary" variant="h4" >
-                        {t('INSTRUCTIONS.LINE3')}
-                    </Typography>
-
-                  </div>
-
-                  <img src={InstructionsImage} className="instructionsImage"/>
+              
+                  <img src={MainImage} className="instructionsImage"/>
 
                   <p className="preWorkoutActions">
                       <Button
