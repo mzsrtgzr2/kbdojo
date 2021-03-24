@@ -14,7 +14,7 @@ function Routes() {
         <Switch>
             <Route exact path="/restricted" component={Restricted} />
             <Route exact path="/error/:why" component={Error} />
-
+            
             <ProtectedRoute
                 exact
                 restrictionType={RestrictionType.AuthenticatedOnly}
@@ -22,6 +22,8 @@ function Routes() {
                 path="/beta/:code"
                 component={WorkoutSession}/>
 
+            <Redirect to="/beta/raanana" />
+            
             <Route exact path="/" component={Home} />
             <Redirect to="/" />
         </Switch>

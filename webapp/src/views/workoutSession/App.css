@@ -1,11 +1,11 @@
 
 .topMenu{
   position: fixed;
-  background-color: rgba(0, 0, 0, 0.85);
+  background-color: #EF0B5E;
   width: 100%;
   text-align: center;
   
-  color: #EF0B5E;
+  color: black;
   
   padding-top: 30px;
   padding-bottom: 10px;
@@ -20,13 +20,31 @@
   text-align: center;
 }
 
-.topMenuCell > div:first-child {
-  font-size: 3vw;
+
+@media only screen and (max-width: 768px) {
+  .topMenuCell > div:first-child {
+    font-size: 4vw;
+    font-weight: 500;
+
+  }
+  
+  .topMenuCell > div:nth-child(2) {
+    font-size: 7vw;
+    font-weight: 900;
+  }  
 }
 
-.topMenuCell > div:nth-child(2) {
-  font-size: 5vw;
-  font-weight: 900;
+
+@media only screen and (min-width: 768px) {
+  .topMenuCell > div:first-child {
+    font-size: 4vw;
+    font-weight: 500;
+  }
+  
+  .topMenuCell > div:nth-child(2) {
+    font-size: 5vw;
+    font-weight: 900;
+  }  
 }
 
 .bottomMenu{
@@ -44,9 +62,19 @@
   display: flex;
 }
 
-.timer{
-  font-size: 6vw;
-  font-weight: 900;
+@media only screen and (max-width: 768px) {
+  .timer{
+    font-size: 15vw;
+    font-weight: 900;
+  }
+}
+
+
+@media only screen and (min-width: 768px) {
+  .timer{
+    font-size: 6vw;
+    font-weight: 900;
+  }
 }
 
 .videoClass{

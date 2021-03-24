@@ -22,18 +22,10 @@ export default function () {
             className="restrictedContainer">
 
             <Security fontSize="large" />
-            <Typography className="restrictedTypography" variant="h5" >
-                {t('RESTRICTED_TO_STORE_OWNER')}
+            <Typography className="restrictedTypography" variant="h3" >
+                {t('RESTRICTED')}
             </Typography>
 
-            <p className="restrictedActions">
-                <Button
-                    variant="contained"
-                    color="primary"
-                    component={Link} to="/demo_auth">
-                    {t('REDIRECT_TO_AUTH')}
-                </Button>
-            </p>
 
         </Grid>
     );

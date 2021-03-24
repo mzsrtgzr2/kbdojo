@@ -27,11 +27,13 @@ export const AuthProvider = ({ children }: { children: any }) => {
     useEffect(() => {
         FirebaseOps.auth.onAuthStateChanged((user: any) => {
             setUser(user);
-            Mixpanel.identify(user.email);
-            Mixpanel.people.set({
-                "$email": user.email,
-                "name": user.displayName
-              });
+            if (!!user){
+                Mixpanel.identify(user.email);
+                Mixpanel.people.set({
+                    "$email": user.email,
+                    "name": user.displayName
+                });
+            }
             setLoadingAuthState(false);
         });
     }, []);
