@@ -42,8 +42,6 @@ const codes = [
     generateStringArray('grvk')  
   )
 
-for (var i=0; i<codes.length;i++)
-console.log(`https://kbdojo-5e655.firebaseapp.com/beta/${codes[i]}`)
 
 
 function App() {

@@ -44,8 +44,10 @@ function checkSnatchPisition(shoulder, elbow, wrist, nose, sensitivity=50){
   console.log('y', wrist.y, elbow.y, shoulder.y, (wrist.y < elbow.y) && (wrist.y < shoulder.y) && (elbow.y < shoulder.y));
 
   console.log('x', wrist.x, elbow.x, shoulder.x, Math.abs(wrist.x-elbow.x)<=sensitivity, Math.abs(wrist.x-shoulder.x)<=sensitivity);
+
   return(
     (sensitivity <= (nose.y-wrist.y)) &&
+    (sensitivity <= Math.abs(shoulder.y-wrist.y)) &&
     (wrist.y < elbow.y) && (wrist.y < shoulder.y) && (elbow.y < shoulder.y))
     // (Math.abs(wrist.x-elbow.x)<=2*sensitivity) &&
     // (Math.abs(wrist.x-shoulder.x)<=2*sensitivity))
@@ -77,7 +79,7 @@ export default function(sensitivity = 10) {
   
   const checkPoses = useCallback(
     pose => {
-      if (pose.score<0.5){
+      if (pose.score<0.4){
         return;
       }
       const now = Date.now()
@@ -147,7 +149,7 @@ export default function(sensitivity = 10) {
           rightElbow,
           rightWrist,
           nose,
-          sensitivity = chestWidth/2
+          sensitivity = chestWidth/1.5
           )
           // if (isRightSnatch){
           //   console.log('right snatch!', rightShoulder,
@@ -163,7 +165,7 @@ export default function(sensitivity = 10) {
           leftElbow,
           leftWrist,
           nose,
-          sensitivity = chestWidth/2
+          sensitivity = chestWidth/1.5
         )
         // if (isLeftSnatch){
         //   console.log('left snatch!', leftShoulder,
