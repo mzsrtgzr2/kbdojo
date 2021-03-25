@@ -53,6 +53,13 @@ function checkSnatchPisition(shoulder, elbow, wrist, nose, sensitivity=50){
     // (Math.abs(wrist.x-shoulder.x)<=2*sensitivity))
 }
 
+function checkHandAboveHand(shoulder, elbow, wrist, nose, sensitivity=50){
+  
+  return (0 <= (nose.y-wrist.y) || 0 <= (nose.y-elbow.y) )
+    // (Math.abs(wrist.x-elbow.x)<=2*sensitivity) &&
+    // (Math.abs(wrist.x-shoulder.x)<=2*sensitivity))
+}
+
 function checkBallDown(shoulder, elbow, wrist){
   
   const arm_edge = elbow
@@ -141,7 +148,7 @@ export default function(sensitivity = 10) {
         return
       }
       
-      var isRightSnatch=false, isLeftSnatch=false;
+      var isRightSnatch=false, isLeftSnatch=false, isRightHandAboveHead=false, isLeftHandAboveHead=false;
       // check right
       if (!!rightWrist && !!rightShoulder && !!rightElbow){
         isRightSnatch = checkSnatchPisition(
@@ -150,6 +157,13 @@ export default function(sensitivity = 10) {
           rightWrist,
           nose,
           sensitivity = chestWidth/1.5
+          )
+          isRightHandAboveHead = checkHandAboveHand(
+            rightShoulder,
+            rightElbow,
+            rightWrist,
+            nose,
+            sensitivity = chestWidth/1.5
           )
           // if (isRightSnatch){
           //   console.log('right snatch!', rightShoulder,
@@ -161,6 +175,13 @@ export default function(sensitivity = 10) {
       // check left
       if (!!leftWrist && !!leftShoulder && !!leftElbow){
         isLeftSnatch = checkSnatchPisition(
+          leftShoulder,
+          leftElbow,
+          leftWrist,
+          nose,
+          sensitivity = chestWidth/1.5
+        )
+        isLeftHandAboveHead = checkHandAboveHand(
           leftShoulder,
           leftElbow,
           leftWrist,
@@ -181,7 +202,7 @@ export default function(sensitivity = 10) {
         if (state.current === 'down'){
           if (upCounter.current <= 0){
             console.log('up counter started')
-            upCounter.current = 1;
+            upCounter.current = 2;
             downCounter.current = -1;
           } else {
 
@@ -196,7 +217,9 @@ export default function(sensitivity = 10) {
               downCounter.current = -1;
 
               var currentSide = null;
-              if (isLeftSnatch && isRightSnatch){
+              if (
+                  (isLeftSnatch && (isRightHandAboveHead || isRightSnatch)) || 
+                  (isRightSnatch && (isLeftHandAboveHead || isLeftSnatch))){
                 currentSide = 'both';
               } else if (isLeftSnatch){
                 currentSide = 'left';

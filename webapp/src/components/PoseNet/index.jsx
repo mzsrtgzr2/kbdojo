@@ -47,7 +47,10 @@ export default class PoseNet extends React.Component {
   async componentWillMount() {
     // Loads the pre-trained PoseNet model
     this.net = await posenet.load({
-      architecture: this.props.mobileNetArchitecture,
+      architecture: 'MobileNetV1',
+      outputStride: 8,
+      multiplier: 1.0,
+      // inputResolution: { width: this.props.videoWidth, height: this.props.videoHeight },
     });
     console.log('posnet loaded', this.net);
   }

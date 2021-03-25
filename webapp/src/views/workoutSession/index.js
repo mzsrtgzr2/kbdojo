@@ -10,10 +10,10 @@ import MainImage from 'assets/main.png';
 import TitleImage from 'assets/title.png';
 import FacebookLoginImage from 'assets/facebook_login.jpeg';
 import GoogleLoginImage from 'assets/google_login.jpeg';
+import AnonymousLoginImage from 'assets/anonymous_login.jpg';
 
 import { Mixpanel } from 'mixpanel';
 import AuthHelper from 'helpers/auth';
-import { useAuthContext } from 'state/AuthProvider'
 
 import {
   Grid,
@@ -26,9 +26,9 @@ import './preworkout.css';
 
 const generateStringArray = (pat)=>[...Array(10)].map((_, i) => `${pat}${i}`)
 
-const hommies = 'r_a_a_n_a_n_a';
+const hommies = 'raanana';
 const codes = [
-  hommies.replaceAll('_', '')].concat(
+  hommies].concat(
     generateStringArray('13252')  
   ).concat(
     generateStringArray('23252')  
@@ -78,6 +78,14 @@ const signInGoogleFunc = async ()=>{
 const signInFacebookFunc = async ()=>{
   try{
     await AuthHelper.signInFacebook();
+  } catch (e) {
+    setError(e.message);
+  }
+}
+
+const signInAnonymousFunc = async ()=>{
+  try{
+    await AuthHelper.signInAnonymous();
   } catch (e) {
     setError(e.message);
   }
@@ -153,6 +161,7 @@ const signInFacebookFunc = async ()=>{
                 <img src={TitleImage} className="titleImage"/>
                 <Button><img src={FacebookLoginImage} className="loginImage" onClick={signInFacebookFunc}/></Button>
                 <Button><img src={GoogleLoginImage} className="loginImage"  onClick={signInGoogleFunc}/></Button>
+                <Button><img src={AnonymousLoginImage} className="loginImage"  onClick={signInAnonymousFunc}/></Button>
 
                 <Typography color="primary">{error}</Typography>
             </Grid>                  

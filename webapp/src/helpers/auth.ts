@@ -25,6 +25,10 @@ export default class AuthHelper {
         return await FirebaseOps.auth.signInWithPopup(provider);
     }
 
+    static async signInAnonymous() {
+        return await FirebaseOps.auth.signInAnonymously();
+    }
+
     static async signOut() {
         await FirebaseOps.auth.signOut();
     }
