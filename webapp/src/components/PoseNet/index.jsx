@@ -25,7 +25,7 @@ export default class PoseNet extends React.Component {
     outputStride: 16,
     imageScaleFactor: 0.5,
     skeletonColor: 'rgba(66,135,246,0.6)',
-    skeletonLineWidth: isMobile() ? 5: 15,
+    skeletonLineWidth: 15,
     loadingText: 'Loading...',
     className: '',
     onEstimate: null
@@ -48,7 +48,8 @@ export default class PoseNet extends React.Component {
     // Loads the pre-trained PoseNet model
     this.net = await posenet.load({
       architecture: 'MobileNetV1',
-      // outputStride: 16,
+      inputResolution: 200,
+      // outputStride: 8,
       // multiplier: 0.75,
       // inputResolution: { width: this.props.videoWidth, height: this.props.videoHeight },
     });
@@ -85,8 +86,8 @@ export default class PoseNet extends React.Component {
       audio: false,
       video: {
         facingMode: 'user',
-        width: mobile ? void 0 : videoWidth,
-        height: mobile ? void 0: videoHeight,
+        width: {max: videoWidth},
+        height: {max: videoHeight},
       }
     });
 

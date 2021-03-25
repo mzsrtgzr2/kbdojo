@@ -110,13 +110,15 @@ function App() {
 
   };
 
+  const forceWidth = 200
+  // {forceWidth/window.innerWidth * window.innerHeight}
   return (
     <div>
       <PoseNet 
             className="videoClass"
             onEstimate={onEstimate}
-            videoWidth={window.innerWidth}
-            videoHeight={window.innerHeight}
+            videoWidth={forceWidth}
+            videoHeight={forceWidth}
           />
           {/* {renderPositionMessage()} */}
           {/* {!!workout ? renderWorkout(): renderWorkoutSetup()} */}

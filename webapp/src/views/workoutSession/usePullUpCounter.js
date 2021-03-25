@@ -46,9 +46,10 @@ function checkSnatchPisition(shoulder, elbow, wrist, nose, sensitivity=50){
   console.log('x', wrist.x, elbow.x, shoulder.x, Math.abs(wrist.x-elbow.x)<=sensitivity, Math.abs(wrist.x-shoulder.x)<=sensitivity);
 
   return(
-    (sensitivity <= (nose.y-wrist.y)) &&
+    (0 <= (nose.y-wrist.y) || 0 <= (nose.y-elbow.y)) &&
     (sensitivity <= Math.abs(shoulder.y-wrist.y)) &&
-    (wrist.y < elbow.y) && (wrist.y < shoulder.y) && (elbow.y < shoulder.y))
+    (wrist.y < shoulder.y)  || (elbow.y < shoulder.y))
+    // (wrist.y < elbow.y) && (wrist.y < shoulder.y) && (elbow.y < shoulder.y))
     // (Math.abs(wrist.x-elbow.x)<=2*sensitivity) &&
     // (Math.abs(wrist.x-shoulder.x)<=2*sensitivity))
 }
@@ -66,7 +67,8 @@ function checkBallDown(shoulder, elbow, wrist){
   const arm_base = shoulder
   // if (!!arm_edge && !!arm_base && arm_edge.y > arm_base.y)
   //   console.log(arm_edge.y, arm_base.y);
-  return !!arm_edge && !!arm_base && arm_edge.y > arm_base.y;
+  return !!elbow && !!shoulder && !!wrist && (
+    (elbow.y > shoulder.y || wrist.y > shoulder.y));
 }
 
 export default function(sensitivity = 10) {
@@ -117,7 +119,9 @@ export default function(sensitivity = 10) {
         return;
       }
 
-      const chestWidth = Math.abs(leftShoulder.x - rightShoulder.x);
+      const chestWidth = Math.sqrt(
+        Math.pow(leftShoulder.x - rightShoulder.x, 2) + 
+        Math.pow(leftShoulder.y - rightShoulder.y, 2));
       
       if (isDown){
         const prev = downLastTimestamp.current
@@ -126,7 +130,7 @@ export default function(sensitivity = 10) {
         if (state.current === 'up'){
           if (downCounter.current<=0){
             console.log('down counter started')
-            downCounter.current = 5;
+            downCounter.current = 3;
             upCounter.current = -1;
           } else {
             const diff = now-prev
@@ -156,14 +160,14 @@ export default function(sensitivity = 10) {
           rightElbow,
           rightWrist,
           nose,
-          sensitivity = chestWidth/1.5
+          sensitivity = chestWidth/2
           )
           isRightHandAboveHead = checkHandAboveHand(
             rightShoulder,
             rightElbow,
             rightWrist,
             nose,
-            sensitivity = chestWidth/1.5
+            sensitivity = chestWidth/2
           )
           // if (isRightSnatch){
           //   console.log('right snatch!', rightShoulder,
@@ -179,14 +183,14 @@ export default function(sensitivity = 10) {
           leftElbow,
           leftWrist,
           nose,
-          sensitivity = chestWidth/1.5
+          sensitivity = chestWidth/2
         )
         isLeftHandAboveHead = checkHandAboveHand(
           leftShoulder,
           leftElbow,
           leftWrist,
           nose,
-          sensitivity = chestWidth/1.5
+          sensitivity = chestWidth/2
         )
         // if (isLeftSnatch){
         //   console.log('left snatch!', leftShoulder,
