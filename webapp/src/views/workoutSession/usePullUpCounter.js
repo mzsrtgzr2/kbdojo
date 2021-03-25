@@ -181,7 +181,7 @@ export default function(sensitivity = 10) {
         if (state.current === 'down'){
           if (upCounter.current <= 0){
             console.log('up counter started')
-            upCounter.current = 2;
+            upCounter.current = 1;
             downCounter.current = -1;
           } else {
 
