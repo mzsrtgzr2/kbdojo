@@ -48,7 +48,7 @@ export default class PoseNet extends React.Component {
     // Loads the pre-trained PoseNet model
     this.net = await posenet.load({
       architecture: 'MobileNetV1',
-      inputResolution: 200,
+      inputResolution: isMobile() ? 200: 200,
       // outputStride: 8,
       // multiplier: 0.75,
       // inputResolution: { width: this.props.videoWidth, height: this.props.videoHeight },

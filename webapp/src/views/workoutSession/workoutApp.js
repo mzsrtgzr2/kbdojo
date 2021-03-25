@@ -7,7 +7,7 @@ import PoseNet from 'components/PoseNet'
 import { useParams, useHistory, Redirect } from "react-router-dom";
 import {speak} from './utils';
 import { Mixpanel } from 'mixpanel';
-
+import { isMobile } from 'components/PoseNet/utils'
 
 import './App.css';
 
@@ -110,7 +110,7 @@ function App() {
 
   };
 
-  const forceWidth = 200
+  const forceWidth = isMobile() ? 200: 200;
   // {forceWidth/window.innerWidth * window.innerHeight}
   return (
     <div>

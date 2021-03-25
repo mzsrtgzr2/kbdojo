@@ -48,10 +48,10 @@ function checkSnatchPisition(shoulder, elbow, wrist, nose, sensitivity=50){
   return(
     (0 <= (nose.y-wrist.y) || 0 <= (nose.y-elbow.y)) &&
     (sensitivity <= Math.abs(shoulder.y-wrist.y)) &&
-    (wrist.y < shoulder.y)  || (elbow.y < shoulder.y))
+    ((sensitivity <= shoulder.y-wrist.y)  || (sensitivity <= shoulder.y-elbow.y)) &&
     // (wrist.y < elbow.y) && (wrist.y < shoulder.y) && (elbow.y < shoulder.y))
-    // (Math.abs(wrist.x-elbow.x)<=2*sensitivity) &&
-    // (Math.abs(wrist.x-shoulder.x)<=2*sensitivity))
+    (Math.abs(wrist.x-elbow.x)<=1.5*sensitivity) &&
+    (Math.abs(wrist.x-shoulder.x)<=1.5*sensitivity))
 }
 
 function checkHandAboveHand(shoulder, elbow, wrist, nose, sensitivity=50){
@@ -88,7 +88,7 @@ export default function(sensitivity = 10) {
   
   const checkPoses = useCallback(
     pose => {
-      if (pose.score<0.4){
+      if (pose.score<0.5){
         return;
       }
       const now = Date.now()
@@ -130,7 +130,7 @@ export default function(sensitivity = 10) {
         if (state.current === 'up'){
           if (downCounter.current<=0){
             console.log('down counter started')
-            downCounter.current = 3;
+            downCounter.current = 4;
             upCounter.current = -1;
           } else {
             const diff = now-prev
