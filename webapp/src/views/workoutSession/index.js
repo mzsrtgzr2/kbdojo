@@ -114,7 +114,7 @@ const signInAnonymousFunc = async ()=>{
 
               
                   <img src={MainImage} className="instructionsImage"/>
-
+                  {process.env.NODE_ENV=='development' && <Typography>development env</Typography>}
                   <p className="preWorkoutActions">
                       <Button
                         className="startButton"

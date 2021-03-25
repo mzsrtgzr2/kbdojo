@@ -35,7 +35,10 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "GENERATE_SOURCEMAP=false react-scripts build",
+    "build": "NODE_ENV=development GENERATE_SOURCEMAP=false react-scripts build",
+    "build-deploy": "npm run build && firebase use dev && firebase deploy --only hosting",
+    "build-prod": "NODE_ENV=production GENERATE_SOURCEMAP=false react-scripts build",
+    "build-deploy-prod": "npm run build-prod && firebase use prod && firebase deploy --only hosting",
     "build:serve": "node_modules/.bin/serve -s build",
     "test-watch": "react-scripts --inspect-brk test --watchAll=false",
     "test": "firebase emulators:exec --only firestore \"react-scripts test --watchAll=false\"",

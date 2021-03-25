@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "kbdojo-5e655"
+    "dev": "kbdojo-dev",
+    "prod": "kbdojo-5e655"
   }
 }
