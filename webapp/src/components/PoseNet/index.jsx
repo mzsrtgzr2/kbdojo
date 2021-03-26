@@ -13,12 +13,12 @@ export default class PoseNet extends React.Component {
     videoWidth: 600,
     videoHeight: 500,
     flipHorizontal: false,
-    algorithm: 'single-pose',
+    algorithm: 'multi-pose',
     mobileNetArchitecture: isMobile() ? 'MobileNetV1' : 'MobileNetV1',
     showVideo: true,
     showSkeleton: true,
     showPoints: false,
-    minPoseConfidence: 0.1,
+    minPoseConfidence: 0.4,
     minPartConfidence: 0.5,
     maxPoseDetections: 2,
     nmsRadius: 20.0,
@@ -151,19 +151,26 @@ export default class PoseNet extends React.Component {
             poses.push(pose)
           }
           break
-        // case 'multi-pose':
+        case 'multi-pose':
+          if (!!this.net){
+            const rawPoses = await this.net.estimateMultiplePoses(
+              video,
+              imageScaleFactor,
+              flipHorizontal,
+              outputStride,
+              maxPoseDetections,
+              minPartConfidence,
+              nmsRadius
+            )
+            if (rawPoses.length>0){
 
-          // poses = await net.estimateMultiplePoses(
-          //   video,
-          //   imageScaleFactor,
-          //   flipHorizontal,
-          //   outputStride,
-          //   maxPoseDetections,
-          //   minPartConfidence,
-          //   nmsRadius
-          // )
+              const pose = rawPoses[0];
+              this.props.onEstimate(pose);
+              poses.push(pose)
+            }
+          }
 
-          // break
+          break
       }
 
       ctx.clearRect(0, 0, videoWidth, videoHeight);

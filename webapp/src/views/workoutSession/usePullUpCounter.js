@@ -48,7 +48,7 @@ function checkSnatchPisition(shoulder, elbow, wrist, nose, sensitivity=50){
   return(
     (0 <= (nose.y-wrist.y) || 0 <= (nose.y-elbow.y)) &&
     (sensitivity <= Math.abs(shoulder.y-wrist.y)) &&
-    ((sensitivity <= shoulder.y-wrist.y)  || (sensitivity <= shoulder.y-elbow.y)) &&
+    ((sensitivity/2 <= shoulder.y-wrist.y)  && (sensitivity <= shoulder.y-elbow.y)) &&
     // (wrist.y < elbow.y) && (wrist.y < shoulder.y) && (elbow.y < shoulder.y))
     (Math.abs(wrist.x-elbow.x)<=3*sensitivity) &&
     (Math.abs(wrist.x-shoulder.x)<=3*sensitivity))
@@ -169,7 +169,7 @@ export default function(sensitivity = 10) {
           rightElbow,
           rightWrist,
           nose,
-          sensitivity = chestWidth/3
+          sensitivity = chestWidth/2
           )
           isRightHandAboveHead = checkHandAboveHand(
             rightShoulder,
@@ -192,7 +192,7 @@ export default function(sensitivity = 10) {
           leftElbow,
           leftWrist,
           nose,
-          sensitivity = chestWidth/3
+          sensitivity = chestWidth/2
         )
         isLeftHandAboveHead = checkHandAboveHand(
           leftShoulder,
