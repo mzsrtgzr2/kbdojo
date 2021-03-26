@@ -81,25 +81,25 @@ function App() {
               }}
             />
           </Grid>
-          <Grid item xs={3} className="topMenuCell">
+          <Grid item xs={2.2} className="topMenuCell">
           
               <div>Total</div>
               <div>{count.bothTotal + count.leftTotal+count.rightTotal}</div>
               
           </Grid>
-          {/* <Grid item xs={2} className="topMenuCell">
+          <Grid item xs={2.2} className="topMenuCell">
               <div>Reps/Min</div>
                 <div>{calcPace()}</div>
-          </Grid> */}
-          <Grid item xs={3} className="topMenuCell">
+          </Grid>
+          <Grid item xs={2.2} className="topMenuCell">
               <div>Lefts</div>
               <div>{count.leftTotal}</div>
           </Grid>
-          <Grid item xs={3} className="topMenuCell">
+          <Grid item xs={2.2} className="topMenuCell">
               <div>Rights</div>
               <div>{count.rightTotal}</div>
           </Grid>
-          <Grid item xs={3} className="topMenuCell">
+          <Grid item xs={2.2} className="topMenuCell">
               <div>Doubles</div>
               <div>{count.bothTotal}</div>
           </Grid>
