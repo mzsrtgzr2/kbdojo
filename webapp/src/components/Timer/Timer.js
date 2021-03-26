@@ -3,7 +3,7 @@ import SecondsTohhmmss from './SecondsTohhmmss'
 import PropTypes from 'prop-types'
 
 let offset = null, interval = null
-
+let durations = [];
 /**
  * Timer module
  * A simple timer component.
@@ -41,13 +41,16 @@ export default class Timer extends Component {
       clearInterval(interval)
       interval = null
       this.setState({active: false})
+      durations.append(this.currentClock())
     }
   }
 
   play() {
+    offset = Date.now()
     if (!interval) {
       interval = setInterval(this.update.bind(this), 1000)
       this.setState({active: true})
+      
     }
   }
 
@@ -55,11 +58,18 @@ export default class Timer extends Component {
     this.setState({clock: 0 })
     let time = SecondsTohhmmss(0 / 1000)
     this.setState({time: time })
+    if (durations.length>0){
+      durations.splice(0, durations.length);
+    }
+  }
+
+  currentClock(){
+    return (Date.now() - offset) / 1000;
   }
 
   update() {
-    let clock = this.state.clock
-    clock += 1
+    debugger;
+    const clock = this.currentClock() + durations.reduce((a, b) => a + b, 0) / 1000;
     this.setState({clock: clock })
     let time = SecondsTohhmmss(clock)
     this.setState({time: time })
@@ -117,7 +127,7 @@ export default class Timer extends Component {
       <div style={timerStyle} className={this.props.className}>
         <div style={secondsStyles} className="seconds"> {this.state.time}</div>
         <div>
-          {showControllers && renderControllers()}
+          {/* {showControllers && renderControllers()} */}
         </div>
         
       </div>

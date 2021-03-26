@@ -8,7 +8,11 @@ import { useParams, useHistory, Redirect } from "react-router-dom";
 import {speak} from './utils';
 import { Mixpanel } from 'mixpanel';
 import { isMobile } from 'components/PoseNet/utils'
-
+import {
+  Grid,
+  Button,
+  Typography,
+} from '@material-ui/core';
 import './App.css';
 
 
@@ -56,50 +60,51 @@ function App() {
     return (
       <div>
       <div className="topMenu">
-        <span className="topMenuCell topMenuMiddle">
-          <div>Total</div>
-          <div>{count.bothTotal + count.leftTotal+count.rightTotal}</div>
-          </span>
-          <span className="topMenuCell">
-            <div>Reps/Min</div>
-            <div>{calcPace()}</div>
-          </span>
-        <span className="topMenuCell topMenuLeft">
-          <div>Lefts</div>
-          <div>{count.leftTotal}</div>
-        </span>
-        <span className="topMenuCell topMenuLeft">
-
-          <div>Rights</div>
-          <div>{count.rightTotal}</div>
-
-        </span>
-        <span className="topMenuCell topMenuRight">
-          <div>Doubles</div>
-          <div>{count.bothTotal}</div>
-
-        </span>
+        
       </div>
       <div className="bottomMenu">
-          {/* <span className="topMenuCell">
-            <div>ver</div>
-            <div>0.4</div>
-          </span> */}
-          <Timer
-            className="timer"
-            startAutomatically={isWorkoutStarted()}
-            showControllers={isWorkoutStarted()}
-            onMinute={(minute)=>{
-              if (!!minute){
-                speak(`${minute} minute passed`);
-                setTimeout(()=>{
-                  Mixpanel.track('minute_update', {
-                    totalMinutes: minute
-                  })
-                }, 0)
-              }
-            }}
-          />
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <Timer
+              className="timer"
+              startAutomatically={isWorkoutStarted()}
+              showControllers={isWorkoutStarted()}
+              onMinute={(minute)=>{
+                if (!!minute){
+                  speak(`${minute} minute passed`);
+                  setTimeout(()=>{
+                    Mixpanel.track('minute_update', {
+                      totalMinutes: minute
+                    })
+                  }, 0)
+                }
+              }}
+            />
+          </Grid>
+          <Grid item xs={3} className="topMenuCell">
+          
+              <div>Total</div>
+              <div>{count.bothTotal + count.leftTotal+count.rightTotal}</div>
+              
+          </Grid>
+          {/* <Grid item xs={2} className="topMenuCell">
+              <div>Reps/Min</div>
+                <div>{calcPace()}</div>
+          </Grid> */}
+          <Grid item xs={3} className="topMenuCell">
+              <div>Lefts</div>
+              <div>{count.leftTotal}</div>
+          </Grid>
+          <Grid item xs={3} className="topMenuCell">
+              <div>Rights</div>
+              <div>{count.rightTotal}</div>
+          </Grid>
+          <Grid item xs={3} className="topMenuCell">
+              <div>Doubles</div>
+              <div>{count.bothTotal}</div>
+          </Grid>
+        </Grid>
+          
           
       </div>
       </div>

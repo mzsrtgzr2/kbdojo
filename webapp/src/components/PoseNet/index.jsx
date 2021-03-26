@@ -1,7 +1,11 @@
 import * as posenet from '@tensorflow-models/posenet'
 import * as React from 'react'
 import * as tf from '@tensorflow/tfjs';
-
+import {
+  Grid,
+  Button,
+  Typography,
+} from '@material-ui/core';
 import { isMobile, drawKeypoints, drawSkeleton } from './utils'
 import './style.scss'
 
@@ -23,9 +27,9 @@ export default class PoseNet extends React.Component {
     maxPoseDetections: 2,
     nmsRadius: 20.0,
     outputStride: 16,
-    imageScaleFactor: 0.5,
-    skeletonColor: 'rgba(66,135,246,0.6)',
-    skeletonLineWidth: 15,
+    imageScaleFactor: 0.6,
+    skeletonColor: 'rgba(239,11,94,0.3)',
+    skeletonLineWidth: 10,
     loadingText: 'Loading...',
     className: '',
     onEstimate: null
@@ -205,11 +209,17 @@ export default class PoseNet extends React.Component {
 
   render() {
     const loading = this.state.loading
-      ? <div className="PoseNet__loading">{ this.props.loadingText }</div>
+      ? <div>{ this.props.loadingText }</div>
       : ''
     return (
       <div className="PoseNet">
-        { loading }
+        <Grid
+              container
+              direction="column"
+              alignItems="center"
+              justify="center">
+          { loading }
+        </Grid>
         
         <canvas 
           className={this.props.className}
