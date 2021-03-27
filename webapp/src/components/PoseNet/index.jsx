@@ -13,7 +13,10 @@ import kimVid from 'assets/kim1.mp4';
 import andr2Vid from 'assets/andr2.mp4';
 import kim2Vid from 'assets/kim2.mp4';
 import kim3Vid from 'assets/kim3.mp4';
-import kim4Vid from 'assets/kim4_problem_min_1.mp4';
+// import kim3Vid from 'assets/kim3_problem.mp4';
+// import kim4Vid from 'assets/kim4_problem_min_1.mp4';
+// import kim4Vid from 'assets/kim4.mp4';
+// import kim4Vid from 'assets/kim4_problem_min_1_2.mp4'
 
 console.log('Using TensorFlow backend: ', tf.getBackend());
 
@@ -252,7 +255,7 @@ export default class PoseNet extends React.Component {
           mute
           playsInline
           ref={ this.getVideo }>
-            <source src={kim4Vid}></source>
+            <source src={kim3Vid}></source>
           </video>
       </div>
     )

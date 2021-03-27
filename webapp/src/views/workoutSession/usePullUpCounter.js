@@ -69,7 +69,7 @@ function checkHandAboveHand(shoulder, elbow, wrist, nose, sensitivity=50){
 function checkBallDown(shoulder, elbow, wrist, nose, sensitivity=50){
   
   const res = !!elbow && !!wrist && !!shoulder && (
-    ((elbow.y-shoulder.y) >= 0 && (wrist.y-nose.y) >= 0));
+    (((elbow.y-nose.y) >= 0 || (elbow.y-shoulder.y) >= 0) && (wrist.y-nose.y) >= 0));
   // if (res)
     console.log(
       shoulder.y, elbow.y, wrist.y, nose.y, sensitivity

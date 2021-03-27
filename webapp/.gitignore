@@ -7,3 +7,4 @@ ui-debug.log
 firestore-debug.log
 .firebase/
 .env
+src/assets/*.mp4
