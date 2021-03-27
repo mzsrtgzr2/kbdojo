@@ -249,7 +249,7 @@ export default function(sensitivity = 10) {
           
           if (upCounter.current <= 0){
             console.log('up counter started')
-            upCounter.current = 2;
+            upCounter.current = 3;
             downCounter.current = -1;
           } else {
 

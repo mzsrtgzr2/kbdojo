@@ -14,9 +14,11 @@ import andr2Vid from 'assets/andr2.mp4';
 import kim2Vid from 'assets/kim2.mp4';
 import kim3Vid from 'assets/kim3.mp4';
 // import kim3Vid from 'assets/kim3_problem.mp4';
-// import kim4Vid from 'assets/kim4_problem_min_1.mp4';
+import kim4Vid from 'assets/kim4_problem_min_1.mp4';
 // import kim4Vid from 'assets/kim4.mp4';
 // import kim4Vid from 'assets/kim4_problem_min_1_2.mp4'
+import ksenya1Vid from 'assets/ksenya1.mp4';
+import ksenya1Vid_problem_back_swing from 'assets/ksenya1_problem_back_swing.mp4';
 
 console.log('Using TensorFlow backend: ', tf.getBackend());
 
@@ -32,13 +34,13 @@ export default class PoseNet extends React.Component {
     showSkeleton: true,
     showPoints: false,
     minPoseConfidence: 0.5,
-    minPartConfidence: 0.5,
+    minPartConfidence: 0.6,
     maxPoseDetections: 2,
     nmsRadius: 20.0,
     outputStride: 16,
     imageScaleFactor: 1,
-    skeletonColor: 'rgba(239,11,94,0.3)',
-    skeletonLineWidth: 6,
+    skeletonColor: 'rgba(239,11,94,0.0)',
+    skeletonLineWidth: 5,
     loadingText: 'Loading...',
     className: '',
     onEstimate: null
@@ -255,7 +257,7 @@ export default class PoseNet extends React.Component {
           mute
           playsInline
           ref={ this.getVideo }>
-            <source src={kim3Vid}></source>
+            <source src={ksenya1Vid}></source>
           </video>
       </div>
     )
