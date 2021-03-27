@@ -99,37 +99,27 @@ export default class PoseNet extends React.Component {
     video.height = videoHeight
 
     // MDN: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
-    // const stream = await navigator.mediaDevices.getUserMedia({
-    //   audio: false,
-    //   video: {
-    //     facingMode: 'user',
-    //     width: {max: videoWidth},
-    //     height: {max: videoHeight},
-    //   }
-    // });
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: false,
+      video: {
+        facingMode: 'user',
+        width: {max: videoWidth},
+        height: {max: videoHeight},
+      }
+    });
 
-    // video.srcObject = stream
-    // video.src = "https://tests-kbdojo-assets.s3-eu-west-1.amazonaws.com/kim1.mp4"
-    
+    video.srcObject = stream    
     
     return new Promise(resolve => {
       
       video.onloadedmetadata = () => {
         // Once the video metadata is ready, we can start streaming video
-        setTimeout(()=>video.play(), 100)
+        setTimeout(()=>video.play(), 0)
         video.muted = true;
-        
+
 
         resolve(video)
       }
-      // video.onloadeddata = ()=>{
-      //   setTimeout(
-      //     ()=>{
-      //       video.currentTime = 40
-      //     }, 1000
-      //   )
-        
-      // }
     })
   }
 
@@ -257,11 +247,15 @@ export default class PoseNet extends React.Component {
           className={this.props.className}
           ref={ this.getCanvas }></canvas>
         <video
+          playsInline
+          ref={ this.getVideo }>
+          </video>
+        {/* <video
           mute
           playsInline
           ref={ this.getVideo }>
             <source src={kim4Vid}></source>
-          </video>
+          </video> */}
       </div>
     )
   }
