@@ -68,7 +68,6 @@ export default class Timer extends Component {
   }
 
   update() {
-    debugger;
     const clock = this.currentClock() + durations.reduce((a, b) => a + b, 0) / 1000;
     this.setState({clock: clock })
     let time = SecondsTohhmmss(clock)

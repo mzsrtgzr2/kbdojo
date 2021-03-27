@@ -115,7 +115,7 @@ function App() {
 
   };
 
-  const forceWidth = isMobile() ? 200: 200;
+  const forceWidth = isMobile() ? 300: 300;
   // {forceWidth/window.innerWidth * window.innerHeight}
   return (
     <div>

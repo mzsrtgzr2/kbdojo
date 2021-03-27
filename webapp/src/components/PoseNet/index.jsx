@@ -8,6 +8,12 @@ import {
 } from '@material-ui/core';
 import { isMobile, drawKeypoints, drawSkeleton } from './utils'
 import './style.scss'
+import kimVid from 'assets/kim1.mp4';
+// import andr1Vid from 'assets/andr1.mp4';
+import andr2Vid from 'assets/andr2.mp4';
+import kim2Vid from 'assets/kim2.mp4';
+import kim3Vid from 'assets/kim3.mp4';
+import kim4Vid from 'assets/kim4_problem_min_1.mp4';
 
 console.log('Using TensorFlow backend: ', tf.getBackend());
 
@@ -22,14 +28,14 @@ export default class PoseNet extends React.Component {
     showVideo: true,
     showSkeleton: true,
     showPoints: false,
-    minPoseConfidence: 0.4,
+    minPoseConfidence: 0.5,
     minPartConfidence: 0.5,
     maxPoseDetections: 2,
     nmsRadius: 20.0,
     outputStride: 16,
-    imageScaleFactor: 0.6,
+    imageScaleFactor: 1,
     skeletonColor: 'rgba(239,11,94,0.3)',
-    skeletonLineWidth: 10,
+    skeletonLineWidth: 6,
     loadingText: 'Loading...',
     className: '',
     onEstimate: null
@@ -52,7 +58,7 @@ export default class PoseNet extends React.Component {
     // Loads the pre-trained PoseNet model
     this.net = await posenet.load({
       architecture: 'MobileNetV1',
-      inputResolution: isMobile() ? 200: 200,
+      inputResolution: isMobile() ? 300: 300,
       // outputStride: 8,
       // multiplier: 0.75,
       // inputResolution: { width: this.props.videoWidth, height: this.props.videoHeight },
@@ -64,6 +70,7 @@ export default class PoseNet extends React.Component {
     try {
       await this.setupCamera()
     } catch(e) {
+      alert('This browser does not support video capture, or this device does not have a camera')
       throw 'This browser does not support video capture, or this device does not have a camera'
     } finally {
       this.setState({ loading: false })
@@ -86,23 +93,37 @@ export default class PoseNet extends React.Component {
     video.height = videoHeight
 
     // MDN: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: false,
-      video: {
-        facingMode: 'user',
-        width: {max: videoWidth},
-        height: {max: videoHeight},
-      }
-    });
+    // const stream = await navigator.mediaDevices.getUserMedia({
+    //   audio: false,
+    //   video: {
+    //     facingMode: 'user',
+    //     width: {max: videoWidth},
+    //     height: {max: videoHeight},
+    //   }
+    // });
 
-    video.srcObject = stream
-
+    // video.srcObject = stream
+    // video.src = "https://tests-kbdojo-assets.s3-eu-west-1.amazonaws.com/kim1.mp4"
+    
+    
     return new Promise(resolve => {
+      
       video.onloadedmetadata = () => {
         // Once the video metadata is ready, we can start streaming video
-        video.play()
+        setTimeout(()=>video.play(), 100)
+        video.muted = true;
+        
+
         resolve(video)
       }
+      // video.onloadeddata = ()=>{
+      //   setTimeout(
+      //     ()=>{
+      //       video.currentTime = 40
+      //     }, 1000
+      //   )
+        
+      // }
     })
   }
 
@@ -143,7 +164,6 @@ export default class PoseNet extends React.Component {
 
       switch (algorithm) {
         case 'single-pose':
-
           if (!!this.net){
             const pose = await this.net.estimateSinglePose(
               video,
@@ -169,8 +189,12 @@ export default class PoseNet extends React.Component {
             if (rawPoses.length>0){
 
               const pose = rawPoses[0];
-              this.props.onEstimate(pose);
-              poses.push(pose)
+              if (pose.score >= minPoseConfidence) {
+                this.props.onEstimate(pose);
+                poses.push(pose)
+              } else {
+                console.log('dropping pose, score', pose.score)
+              }
             }
           }
 
@@ -224,7 +248,12 @@ export default class PoseNet extends React.Component {
         <canvas 
           className={this.props.className}
           ref={ this.getCanvas }></canvas>
-        <video playsInline ref={ this.getVideo }></video>
+        <video
+          mute
+          playsInline
+          ref={ this.getVideo }>
+            <source src={kim4Vid}></source>
+          </video>
       </div>
     )
   }
