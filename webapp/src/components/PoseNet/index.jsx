@@ -258,7 +258,7 @@ export default class PoseNet extends React.Component {
           mute
           playsInline
           ref={ this.getVideo }>
-            <source src={ksenya1Vid_problem_back_swing_2}></source>
+            <source src={kim3Vid}></source>
           </video>
       </div>
     )
