@@ -149,7 +149,7 @@ export default function(sensitivity = 10) {
         if (state.current === 'up'){
           if (downCounter.current<=0){
             console.log('down counter started')
-            downCounter.current = 5;
+            downCounter.current = 7;
             upCounter.current = -1;
           } else {
             const diff = now-prev
@@ -249,7 +249,7 @@ export default function(sensitivity = 10) {
           
           if (upCounter.current <= 0){
             console.log('up counter started')
-            upCounter.current = 3;
+            upCounter.current = 5;
             downCounter.current = -1;
           } else {
 

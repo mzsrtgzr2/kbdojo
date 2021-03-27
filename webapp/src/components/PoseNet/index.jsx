@@ -19,6 +19,7 @@ import kim4Vid from 'assets/kim4_problem_min_1.mp4';
 // import kim4Vid from 'assets/kim4_problem_min_1_2.mp4'
 import ksenya1Vid from 'assets/ksenya1.mp4';
 import ksenya1Vid_problem_back_swing from 'assets/ksenya1_problem_back_swing.mp4';
+import ksenya1Vid_problem_back_swing_2 from 'assets/ksenya1_back_swing_crazy.mp4';
 
 console.log('Using TensorFlow backend: ', tf.getBackend());
 
@@ -39,8 +40,8 @@ export default class PoseNet extends React.Component {
     nmsRadius: 20.0,
     outputStride: 16,
     imageScaleFactor: 1,
-    skeletonColor: 'rgba(239,11,94,0.0)',
-    skeletonLineWidth: 5,
+    skeletonColor: 'rgba(239,11,94,0.5)',
+    skeletonLineWidth: 10,
     loadingText: 'Loading...',
     className: '',
     onEstimate: null
@@ -257,7 +258,7 @@ export default class PoseNet extends React.Component {
           mute
           playsInline
           ref={ this.getVideo }>
-            <source src={ksenya1Vid}></source>
+            <source src={ksenya1Vid_problem_back_swing_2}></source>
           </video>
       </div>
     )
