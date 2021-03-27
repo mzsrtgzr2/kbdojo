@@ -64,7 +64,7 @@ export default class PoseNet extends React.Component {
     // Loads the pre-trained PoseNet model
     this.net = await posenet.load({
       architecture: 'MobileNetV1',
-      inputResolution: isMobile() ? 300: 300,
+      inputResolution: isMobile() ? 250: 250,
       // outputStride: 8,
       // multiplier: 0.75,
       // inputResolution: { width: this.props.videoWidth, height: this.props.videoHeight },
@@ -108,7 +108,7 @@ export default class PoseNet extends React.Component {
       }
     });
 
-    video.srcObject = stream    
+    video.srcObject = stream
     
     return new Promise(resolve => {
       
@@ -210,7 +210,7 @@ export default class PoseNet extends React.Component {
       // For each pose (i.e. person) detected in an image, loop through the poses
       // and draw the resulting skeleton and keypoints if over certain confidence
       // scores
-      if (process.env.NODE_ENV=='development'){
+      if (true || process.env.NODE_ENV=='development'){
         poses.forEach(({ score, keypoints }) => {
           if (score >= minPoseConfidence) {
             if (showPoints) {
