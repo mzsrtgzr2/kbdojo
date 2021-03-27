@@ -220,16 +220,18 @@ export default class PoseNet extends React.Component {
       // For each pose (i.e. person) detected in an image, loop through the poses
       // and draw the resulting skeleton and keypoints if over certain confidence
       // scores
-      poses.forEach(({ score, keypoints }) => {
-        if (score >= minPoseConfidence) {
-          if (showPoints) {
-            drawKeypoints(keypoints, minPartConfidence, skeletonColor, ctx);
+      if (process.env.NODE_ENV=='development'){
+        poses.forEach(({ score, keypoints }) => {
+          if (score >= minPoseConfidence) {
+            if (showPoints) {
+              drawKeypoints(keypoints, minPartConfidence, skeletonColor, ctx);
+            }
+            if (showSkeleton) {
+              drawSkeleton(keypoints, minPartConfidence, skeletonColor, skeletonLineWidth, ctx);
+            }
           }
-          if (showSkeleton) {
-            drawSkeleton(keypoints, minPartConfidence, skeletonColor, skeletonLineWidth, ctx);
-          }
-        }
-      })
+        })
+      }
 
       requestAnimationFrame(poseDetectionFrameInner)
     }
@@ -258,7 +260,7 @@ export default class PoseNet extends React.Component {
           mute
           playsInline
           ref={ this.getVideo }>
-            <source src={kim3Vid}></source>
+            <source src={kim4Vid}></source>
           </video>
       </div>
     )
