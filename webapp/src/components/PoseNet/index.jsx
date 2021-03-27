@@ -8,18 +8,22 @@ import {
 } from '@material-ui/core';
 import { isMobile, drawKeypoints, drawSkeleton } from './utils'
 import './style.scss'
-import kimVid from 'assets/kim1.mp4';
+// import kimVid from 'assets/kim1.mp4';
 // import andr1Vid from 'assets/andr1.mp4';
-import andr2Vid from 'assets/andr2.mp4';
-import kim2Vid from 'assets/kim2.mp4';
-import kim3Vid from 'assets/kim3.mp4';
+// import andr2Vid from 'assets/andr2.mp4';
+// import kim2Vid from 'assets/kim2.mp4';
+// import kim3Vid from 'assets/kim3.mp4';
 // import kim3Vid from 'assets/kim3_problem.mp4';
-import kim4Vid from 'assets/kim4_problem_min_1.mp4';
+// import kim4Vid from 'assets/kim4_problem_min_1.mp4';
 // import kim4Vid from 'assets/kim4.mp4';
 // import kim4Vid from 'assets/kim4_problem_min_1_2.mp4'
-import ksenya1Vid from 'assets/ksenya1.mp4';
-import ksenya1Vid_problem_back_swing from 'assets/ksenya1_problem_back_swing.mp4';
-import ksenya1Vid_problem_back_swing_2 from 'assets/ksenya1_back_swing_crazy.mp4';
+// import ksenya1Vid from 'assets/ksenya1.mp4';
+// import ksenya1Vid_problem_back_swing from 'assets/ksenya1_problem_back_swing.mp4';
+// import ksenya1Vid_problem_back_swing_2 from 'assets/ksenya1_back_swing_crazy.mp4';
+// import ksenya1Vid_problem_back_swing_lefts from 'assets/ksenya1_back_swing_crazy_lefts.mp4';
+import andrFastSnatchVid from 'assets/andr_fast.mp4';
+import someGuyVid from 'assets/someguy.mp4'
+import denis1Vid from 'assets/denis1.mp4'
 
 console.log('Using TensorFlow backend: ', tf.getBackend());
 
@@ -40,8 +44,8 @@ export default class PoseNet extends React.Component {
     nmsRadius: 20.0,
     outputStride: 16,
     imageScaleFactor: 1,
-    skeletonColor: 'rgba(239,11,94,0.5)',
-    skeletonLineWidth: 10,
+    skeletonColor: 'rgba(239,11,94,0.3)',
+    skeletonLineWidth: 7,
     loadingText: 'Loading...',
     className: '',
     onEstimate: null
@@ -64,7 +68,7 @@ export default class PoseNet extends React.Component {
     // Loads the pre-trained PoseNet model
     this.net = await posenet.load({
       architecture: 'MobileNetV1',
-      inputResolution: isMobile() ? 250: 250,
+      inputResolution: this.props.videoWidth,
       // outputStride: 8,
       // multiplier: 0.75,
       // inputResolution: { width: this.props.videoWidth, height: this.props.videoHeight },
@@ -246,16 +250,16 @@ export default class PoseNet extends React.Component {
         <canvas 
           className={this.props.className}
           ref={ this.getCanvas }></canvas>
-        <video
+        {/* <video
           playsInline
           ref={ this.getVideo }>
-          </video>
-        {/* <video
+          </video> */}
+        <video
           mute
           playsInline
           ref={ this.getVideo }>
-            <source src={kim4Vid}></source>
-          </video> */}
+            <source src={denis1Vid}></source>
+          </video>
       </div>
     )
   }

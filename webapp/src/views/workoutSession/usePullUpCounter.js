@@ -71,9 +71,9 @@ function checkBallDown(shoulder, elbow, wrist, nose, sensitivity=50){
   const res = !!elbow && !!wrist && !!shoulder && (
     (((elbow.y-nose.y) >= 0 || (elbow.y-shoulder.y) >= 0) && (wrist.y-nose.y) >= 0));
   // if (res)
-    console.log(
-      shoulder.y, elbow.y, wrist.y, nose.y, sensitivity
-    );
+    // console.log(
+    //   shoulder.y, elbow.y, wrist.y, nose.y, sensitivity
+    // );
   return res;
 }
 
@@ -249,7 +249,16 @@ export default function(sensitivity = 10) {
           
           if (upCounter.current <= 0){
             console.log('up counter started')
-            upCounter.current = 3;
+
+            // special case is when state "changes", we need to wait a bit more
+            // to make sure it's not a back swting
+            if (count.reps.length){
+            const prevRep = count.reps[count.reps.length-1];
+              upCounter.current = (prevRep.side != currentSide) ? 7: 3;
+            } else {
+              upCounter.current = 3;
+            }
+
             downCounter.current = -1;
           } else {
 
