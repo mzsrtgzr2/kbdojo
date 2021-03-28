@@ -20,6 +20,7 @@ import './style.scss'
 // import ksenya1Vid from 'assets/ksenya1.mp4';
 // import ksenya1Vid_problem_back_swing from 'assets/ksenya1_problem_back_swing.mp4';
 // import ksenya1Vid_problem_back_swing_2 from 'assets/ksenya1_back_swing_crazy.mp4';
+// import ksenya1Vid_problem_rep_110_120 from 'assets/ksenya_problem_rep_110_120.mov';
 // import ksenya1Vid_problem_back_swing_lefts from 'assets/ksenya1_back_swing_crazy_lefts.mp4';
 // import andrFastSnatchVid from 'assets/andr_fast.mp4';
 // import someGuyVid from 'assets/someguy.mp4'
@@ -68,10 +69,9 @@ export default class PoseNet extends React.Component {
     // Loads the pre-trained PoseNet model
     this.net = await posenet.load({
       architecture: 'MobileNetV1',
-      inputResolution: this.props.videoWidth,
       // outputStride: 8,
       // multiplier: 0.75,
-      // inputResolution: { width: this.props.videoWidth, height: this.props.videoHeight },
+      inputResolution: { width: this.props.videoWidth, height: this.props.videoHeight },
     });
     console.log('posnet loaded', this.net);
   }
@@ -81,7 +81,7 @@ export default class PoseNet extends React.Component {
       await this.setupCamera()
     } catch(e) {
       alert('This browser does not support video capture, or this device does not have a camera')
-      throw 'This browser does not support video capture, or this device does not have a camera'
+      throw e
     } finally {
       this.setState({ loading: false })
     }
@@ -258,7 +258,7 @@ export default class PoseNet extends React.Component {
           mute
           playsInline
           ref={ this.getVideo }>
-            <source src={denis1Vid}></source>
+            <source src={ksenya1Vid}></source>
           </video> */}
       </div>
     )

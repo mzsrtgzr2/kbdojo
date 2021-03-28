@@ -115,15 +115,21 @@ function App() {
 
   };
 
-  const forceWidth = isMobile() ? 250: 250;
-  // {forceWidth/window.innerWidth * window.innerHeight}
+  let forceWidth = 250;
+  let forceHeight = 250;
+  // if (window.innerWidth > window.innerHeight){
+  //   forceHeight = forceWidth/window.innerWidth * window.innerHeight;
+  // } else {
+  //   forceWidth = forceHeight / window.innerHeight * window.innerWidth;
+  // }
+
   return (
     <div>
       <PoseNet 
             className="videoClass"
             onEstimate={onEstimate}
             videoWidth={forceWidth}
-            videoHeight={forceWidth}
+            videoHeight={forceHeight}
           />
           {/* {renderPositionMessage()} */}
           {/* {!!workout ? renderWorkout(): renderWorkoutSetup()} */}

@@ -99,6 +99,8 @@ export default function(sensitivity = 10) {
   const sideCounter = useRef([]);
   const downLastTimestamp = useRef(0);
   const upLastTimestamp = useRef(0);
+  const lastSide = useRef(null)
+  const lastTimeOfFixation = useRef(null)
   
   const checkPoses = useCallback(
     pose => {
@@ -226,35 +228,42 @@ export default function(sensitivity = 10) {
         const prev = upLastTimestamp.current
 
         var currentSide = null;
-          if (
-            checkHandsParallel(rightElbow, leftElbow, leftWrist, leftElbow, sensitivity) && 
-            (
-              (isLeftSnatch && (isRightHandAboveHead || isRightSnatch)) || 
-              (isRightSnatch && (isLeftHandAboveHead || isLeftSnatch))
-            )){
-            currentSide = 'both';
-          } else if (isLeftSnatch){
-            currentSide = 'left';
-          } else if (isRightSnatch){
-            currentSide = 'right';
-          }
-          
-          if (!!currentSide){
-            sideCounter.current.push(
-              currentSide
-            )
-          }
+        if (
+          checkHandsParallel(rightElbow, leftElbow, leftWrist, leftElbow, sensitivity) && 
+          (
+            (isLeftSnatch && (isRightHandAboveHead || isRightSnatch)) || 
+            (isRightSnatch && (isLeftHandAboveHead || isLeftSnatch))
+          )){
+          currentSide = 'both';
+        } else if (isLeftSnatch){
+          currentSide = 'left';
+        } else if (isRightSnatch){
+          currentSide = 'right';
+        }
+
+        const prevSide = lastSide.current;
+        if (prevSide != currentSide && 
+            !!lastTimeOfFixation.current &&
+            (now-lastTimeOfFixation.current) <= 2200){
+              console.log('dropped up because its probably back swing');
+              sideCounter.current = []
+              upLastTimestamp.current = 0; //zero other option
+              return;
+        }
+        
+        if (!!currentSide){
+          sideCounter.current.push(
+            currentSide
+          )
+        }
 
         if (state.current === 'down'){
-          
           if (upCounter.current <= 0){
-            console.log('up counter started')
 
             // special case is when state "changes", we need to wait a bit more
             // to make sure it's not a back swting
-            if (count.reps.length){
-            const prevRep = count.reps[count.reps.length-1];
-              upCounter.current = (prevRep.side != currentSide) ? 7: 3;
+            if (!!lastSide.current){
+              upCounter.current = (prevSide != currentSide) ? 6: 3;
             } else {
               upCounter.current = 3;
             }
@@ -280,12 +289,14 @@ export default function(sensitivity = 10) {
               }
 
               const maxOccSide = Object.entries(counts).sort((x,y)=>y[1]-x[1])[0]
-
+              const side = maxOccSide[0];
               dispatch({
                 type: 'increment',
-                currentSide: maxOccSide[0],
+                currentSide: side,
               });
-              console.log('up')
+              lastSide.current = side;
+              lastTimeOfFixation.current = now
+              console.log('up', side)
             }  
           }
           
