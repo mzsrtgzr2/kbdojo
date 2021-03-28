@@ -21,9 +21,9 @@ import './style.scss'
 // import ksenya1Vid_problem_back_swing from 'assets/ksenya1_problem_back_swing.mp4';
 // import ksenya1Vid_problem_back_swing_2 from 'assets/ksenya1_back_swing_crazy.mp4';
 // import ksenya1Vid_problem_back_swing_lefts from 'assets/ksenya1_back_swing_crazy_lefts.mp4';
-import andrFastSnatchVid from 'assets/andr_fast.mp4';
-import someGuyVid from 'assets/someguy.mp4'
-import denis1Vid from 'assets/denis1.mp4'
+// import andrFastSnatchVid from 'assets/andr_fast.mp4';
+// import someGuyVid from 'assets/someguy.mp4'
+// import denis1Vid from 'assets/denis1.mp4'
 
 console.log('Using TensorFlow backend: ', tf.getBackend());
 
@@ -250,16 +250,16 @@ export default class PoseNet extends React.Component {
         <canvas 
           className={this.props.className}
           ref={ this.getCanvas }></canvas>
-        {/* <video
+        <video
           playsInline
           ref={ this.getVideo }>
-          </video> */}
-        <video
+          </video>
+        {/* <video
           mute
           playsInline
           ref={ this.getVideo }>
             <source src={denis1Vid}></source>
-          </video>
+          </video> */}
       </div>
     )
   }
