@@ -45,7 +45,8 @@ const codes = [
 
 
 function App() {
-  const [stage, setStage] = useState('not_started');
+  const [stage, setStage] = useState(
+    process.env.NODE_ENV=='development' ? 'workout': 'not_started');
   const { code } = useParams();
   const [loadingAuthState, setLoadingAuthState] = useState(true);
   const [user, setUser] = useState(null);
@@ -125,6 +126,7 @@ const signInAnonymousFunc = async ()=>{
                           {t('START')}
                       </Button>
                   </p>
+                  
 
               </Grid>
           </> : <>
