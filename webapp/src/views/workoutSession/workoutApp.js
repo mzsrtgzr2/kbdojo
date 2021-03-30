@@ -1,5 +1,5 @@
 
-import React, { useCallback, useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState, useRef, useInterval } from "react"
 // import PoseNet from "react-posenet"
 import usePullUpCounter from "./usePullUpCounter"
 import Timer from 'components/Timer/Timer';
@@ -13,14 +13,20 @@ import {
   Button,
   Typography,
 } from '@material-ui/core';
+import { useTranslation } from 'react-i18next';
+
 import './App.css';
 
 
 
 function App() {
+  const { t } = useTranslation();
   const [count, checkPoses] = usePullUpCounter()
   const onEstimate = useCallback(poses => checkPoses(poses), [checkPoses])
   const [workout, setWorkout] = useState(null);
+  const [isWorkoutStarted, setIsWorkoutStarted] = useState(false);
+  const [timeToStart, setTimeToStart] = useState(null);
+  const timerInterval = useRef(null);
 
 
   useEffect(()=>{
@@ -54,7 +60,6 @@ function App() {
     </div>)
   }
 
-  const isWorkoutStarted = ()=>count.reps.length>0;
 
   const renderWorkout = ()=>{
     return (
@@ -67,8 +72,8 @@ function App() {
           <Grid item xs={12}>
             <Timer
               className="timer"
-              startAutomatically={isWorkoutStarted()}
-              showControllers={isWorkoutStarted()}
+              startAutomatically={isWorkoutStarted}
+              showControllers={isWorkoutStarted}
               onMinute={(minute)=>{
                 if (!!minute){
                   speak(`${minute} minute passed`);
@@ -115,25 +120,59 @@ function App() {
 
   };
 
+  useEffect(() => {
+    if (timeToStart==0){
+      setIsWorkoutStarted(true);
+      speak('Start working out')
+    }
+    if(timeToStart > 0){
+      speak(timeToStart);
+      setTimeout(() => setTimeToStart(timeToStart - 1), 1000);
+    }
+  }, [timeToStart]);
+
+  const renderTimerToStart = ()=>(
+    
+    <Grid
+      container
+      direction="column"
+      alignItems="center"
+      justify="center"
+      className="containerTimerToStart">
+          <Typography className="timerToStart" color="primary">
+            {timeToStart}
+          </Typography>
+          {timeToStart===null && 
+            <Button
+              className="startButton"
+              variant="contained"
+              color="primary"
+              onClick={()=>{
+                setTimeToStart(process.env.NODE_ENV=='development' ? 2: 10);
+              }}
+              >
+              {t('START')}
+          </Button>
+          }
+          
+      </Grid>
+  );
+
   let forceWidth = 250;
   let forceHeight = 250;
-  // if (window.innerWidth > window.innerHeight){
-  //   forceHeight = forceWidth/window.innerWidth * window.innerHeight;
-  // } else {
-  //   forceWidth = forceHeight / window.innerHeight * window.innerWidth;
-  // }
 
   return (
     <div>
       <PoseNet 
             className="videoClass"
-            onEstimate={onEstimate}
+            onEstimate={isWorkoutStarted && onEstimate}
             videoWidth={forceWidth}
             videoHeight={forceHeight}
           />
           {/* {renderPositionMessage()} */}
           {/* {!!workout ? renderWorkout(): renderWorkoutSetup()} */}
-          {renderWorkout()}
+          {isWorkoutStarted && renderWorkout()}
+          {!isWorkoutStarted && renderTimerToStart()}
        
     </div>
   );

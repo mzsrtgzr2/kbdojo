@@ -25,22 +25,24 @@ import './style.scss'
 // import andrFastSnatchVid from 'assets/andr_fast.mp4';
 // import someGuyVid from 'assets/someguy.mp4'
 // import denis1Vid from 'assets/denis1.mp4'
+// import kim5Vid from 'assets/kim5_gym.mp4'
+// import kim5Vid_snatch from 'assets/kim5_gym_snatch.mp4'
 
 console.log('Using TensorFlow backend: ', tf.getBackend());
 
 export default class PoseNet extends React.Component {
 
   static defaultProps = {
-    videoWidth: 600,
-    videoHeight: 500,
+    videoWidth: 250,
+    videoHeight: 250,
     flipHorizontal: false,
     algorithm: 'multi-pose',
     mobileNetArchitecture: isMobile() ? 'MobileNetV1' : 'MobileNetV1',
     showVideo: true,
     showSkeleton: true,
     showPoints: false,
-    minPoseConfidence: 0.5,
-    minPartConfidence: 0.6,
+    minPoseConfidence: 0.4,
+    minPartConfidence: 0.25,
     maxPoseDetections: 2,
     nmsRadius: 20.0,
     outputStride: 16,
@@ -107,16 +109,14 @@ export default class PoseNet extends React.Component {
     const video = this.video
     const mobile = isMobile()
 
-    video.width = videoWidth
-    video.height = videoHeight
+    // video.width = videoWidth
+    // video.height = videoHeight
 
     // MDN: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: false,
       video: {
         facingMode: 'user',
-        width: {max: videoWidth},
-        height: {max: videoHeight},
       }
     });
 
@@ -128,6 +128,16 @@ export default class PoseNet extends React.Component {
         // Once the video metadata is ready, we can start streaming video
         setTimeout(()=>video.play(), 0)
         video.muted = true;
+
+        console.log('raw video:', video.videoWidth, video.videoHeight)
+
+        if (video.videoWidth > video.videoHeight){
+          video.width = videoWidth
+          video.height = videoWidth / video.videoWidth * video.videoHeight;
+        } else {
+          video.width = videoHeight / video.videoHeight * video.videoWidth;
+          video.height = videoHeight
+        }
 
 
         resolve(video)
@@ -179,8 +189,8 @@ export default class PoseNet extends React.Component {
     const canvas = this.canvas
     const ctx = canvas.getContext('2d')
 
-    canvas.width = videoWidth
-    canvas.height = videoHeight
+    canvas.width = this.video.width
+    canvas.height = this.video.height
 
     this.poseDetectionFrame(ctx)
   }
@@ -207,19 +217,21 @@ export default class PoseNet extends React.Component {
     const video = this.video
 
     const poseDetectionFrameInner = async () => {
-      let poses = []
+      let pose;
 
+      
       switch (algorithm) {
         case 'single-pose':
           if (!!this.net){
-            const pose = await this.net.estimateSinglePose(
+            pose = await this.net.estimateSinglePose(
               video,
               imageScaleFactor,
               flipHorizontal,
               outputStride
             )
-            this.props.onEstimate(pose);
-            poses.push(pose)
+            if (!!this.props.onEstimate){
+              pose = this.props.onEstimate([pose], minPoseConfidence);
+            }
           }
           break
         case 'multi-pose':
@@ -235,18 +247,15 @@ export default class PoseNet extends React.Component {
             )
             if (rawPoses.length>0){
 
-              const pose = rawPoses[0];
-              if (pose.score >= minPoseConfidence) {
-                this.props.onEstimate(pose);
-                poses.push(pose)
-              } else {
-                console.log('dropping pose, score', pose.score)
+              if (!!this.props.onEstimate){
+                pose = this.props.onEstimate(rawPoses, minPoseConfidence);
               }
             }
           }
 
           break
       }
+      
 
       ctx.clearRect(0, 0, videoWidth, videoHeight);
 
@@ -254,24 +263,23 @@ export default class PoseNet extends React.Component {
         ctx.save()
         // ctx.scale(-1, 1)
         // ctx.translate(-videoWidth, 0)
-        ctx.drawImage(video, 0, 0, videoWidth, videoHeight)
+        ctx.drawImage(video, 0, 0, this.video.width, this.video.height)
         ctx.restore()
       }
 
       // For each pose (i.e. person) detected in an image, loop through the poses
       // and draw the resulting skeleton and keypoints if over certain confidence
       // scores
-      if (true || process.env.NODE_ENV=='development'){
-        poses.forEach(({ score, keypoints }) => {
-          if (score >= minPoseConfidence) {
-            if (showPoints) {
-              drawKeypoints(keypoints, minPartConfidence, skeletonColor, ctx);
-            }
-            if (showSkeleton) {
-              drawSkeleton(keypoints, minPartConfidence, skeletonColor, skeletonLineWidth, ctx);
-            }
+      if (process.env.NODE_ENV=='development'){
+        if (!!pose){
+          const { keypoints } = pose;
+          if (showPoints) {
+            drawKeypoints(keypoints, minPartConfidence, skeletonColor, ctx);
           }
-        })
+          if (showSkeleton) {
+            drawSkeleton(keypoints, minPartConfidence, skeletonColor, skeletonLineWidth, ctx);
+          }
+        }
       }
 
       requestAnimationFrame(poseDetectionFrameInner)
@@ -305,7 +313,7 @@ export default class PoseNet extends React.Component {
           mute
           playsInline
           ref={ this.getVideo }>
-            <source src={ksenya1Vid}></source>
+            <source src={kim5Vid}></source>
           </video> */}
       </div>
     )

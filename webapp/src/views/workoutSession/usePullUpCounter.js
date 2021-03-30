@@ -61,7 +61,7 @@ function checkSnatchPisition(shoulder, elbow, wrist, nose, sensitivity=50){
 
 function checkHandAboveHand(shoulder, elbow, wrist, nose, sensitivity=50){
   
-  return (0 <= (nose.y-wrist.y) || 0 <= (nose.y-elbow.y) )
+  return (sensitivity <= (nose.y-wrist.y) || sensitivity <= (shoulder.y-elbow.y) )
     // (Math.abs(wrist.x-elbow.x)<=2*sensitivity) &&
     // (Math.abs(wrist.x-shoulder.x)<=2*sensitivity))
 }
@@ -79,9 +79,19 @@ function checkBallDown(shoulder, elbow, wrist, nose, sensitivity=50){
 
 function checkHandsParallel(rightElbow, leftElbow, rightWrist, leftWrist, sensitivity){
   return (
-    (sensitivity*2>=Math.abs(rightElbow.y-leftElbow.y)) ||
-    (sensitivity*2>=Math.abs(rightWrist.y-leftWrist.y))
+    (sensitivity>=Math.abs(rightElbow.y-leftElbow.y)) ||
+    (sensitivity>=Math.abs(rightWrist.y-leftWrist.y))
   )
+}
+
+function getChestWidth(leftShoulder, rightShoulder){
+  return Math.sqrt(
+    Math.pow(leftShoulder.x - rightShoulder.x, 2) + 
+    Math.pow(leftShoulder.y - rightShoulder.y, 2))
+}
+
+function getPoseMiddle(nose, leftShoulder, rightShoulder){
+  return (nose.x+leftShoulder.x+rightShoulder.x)/3;
 }
 
 export default function(sensitivity = 10) {
@@ -101,11 +111,45 @@ export default function(sensitivity = 10) {
   const upLastTimestamp = useRef(0);
   const lastSide = useRef(null)
   const lastTimeOfFixation = useRef(null)
+  const lastPose = useRef(null);
   
   const checkPoses = useCallback(
-    pose => {
+    (poses, minPoseConfidence) => {
 
-      const now = Date.now()
+      const now = Date.now();
+      let pose;
+
+      // const lastPoseMiddle = !!lastPose.current ? 
+      //   getPoseMiddle(lastPose.current.pose.nose, lastPose.current.pose.leftShoulder, lastPose.current.pose.rightShoulder)
+      // const poseMiddles = poses.map(_pose=>getPoseMiddle(_pose.nose, _pose.leftShoulder, _pose.rightShoulder));
+      // let lastPoseIndex = poses.reduce((iMax, _pose, i, arr) => 
+      //   getPoseMiddle(_pose.nose, _pose.leftShoulder, _pose.rightShoulder) > arr[iMax].score ? i : iMax, 0);
+
+      // for (let i; i<poses.length; i++){
+      //   const poseIndex = poses.reduce((iMax, _pose, i, arr) => _pose.score > arr[iMax].score ? i : iMax, 0);
+
+
+      // }
+      const chestWidths = poses.map(_pose=>{
+        const {
+          leftShoulder,
+          rightShoulder,
+        } = getKeypointsObject(_pose)
+        if (!!leftShoulder && !!rightShoulder){
+          return getChestWidth(leftShoulder, rightShoulder);
+        }
+        return 0;
+      })
+
+      const poseIndex = chestWidths.reduce((iMax, val, i, arr) => val > arr[iMax].score ? i : iMax, 0);
+      
+      pose = poses[poseIndex];
+
+      if (pose.score < minPoseConfidence){
+        console.log('low pose confidence', pose.score)
+        return;
+      }
+
       const {
         leftShoulder,
         rightShoulder,
@@ -116,33 +160,44 @@ export default function(sensitivity = 10) {
         nose,
       } = getKeypointsObject(pose)
 
-      
-
-      if (!leftShoulder || !leftElbow || !rightShoulder || !rightElbow || !rightWrist || !leftWrist || !nose){
-        console.log('not enough info')
-        return;
-      }
-
-      const chestWidth = Math.sqrt(
-        Math.pow(leftShoulder.x - rightShoulder.x, 2) + 
-        Math.pow(leftShoulder.y - rightShoulder.y, 2));
-
-
-        const isDown = 
-        checkBallDown(
+      // if pose person changed
+      // set this as last pose
+      lastPose.current = {
+        pose: {
+          score: pose.score,
+          leftShoulder,
           rightShoulder,
+          leftElbow,
           rightElbow,
+          leftWrist,
           rightWrist,
           nose,
-          sensitivity=chestWidth
-        ) &&
-        checkBallDown(
-          leftShoulder,
-          leftElbow,
-          leftWrist,
-          nose,
-          sensitivity=chestWidth
-        )
+        },
+        time: now
+      };
+
+      
+      if (!leftShoulder || !leftElbow || !rightShoulder || !rightElbow || !rightWrist || !leftWrist || !nose){
+        console.log('not enough info')
+      }
+
+      const chestWidth = getChestWidth(leftShoulder, rightShoulder);
+
+      const isDown = 
+      checkBallDown(
+        rightShoulder,
+        rightElbow,
+        rightWrist,
+        nose,
+        sensitivity=chestWidth
+      ) &&
+      checkBallDown(
+        leftShoulder,
+        leftElbow,
+        leftWrist,
+        nose,
+        sensitivity=chestWidth
+      )
 
       if (isDown){
         const prev = downLastTimestamp.current
@@ -173,7 +228,7 @@ export default function(sensitivity = 10) {
         downLastTimestamp.current = now
         upLastTimestamp.current = 0; //zero other option
         sideCounter.current = []
-        return
+        return pose
       }
       
       var isRightSnatch=false, isLeftSnatch=false, isRightHandAboveHead=false, isLeftHandAboveHead=false;
@@ -191,7 +246,7 @@ export default function(sensitivity = 10) {
             rightElbow,
             rightWrist,
             nose,
-            sensitivity = chestWidth/2
+            sensitivity = chestWidth/3
           )
           // if (isRightSnatch){
           //   console.log('right snatch!', rightShoulder,
@@ -214,7 +269,7 @@ export default function(sensitivity = 10) {
           leftElbow,
           leftWrist,
           nose,
-          sensitivity = chestWidth/2
+          sensitivity = chestWidth/3
         )
         // if (isLeftSnatch){
         //   console.log('left snatch!', leftShoulder,
@@ -229,7 +284,7 @@ export default function(sensitivity = 10) {
 
         var currentSide = null;
         if (
-          checkHandsParallel(rightElbow, leftElbow, leftWrist, leftElbow, sensitivity) && 
+          checkHandsParallel(rightElbow, leftElbow, leftWrist, leftElbow, chestWidth/1.2) && 
           (
             (isLeftSnatch && (isRightHandAboveHead || isRightSnatch)) || 
             (isRightSnatch && (isLeftHandAboveHead || isLeftSnatch))
@@ -248,7 +303,12 @@ export default function(sensitivity = 10) {
               console.log('dropped up because its probably back swing');
               sideCounter.current = []
               upLastTimestamp.current = 0; //zero other option
-              return;
+              return pose;
+        }
+
+        let diffLifts = 0;
+        if (!!lastTimeOfFixation.current){
+          diffLifts = now-lastTimeOfFixation.current
         }
         
         if (!!currentSide){
@@ -263,7 +323,15 @@ export default function(sensitivity = 10) {
             // special case is when state "changes", we need to wait a bit more
             // to make sure it's not a back swting
             if (!!lastSide.current){
-              upCounter.current = (prevSide != currentSide) ? 6: 3;
+
+              if (prevSide != currentSide){
+                if (diffLifts>3500){
+                  upCounter.current =  3; // long time passed. it's ok to require less
+                } else {
+                  upCounter.current =  6; //longer fixation required
+                }
+              }
+              upCounter.current =  3;
             } else {
               upCounter.current = 3;
             }
@@ -278,24 +346,37 @@ export default function(sensitivity = 10) {
             }
         
             if (upCounter.current<=0){
-              state.current = 'up';
-              downCounter.current = -1;
-
+              // find what side was most active
               var counts = {};
               const arr = sideCounter.current;
+
               for (var i = 0; i < arr.length; i++) {
                 var val = arr[i];
                 counts[val] = counts[val] ? counts[val] + 1 : 1;
               }
 
-              const maxOccSide = Object.entries(counts).sort((x,y)=>y[1]-x[1])[0]
+              const sorted = Object.entries(counts).sort((x,y)=>y[1]-x[1]);
+              const maxOccSide = sorted[0]
+              const secondMaxOccSide = sorted[1]
               const side = maxOccSide[0];
+
+              if ((side != sideCounter.current[sideCounter.current.length-1]) || (
+                  !!secondMaxOccSide && 
+                    secondMaxOccSide[1]/maxOccSide[1]>0.4)){
+                upCounter.current+=1
+                console.log('side is not confident, adding more time for fixation')
+                return pose
+              }
+
+              
               dispatch({
                 type: 'increment',
                 currentSide: side,
               });
               lastSide.current = side;
               lastTimeOfFixation.current = now
+              state.current = 'up';
+              downCounter.current = -1;
               console.log('up', side)
             }  
           }
@@ -306,7 +387,8 @@ export default function(sensitivity = 10) {
         upLastTimestamp.current = now;
         downLastTimestamp.current = 0; //zero other option
             
-      }      
+      }
+      return pose
     },
     [sensitivity]
   )
