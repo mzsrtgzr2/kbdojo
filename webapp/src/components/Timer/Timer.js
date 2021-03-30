@@ -24,16 +24,11 @@ export default class Timer extends Component {
   }
 
   componentDidMount() {
+    this.play();
   }
 
   componentWillUnmount() {
     this.pause()
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.startAutomatically == true && !this.props.startAutomatically) {
-        this.play();
-    }
   }
 
   pause() {
