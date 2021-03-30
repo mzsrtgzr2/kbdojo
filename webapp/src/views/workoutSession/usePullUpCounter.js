@@ -61,7 +61,7 @@ function checkSnatchPisition(shoulder, elbow, wrist, nose, sensitivity=50){
 
 function checkHandAboveHand(shoulder, elbow, wrist, nose, sensitivity=50){
   
-  return (0 <= (nose.y-wrist.y) || 0 <= (nose.y-elbow.y) )
+  return (sensitivity <= (nose.y-wrist.y) || sensitivity <= (shoulder.y-elbow.y) )
     // (Math.abs(wrist.x-elbow.x)<=2*sensitivity) &&
     // (Math.abs(wrist.x-shoulder.x)<=2*sensitivity))
 }
@@ -90,6 +90,10 @@ function getChestWidth(leftShoulder, rightShoulder){
     Math.pow(leftShoulder.y - rightShoulder.y, 2))
 }
 
+function getPoseMiddle(nose, leftShoulder, rightShoulder){
+  return (nose.x+leftShoulder.x+rightShoulder.x)/3;
+}
+
 export default function(sensitivity = 10) {
   const [count, dispatch] = useReducer(reducer, {
     leftTotal: 0,
@@ -114,10 +118,33 @@ export default function(sensitivity = 10) {
 
       const now = Date.now();
       let pose;
-      debugger;
-      const poseIndex = poses.reduce((iMax, _pose, i, arr) => _pose.score > arr[iMax].score ? i : iMax, 0);
-      pose = poses[poseIndex];
+
+      // const lastPoseMiddle = !!lastPose.current ? 
+      //   getPoseMiddle(lastPose.current.pose.nose, lastPose.current.pose.leftShoulder, lastPose.current.pose.rightShoulder)
+      // const poseMiddles = poses.map(_pose=>getPoseMiddle(_pose.nose, _pose.leftShoulder, _pose.rightShoulder));
+      // let lastPoseIndex = poses.reduce((iMax, _pose, i, arr) => 
+      //   getPoseMiddle(_pose.nose, _pose.leftShoulder, _pose.rightShoulder) > arr[iMax].score ? i : iMax, 0);
+
+      // for (let i; i<poses.length; i++){
+      //   const poseIndex = poses.reduce((iMax, _pose, i, arr) => _pose.score > arr[iMax].score ? i : iMax, 0);
+
+
+      // }
+      const chestWidths = poses.map(_pose=>{
+        const {
+          leftShoulder,
+          rightShoulder,
+        } = getKeypointsObject(_pose)
+        if (!!leftShoulder && !!rightShoulder){
+          return getChestWidth(leftShoulder, rightShoulder);
+        }
+        return 0;
+      })
+
+      const poseIndex = chestWidths.reduce((iMax, val, i, arr) => val > arr[iMax].score ? i : iMax, 0);
       
+      pose = poses[poseIndex];
+
       if (pose.score < minPoseConfidence){
         console.log('low pose confidence', pose.score)
         return;
@@ -132,6 +159,22 @@ export default function(sensitivity = 10) {
         rightWrist,
         nose,
       } = getKeypointsObject(pose)
+
+      // if pose person changed
+      // set this as last pose
+      lastPose.current = {
+        pose: {
+          score: pose.score,
+          leftShoulder,
+          rightShoulder,
+          leftElbow,
+          rightElbow,
+          leftWrist,
+          rightWrist,
+          nose,
+        },
+        time: now
+      };
 
       
       if (!leftShoulder || !leftElbow || !rightShoulder || !rightElbow || !rightWrist || !leftWrist || !nose){
@@ -203,7 +246,7 @@ export default function(sensitivity = 10) {
             rightElbow,
             rightWrist,
             nose,
-            sensitivity = chestWidth/2
+            sensitivity = chestWidth/3
           )
           // if (isRightSnatch){
           //   console.log('right snatch!', rightShoulder,
@@ -226,7 +269,7 @@ export default function(sensitivity = 10) {
           leftElbow,
           leftWrist,
           nose,
-          sensitivity = chestWidth/2
+          sensitivity = chestWidth/3
         )
         // if (isLeftSnatch){
         //   console.log('left snatch!', leftShoulder,
@@ -306,6 +349,7 @@ export default function(sensitivity = 10) {
               state.current = 'up';
               downCounter.current = -1;
 
+              // find what side was most active
               var counts = {};
               const arr = sideCounter.current;
               for (var i = 0; i < arr.length; i++) {
@@ -315,6 +359,7 @@ export default function(sensitivity = 10) {
 
               const maxOccSide = Object.entries(counts).sort((x,y)=>y[1]-x[1])[0]
               const side = maxOccSide[0];
+
               dispatch({
                 type: 'increment',
                 currentSide: side,
