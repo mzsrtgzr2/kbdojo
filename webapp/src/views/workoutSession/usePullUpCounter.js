@@ -79,8 +79,8 @@ function checkBallDown(shoulder, elbow, wrist, nose, sensitivity=50){
 
 function checkHandsParallel(rightElbow, leftElbow, rightWrist, leftWrist, sensitivity){
   return (
-    (sensitivity*2>=Math.abs(rightElbow.y-leftElbow.y)) ||
-    (sensitivity*2>=Math.abs(rightWrist.y-leftWrist.y))
+    (sensitivity>=Math.abs(rightElbow.y-leftElbow.y)) ||
+    (sensitivity>=Math.abs(rightWrist.y-leftWrist.y))
   )
 }
 
@@ -284,7 +284,7 @@ export default function(sensitivity = 10) {
 
         var currentSide = null;
         if (
-          checkHandsParallel(rightElbow, leftElbow, leftWrist, leftElbow, sensitivity) && 
+          checkHandsParallel(rightElbow, leftElbow, leftWrist, leftElbow, chestWidth/1.2) && 
           (
             (isLeftSnatch && (isRightHandAboveHead || isRightSnatch)) || 
             (isRightSnatch && (isLeftHandAboveHead || isLeftSnatch))
@@ -346,26 +346,37 @@ export default function(sensitivity = 10) {
             }
         
             if (upCounter.current<=0){
-              state.current = 'up';
-              downCounter.current = -1;
-
               // find what side was most active
               var counts = {};
               const arr = sideCounter.current;
+
               for (var i = 0; i < arr.length; i++) {
                 var val = arr[i];
                 counts[val] = counts[val] ? counts[val] + 1 : 1;
               }
 
-              const maxOccSide = Object.entries(counts).sort((x,y)=>y[1]-x[1])[0]
+              const sorted = Object.entries(counts).sort((x,y)=>y[1]-x[1]);
+              const maxOccSide = sorted[0]
+              const secondMaxOccSide = sorted[1]
               const side = maxOccSide[0];
 
+              if ((side != sideCounter.current[sideCounter.current.length-1]) || (
+                  !!secondMaxOccSide && 
+                    secondMaxOccSide[1]/maxOccSide[1]>0.4)){
+                upCounter.current+=1
+                console.log('side is not confident, adding more time for fixation')
+                return pose
+              }
+
+              
               dispatch({
                 type: 'increment',
                 currentSide: side,
               });
               lastSide.current = side;
               lastTimeOfFixation.current = now
+              state.current = 'up';
+              downCounter.current = -1;
               console.log('up', side)
             }  
           }

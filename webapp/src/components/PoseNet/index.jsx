@@ -25,7 +25,8 @@ import './style.scss'
 // import andrFastSnatchVid from 'assets/andr_fast.mp4';
 // import someGuyVid from 'assets/someguy.mp4'
 // import denis1Vid from 'assets/denis1.mp4'
-import kim5Vid from 'assets/kim5_gym.mp4'
+// import kim5Vid from 'assets/kim5_gym.mp4'
+// import kim5Vid_snatch from 'assets/kim5_gym_snatch.mp4'
 
 console.log('Using TensorFlow backend: ', tf.getBackend());
 
@@ -104,14 +105,14 @@ export default class PoseNet extends React.Component {
     // video.height = videoHeight
 
     // MDN: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
-    // const stream = await navigator.mediaDevices.getUserMedia({
-    //   audio: false,
-    //   video: {
-    //     facingMode: 'user',
-    //   }
-    // });
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: false,
+      video: {
+        facingMode: 'user',
+      }
+    });
 
-    // video.srcObject = stream
+    video.srcObject = stream
     
     return new Promise(resolve => {
       
@@ -254,16 +255,16 @@ export default class PoseNet extends React.Component {
         <canvas 
           className={this.props.className}
           ref={ this.getCanvas }></canvas>
-        {/* <video
+        <video
           playsInline
           ref={ this.getVideo }>
-          </video> */}
-        <video
+          </video>
+        {/* <video
           mute
           playsInline
           ref={ this.getVideo }>
             <source src={kim5Vid}></source>
-          </video>
+          </video> */}
       </div>
     )
   }
