@@ -94,7 +94,7 @@ export default class PoseNet extends React.Component {
       this.mediaRecord = await this.record(this.canvas)
       setTimeout(()=>{
         this.mediaRecord.stop()
-      }, 3000)
+      }, 5000)
     }, 3000)
     
   }
@@ -148,7 +148,7 @@ export default class PoseNet extends React.Component {
   record(canvas, time) {
     var recordedChunks = [];
     return new Promise(function (res, rej) {
-        var stream = canvas.captureStream(25 /*fps*/);
+        var stream = canvas.captureStream(15 /*fps*/);
         const mediaRecorder = new MediaRecorder(stream, {
             mimeType: "video/webm; codecs=vp9"
         });
@@ -257,20 +257,20 @@ export default class PoseNet extends React.Component {
       }
       
 
-      ctx.clearRect(0, 0, videoWidth, videoHeight);
-
-      if (showVideo) {
-        ctx.save()
-        // ctx.scale(-1, 1)
-        // ctx.translate(-videoWidth, 0)
-        ctx.drawImage(video, 0, 0, this.video.width, this.video.height)
-        ctx.restore()
-      }
-
       // For each pose (i.e. person) detected in an image, loop through the poses
       // and draw the resulting skeleton and keypoints if over certain confidence
       // scores
       if (process.env.NODE_ENV=='development'){
+        ctx.clearRect(0, 0, videoWidth, videoHeight);
+
+        // if (showVideo) {
+        //   ctx.save()
+        //   // ctx.scale(-1, 1)
+        //   // ctx.translate(-videoWidth, 0)
+        //   ctx.drawImage(video, 0, 0, this.video.width, this.video.height)
+        //   ctx.restore()
+        // }
+        
         if (!!pose){
           const { keypoints } = pose;
           if (showPoints) {
@@ -302,13 +302,15 @@ export default class PoseNet extends React.Component {
           { loading }
         </Grid>
         
+        
+        <video
+          playsInline
+          className={this.props.className}
+          ref={ this.getVideo }>
+          </video>
         <canvas 
           className={this.props.className}
           ref={ this.getCanvas }></canvas>
-        <video
-          playsInline
-          ref={ this.getVideo }>
-          </video>
         {/* <video
           mute
           playsInline
