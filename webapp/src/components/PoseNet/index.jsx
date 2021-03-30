@@ -31,8 +31,8 @@ console.log('Using TensorFlow backend: ', tf.getBackend());
 export default class PoseNet extends React.Component {
 
   static defaultProps = {
-    videoWidth: 600,
-    videoHeight: 500,
+    videoWidth: 250,
+    videoHeight: 250,
     flipHorizontal: false,
     algorithm: 'multi-pose',
     mobileNetArchitecture: isMobile() ? 'MobileNetV1' : 'MobileNetV1',
@@ -99,16 +99,14 @@ export default class PoseNet extends React.Component {
     const video = this.video
     const mobile = isMobile()
 
-    video.width = videoWidth
-    video.height = videoHeight
+    // video.width = videoWidth
+    // video.height = videoHeight
 
     // MDN: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: false,
       video: {
         facingMode: 'user',
-        width: {max: videoWidth},
-        height: {max: videoHeight},
       }
     });
 
@@ -121,6 +119,16 @@ export default class PoseNet extends React.Component {
         setTimeout(()=>video.play(), 0)
         video.muted = true;
 
+        console.log('raw video:', video.videoWidth, video.videoHeight)
+        debugger;
+        if (video.videoWidth > video.videoHeight){
+          video.width = videoWidth
+          video.height = videoWidth / video.videoWidth * video.videoHeight;
+        } else {
+          video.width = videoHeight / video.videoHeight * video.videoWidth;
+          video.height = videoHeight
+        }
+
 
         resolve(video)
       }
@@ -131,9 +139,9 @@ export default class PoseNet extends React.Component {
     const { videoWidth, videoHeight } = this.props
     const canvas = this.canvas
     const ctx = canvas.getContext('2d')
-
-    canvas.width = videoWidth
-    canvas.height = videoHeight
+    debugger;
+    canvas.width = this.video.width
+    canvas.height = this.video.height
 
     this.poseDetectionFrame(ctx)
   }
@@ -207,7 +215,7 @@ export default class PoseNet extends React.Component {
         ctx.save()
         // ctx.scale(-1, 1)
         // ctx.translate(-videoWidth, 0)
-        ctx.drawImage(video, 0, 0, videoWidth, videoHeight)
+        ctx.drawImage(video, 0, 0, this.video.width, this.video.height)
         ctx.restore()
       }
 

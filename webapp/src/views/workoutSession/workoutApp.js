@@ -115,13 +115,19 @@ function App() {
 
   };
 
-  let forceWidth = 250;
-  let forceHeight = 250;
+  let forceWidth = 270;
+  let forceHeight = 270;
   // if (window.innerWidth > window.innerHeight){
   //   forceHeight = forceWidth/window.innerWidth * window.innerHeight;
   // } else {
   //   forceWidth = forceHeight / window.innerHeight * window.innerWidth;
   // }
+
+  // console.log(window.innerWidth, window.innerHeight)
+  // console.log(forceWidth, forceHeight)
+
+  // forceWidth = window.innerWidth
+  // forceHeight = window.innerHeight
 
   return (
     <div>

@@ -250,6 +250,11 @@ export default function(sensitivity = 10) {
               upLastTimestamp.current = 0; //zero other option
               return;
         }
+
+        let diffLifts = 0;
+        if (!!lastTimeOfFixation.current){
+          diffLifts = now-lastTimeOfFixation.current
+        }
         
         if (!!currentSide){
           sideCounter.current.push(
@@ -263,7 +268,15 @@ export default function(sensitivity = 10) {
             // special case is when state "changes", we need to wait a bit more
             // to make sure it's not a back swting
             if (!!lastSide.current){
-              upCounter.current = (prevSide != currentSide) ? 6: 3;
+
+              if (prevSide != currentSide){
+                if (diffLifts>3500){
+                  upCounter.current =  3; // long time passed. it's ok to require less
+                } else {
+                  upCounter.current =  6; //longer fixation required
+                }
+              }
+              upCounter.current =  3;
             } else {
               upCounter.current = 3;
             }
