@@ -84,6 +84,12 @@ function checkHandsParallel(rightElbow, leftElbow, rightWrist, leftWrist, sensit
   )
 }
 
+function getChestWidth(leftShoulder, rightShoulder){
+  return Math.sqrt(
+    Math.pow(leftShoulder.x - rightShoulder.x, 2) + 
+    Math.pow(leftShoulder.y - rightShoulder.y, 2))
+}
+
 export default function(sensitivity = 10) {
   const [count, dispatch] = useReducer(reducer, {
     leftTotal: 0,
@@ -101,11 +107,22 @@ export default function(sensitivity = 10) {
   const upLastTimestamp = useRef(0);
   const lastSide = useRef(null)
   const lastTimeOfFixation = useRef(null)
+  const lastPose = useRef(null);
   
   const checkPoses = useCallback(
-    pose => {
+    (poses, minPoseConfidence) => {
 
-      const now = Date.now()
+      const now = Date.now();
+      let pose;
+      debugger;
+      const poseIndex = poses.reduce((iMax, _pose, i, arr) => _pose.score > arr[iMax].score ? i : iMax, 0);
+      pose = poses[poseIndex];
+      
+      if (pose.score < minPoseConfidence){
+        console.log('low pose confidence', pose.score)
+        return;
+      }
+
       const {
         leftShoulder,
         rightShoulder,
@@ -117,32 +134,27 @@ export default function(sensitivity = 10) {
       } = getKeypointsObject(pose)
 
       
-
       if (!leftShoulder || !leftElbow || !rightShoulder || !rightElbow || !rightWrist || !leftWrist || !nose){
         console.log('not enough info')
-        return;
       }
 
-      const chestWidth = Math.sqrt(
-        Math.pow(leftShoulder.x - rightShoulder.x, 2) + 
-        Math.pow(leftShoulder.y - rightShoulder.y, 2));
+      const chestWidth = getChestWidth(leftShoulder, rightShoulder);
 
-
-        const isDown = 
-        checkBallDown(
-          rightShoulder,
-          rightElbow,
-          rightWrist,
-          nose,
-          sensitivity=chestWidth
-        ) &&
-        checkBallDown(
-          leftShoulder,
-          leftElbow,
-          leftWrist,
-          nose,
-          sensitivity=chestWidth
-        )
+      const isDown = 
+      checkBallDown(
+        rightShoulder,
+        rightElbow,
+        rightWrist,
+        nose,
+        sensitivity=chestWidth
+      ) &&
+      checkBallDown(
+        leftShoulder,
+        leftElbow,
+        leftWrist,
+        nose,
+        sensitivity=chestWidth
+      )
 
       if (isDown){
         const prev = downLastTimestamp.current
@@ -173,7 +185,7 @@ export default function(sensitivity = 10) {
         downLastTimestamp.current = now
         upLastTimestamp.current = 0; //zero other option
         sideCounter.current = []
-        return
+        return pose
       }
       
       var isRightSnatch=false, isLeftSnatch=false, isRightHandAboveHead=false, isLeftHandAboveHead=false;
@@ -248,7 +260,7 @@ export default function(sensitivity = 10) {
               console.log('dropped up because its probably back swing');
               sideCounter.current = []
               upLastTimestamp.current = 0; //zero other option
-              return;
+              return pose;
         }
 
         let diffLifts = 0;
@@ -319,7 +331,8 @@ export default function(sensitivity = 10) {
         upLastTimestamp.current = now;
         downLastTimestamp.current = 0; //zero other option
             
-      }      
+      }
+      return pose
     },
     [sensitivity]
   )

@@ -40,7 +40,7 @@ export default class PoseNet extends React.Component {
     showSkeleton: true,
     showPoints: false,
     minPoseConfidence: 0.5,
-    minPartConfidence: 0.6,
+    minPartConfidence: 0.0,
     maxPoseDetections: 2,
     nmsRadius: 20.0,
     outputStride: 16,
@@ -120,7 +120,7 @@ export default class PoseNet extends React.Component {
         video.muted = true;
 
         console.log('raw video:', video.videoWidth, video.videoHeight)
-        debugger;
+
         if (video.videoWidth > video.videoHeight){
           video.width = videoWidth
           video.height = videoWidth / video.videoWidth * video.videoHeight;
@@ -139,7 +139,7 @@ export default class PoseNet extends React.Component {
     const { videoWidth, videoHeight } = this.props
     const canvas = this.canvas
     const ctx = canvas.getContext('2d')
-    debugger;
+
     canvas.width = this.video.width
     canvas.height = this.video.height
 
@@ -169,17 +169,18 @@ export default class PoseNet extends React.Component {
 
     const poseDetectionFrameInner = async () => {
       let poses = []
+      let pose;
 
       switch (algorithm) {
         case 'single-pose':
           if (!!this.net){
-            const pose = await this.net.estimateSinglePose(
+            pose = await this.net.estimateSinglePose(
               video,
               imageScaleFactor,
               flipHorizontal,
               outputStride
             )
-            this.props.onEstimate(pose);
+            pose = this.props.onEstimate([pose], minPoseConfidence);
             poses.push(pose)
           }
           break
@@ -196,13 +197,8 @@ export default class PoseNet extends React.Component {
             )
             if (rawPoses.length>0){
 
-              const pose = rawPoses[0];
-              if (pose.score >= minPoseConfidence) {
-                this.props.onEstimate(pose);
-                poses.push(pose)
-              } else {
-                console.log('dropping pose, score', pose.score)
-              }
+              pose = this.props.onEstimate(rawPoses, minPoseConfidence);
+                
             }
           }
 
@@ -223,16 +219,15 @@ export default class PoseNet extends React.Component {
       // and draw the resulting skeleton and keypoints if over certain confidence
       // scores
       if (true || process.env.NODE_ENV=='development'){
-        poses.forEach(({ score, keypoints }) => {
-          if (score >= minPoseConfidence) {
-            if (showPoints) {
-              drawKeypoints(keypoints, minPartConfidence, skeletonColor, ctx);
-            }
-            if (showSkeleton) {
-              drawSkeleton(keypoints, minPartConfidence, skeletonColor, skeletonLineWidth, ctx);
-            }
+        if (!!pose){
+          const { keypoints } = pose;
+          if (showPoints) {
+            drawKeypoints(keypoints, minPartConfidence, skeletonColor, ctx);
           }
-        })
+          if (showSkeleton) {
+            drawSkeleton(keypoints, minPartConfidence, skeletonColor, skeletonLineWidth, ctx);
+          }
+        }
       }
 
       requestAnimationFrame(poseDetectionFrameInner)
