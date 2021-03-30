@@ -25,6 +25,8 @@ import './style.scss'
 // import andrFastSnatchVid from 'assets/andr_fast.mp4';
 // import someGuyVid from 'assets/someguy.mp4'
 // import denis1Vid from 'assets/denis1.mp4'
+// import kim5Vid from 'assets/kim5_gym.mp4'
+// import kim5Vid_snatch from 'assets/kim5_gym_snatch.mp4'
 
 console.log('Using TensorFlow backend: ', tf.getBackend());
 
@@ -39,8 +41,8 @@ export default class PoseNet extends React.Component {
     showVideo: true,
     showSkeleton: true,
     showPoints: false,
-    minPoseConfidence: 0.5,
-    minPartConfidence: 0.6,
+    minPoseConfidence: 0.3,
+    minPartConfidence: 0.0,
     maxPoseDetections: 2,
     nmsRadius: 20.0,
     outputStride: 16,
@@ -120,7 +122,7 @@ export default class PoseNet extends React.Component {
         video.muted = true;
 
         console.log('raw video:', video.videoWidth, video.videoHeight)
-        debugger;
+
         if (video.videoWidth > video.videoHeight){
           video.width = videoWidth
           video.height = videoWidth / video.videoWidth * video.videoHeight;
@@ -139,7 +141,7 @@ export default class PoseNet extends React.Component {
     const { videoWidth, videoHeight } = this.props
     const canvas = this.canvas
     const ctx = canvas.getContext('2d')
-    debugger;
+
     canvas.width = this.video.width
     canvas.height = this.video.height
 
@@ -169,17 +171,18 @@ export default class PoseNet extends React.Component {
 
     const poseDetectionFrameInner = async () => {
       let poses = []
+      let pose;
 
       switch (algorithm) {
         case 'single-pose':
           if (!!this.net){
-            const pose = await this.net.estimateSinglePose(
+            pose = await this.net.estimateSinglePose(
               video,
               imageScaleFactor,
               flipHorizontal,
               outputStride
             )
-            this.props.onEstimate(pose);
+            pose = this.props.onEstimate([pose], minPoseConfidence);
             poses.push(pose)
           }
           break
@@ -196,13 +199,8 @@ export default class PoseNet extends React.Component {
             )
             if (rawPoses.length>0){
 
-              const pose = rawPoses[0];
-              if (pose.score >= minPoseConfidence) {
-                this.props.onEstimate(pose);
-                poses.push(pose)
-              } else {
-                console.log('dropping pose, score', pose.score)
-              }
+              pose = this.props.onEstimate(rawPoses, minPoseConfidence);
+                
             }
           }
 
@@ -222,17 +220,16 @@ export default class PoseNet extends React.Component {
       // For each pose (i.e. person) detected in an image, loop through the poses
       // and draw the resulting skeleton and keypoints if over certain confidence
       // scores
-      if (true || process.env.NODE_ENV=='development'){
-        poses.forEach(({ score, keypoints }) => {
-          if (score >= minPoseConfidence) {
-            if (showPoints) {
-              drawKeypoints(keypoints, minPartConfidence, skeletonColor, ctx);
-            }
-            if (showSkeleton) {
-              drawSkeleton(keypoints, minPartConfidence, skeletonColor, skeletonLineWidth, ctx);
-            }
+      if (process.env.NODE_ENV=='development'){
+        if (!!pose){
+          const { keypoints } = pose;
+          if (showPoints) {
+            drawKeypoints(keypoints, minPartConfidence, skeletonColor, ctx);
           }
-        })
+          if (showSkeleton) {
+            drawSkeleton(keypoints, minPartConfidence, skeletonColor, skeletonLineWidth, ctx);
+          }
+        }
       }
 
       requestAnimationFrame(poseDetectionFrameInner)
@@ -266,7 +263,7 @@ export default class PoseNet extends React.Component {
           mute
           playsInline
           ref={ this.getVideo }>
-            <source src={ksenya1Vid}></source>
+            <source src={kim5Vid}></source>
           </video> */}
       </div>
     )
