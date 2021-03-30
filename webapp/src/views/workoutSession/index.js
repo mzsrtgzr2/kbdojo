@@ -42,11 +42,11 @@ const codes = [
     generateStringArray('grvk')  
   )
 
-
+const sawHelpPage = localStorage.getItem('saw_help_page')
 
 function App() {
   const [stage, setStage] = useState(
-    process.env.NODE_ENV=='development' ? 'workout': 'not_started');
+    sawHelpPage=='yes' || process.env.NODE_ENV=='development' ? 'workout': 'not_started');
   const { code } = useParams();
   const [loadingAuthState, setLoadingAuthState] = useState(true);
   const [user, setUser] = useState(null);
@@ -55,6 +55,8 @@ function App() {
 
   useEffect(() => {
     localStorage.setItem('code', code);
+    
+
     FirebaseOps.auth.onAuthStateChanged((user) => {
         setUser(user);
         if (!!user){
@@ -93,7 +95,7 @@ const signInAnonymousFunc = async ()=>{
 }
 
   const start = ()=>{
-    speak('Start working out')
+    localStorage.setItem('saw_help_page', 'yes');
     setStage('workout');
     Mixpanel.track('start_button')
   };
@@ -123,7 +125,7 @@ const signInAnonymousFunc = async ()=>{
                           color="primary"
                           onClick={start}
                           >
-                          {t('START')}
+                          {t('OK')}
                       </Button>
                   </p>
                   
@@ -147,7 +149,7 @@ const signInAnonymousFunc = async ()=>{
       alignItems="center"
       justify="center"
       className="preWorkoutContainer">
-        <Typography>loading...</Typography></Grid>);
+        <Typography variant="h1">loading...</Typography></Grid>);
   }
 
   const authenticated = !!user

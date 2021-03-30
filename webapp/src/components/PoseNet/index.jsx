@@ -41,8 +41,8 @@ export default class PoseNet extends React.Component {
     showVideo: true,
     showSkeleton: true,
     showPoints: false,
-    minPoseConfidence: 0.3,
-    minPartConfidence: 0.0,
+    minPoseConfidence: 0.4,
+    minPartConfidence: 0.25,
     maxPoseDetections: 2,
     nmsRadius: 20.0,
     outputStride: 16,
@@ -170,9 +170,9 @@ export default class PoseNet extends React.Component {
     const video = this.video
 
     const poseDetectionFrameInner = async () => {
-      let poses = []
       let pose;
 
+      
       switch (algorithm) {
         case 'single-pose':
           if (!!this.net){
@@ -182,8 +182,9 @@ export default class PoseNet extends React.Component {
               flipHorizontal,
               outputStride
             )
-            pose = this.props.onEstimate([pose], minPoseConfidence);
-            poses.push(pose)
+            if (!!this.props.onEstimate){
+              pose = this.props.onEstimate([pose], minPoseConfidence);
+            }
           }
           break
         case 'multi-pose':
@@ -199,13 +200,15 @@ export default class PoseNet extends React.Component {
             )
             if (rawPoses.length>0){
 
-              pose = this.props.onEstimate(rawPoses, minPoseConfidence);
-                
+              if (!!this.props.onEstimate){
+                pose = this.props.onEstimate(rawPoses, minPoseConfidence);
+              }
             }
           }
 
           break
       }
+      
 
       ctx.clearRect(0, 0, videoWidth, videoHeight);
 
