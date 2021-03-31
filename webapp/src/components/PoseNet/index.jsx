@@ -89,13 +89,13 @@ export default class PoseNet extends React.Component {
     }
 
     this.detectPose()
-    setTimeout(async ()=>{
-      debugger;
-      this.mediaRecord = await this.record(this.canvas)
-      setTimeout(()=>{
-        this.mediaRecord.stop()
-      }, 5000)
-    }, 3000)
+    // setTimeout(async ()=>{
+      // debugger;
+      // this.mediaRecord = await this.record(this.canvas)
+      // setTimeout(()=>{
+      //   this.mediaRecord.stop()
+      // }, 5000)
+    // }, 3000)
     
   }
 
@@ -154,30 +154,30 @@ export default class PoseNet extends React.Component {
         });
 
         //ondataavailable will fire in interval of `time || 4000 ms`
-        mediaRecorder.start();
+        // mediaRecorder.start();
 
-        mediaRecorder.ondataavailable = function (e) {
-            recordedChunks.push(e.data);
-            if (mediaRecorder.state === 'recording') {
-                // after stop data avilable event run one more time
-                mediaRecorder.stop();
-            }
+        // mediaRecorder.ondataavailable = function (e) {
+        //     recordedChunks.push(e.data);
+        //     if (mediaRecorder.state === 'recording') {
+        //         // after stop data avilable event run one more time
+        //         mediaRecorder.stop();
+        //     }
 
-        }
+        // }
 
-        mediaRecorder.onstop = function (event) {
-            var blob = new Blob(recordedChunks, {
-                type: "video/webm"
-            });
-            var url = URL.createObjectURL(blob);
+        // mediaRecorder.onstop = function (event) {
+        //     var blob = new Blob(recordedChunks, {
+        //         type: "video/webm"
+        //     });
+        //     var url = URL.createObjectURL(blob);
 
-            var a = document.createElement("a");
-            document.body.appendChild(a);
-            a.style = "display: none";
-            a.href = url;
-            a.download = 'session_1.webm';
-            a.click();
-        }
+        //     var a = document.createElement("a");
+        //     document.body.appendChild(a);
+        //     a.style = "display: none";
+        //     a.href = url;
+        //     a.download = 'session_1.webm';
+        //     a.click();
+        // }
 
         res(mediaRecorder);
     })
