@@ -40,6 +40,55 @@ function reducer(count, {type, currentSide}) {
   return count
 }
 
+// function checkSnatchVector(lastPoses, side){
+//   if (!!lastPoses && lastPoses.length>1){
+//     const x_vals = lastPoses.map(({pose})=>{
+//       if (side=='left'){
+//         return pose.leftElbow.x
+//       }
+//       return pose.rightElbow.x
+      
+//     })
+//     let sumX = 0;
+//     for (let i=1; i<x_vals.length; i++){
+//       sumX += Math.abs(x_vals[i]-x_vals[i-1])
+//     }
+
+//     const y_vals = lastPoses.map(({pose})=>{
+//       if (side=='left'){
+//         return pose.leftElbow.y
+//       }
+//       return pose.rightElbow.y
+      
+//     })
+
+//     let sumY = 0;
+//     for (let i=1; i<y_vals.length; i++){
+//       sumY += Math.abs(y_vals[i]-y_vals[i-1])
+//     }
+  
+//     return [sumX/lastPoses.length, sumY/lastPoses.length]
+//   }
+//   return [0,0];
+// }
+
+function checkBackSwing(lastPoses, chestWidth){
+  if (!!lastPoses && lastPoses.length>1){
+    const poseMiddles = lastPoses.map(({pose})=>getPoseMiddle(pose.nose, pose.leftShoulder, pose.rightShoulder))
+
+    const pose = lastPoses[lastPoses.length-1].pose;
+    const lastPoseMiddle = getPoseMiddle(pose.nose, pose.leftShoulder, pose.rightShoulder);
+    
+    for(let i=0; i<poseMiddles.length;i++){
+      const poseMiddle = poseMiddles[i]
+      if (Math.abs(poseMiddle-lastPoseMiddle)>chestWidth/2){
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 function checkSnatchPisition(shoulder, elbow, wrist, nose, sensitivity=50){
   // console.log('y', wrist.y, elbow.y, shoulder.y, (wrist.y < elbow.y) && (wrist.y < shoulder.y) && (elbow.y < shoulder.y));
   // // console.log('x', wrist.x, elbow.x, shoulder.x, Math.abs(wrist.x-elbow.x)<=sensitivity, Math.abs(wrist.x-shoulder.x)<=sensitivity);
@@ -48,15 +97,15 @@ function checkSnatchPisition(shoulder, elbow, wrist, nose, sensitivity=50){
   //   (0 <= shoulder.y-elbow.y),
   //   Math.abs(wrist.x-shoulder.x)<=4*sensitivity)
   
-  // console.log(nose.y, wrist.y) 
-  
+  // console.log(nose.y, wrist.y)
+
   return(
       // 0 <= (nose.y-wrist.y) || 
     sensitivity <= (nose.y-wrist.y) &&
     // ((sensitivity/2 <= shoulder.y-wrist.y)  && 
     (sensitivity/3 <= shoulder.y-elbow.y) &&
     // Math.abs(wrist.x-elbow.x)<=4*sensitivity &&
-    Math.abs(wrist.x-shoulder.x)<=10*sensitivity)
+    Math.abs(wrist.x-shoulder.x)<=8*sensitivity)
 }
 
 function checkHandAboveHand(shoulder, elbow, wrist, nose, sensitivity=50){
@@ -111,7 +160,7 @@ export default function(sensitivity = 10) {
   const upLastTimestamp = useRef(0);
   const lastSide = useRef(null)
   const lastTimeOfFixation = useRef(null)
-  const lastPose = useRef(null);
+  const lastPoses = useRef([]);
   
   const checkPoses = useCallback(
     (poses, minPoseConfidence) => {
@@ -160,9 +209,14 @@ export default function(sensitivity = 10) {
         nose,
       } = getKeypointsObject(pose)
 
-      // if pose person changed
+      if (!leftShoulder || !leftElbow || !rightShoulder || !rightElbow || !rightWrist || !leftWrist || !nose){
+        console.log('pose dropped, not enough info')
+      }
+
+      lastPoses.current = lastPoses.current.filter(({time})=>time>(now-500))
+
       // set this as last pose
-      lastPose.current = {
+      lastPoses.current.push({
         pose: {
           score: pose.score,
           leftShoulder,
@@ -174,12 +228,7 @@ export default function(sensitivity = 10) {
           nose,
         },
         time: now
-      };
-
-      
-      if (!leftShoulder || !leftElbow || !rightShoulder || !rightElbow || !rightWrist || !leftWrist || !nose){
-        console.log('not enough info')
-      }
+      });
 
       const chestWidth = getChestWidth(leftShoulder, rightShoulder);
 
@@ -230,17 +279,26 @@ export default function(sensitivity = 10) {
         sideCounter.current = []
         return pose
       }
+
+      const isBackSwing = checkBackSwing(lastPoses.current, chestWidth);
+      if (isBackSwing){
+        debugger;
+        console.log('detected backswing');
+        return pose;
+      }
       
       var isRightSnatch=false, isLeftSnatch=false, isRightHandAboveHead=false, isLeftHandAboveHead=false;
       // check right
       if (!!rightWrist && !!rightShoulder && !!rightElbow){
-        isRightSnatch = checkSnatchPisition(
-          rightShoulder,
-          rightElbow,
-          rightWrist,
-          nose,
-          sensitivity = chestWidth/3
-          )
+         
+          isRightSnatch = checkSnatchPisition(
+            rightShoulder,
+            rightElbow,
+            rightWrist,
+            nose,
+            sensitivity = chestWidth/3
+            )
+
           isRightHandAboveHead = checkHandAboveHand(
             rightShoulder,
             rightElbow,
@@ -248,6 +306,7 @@ export default function(sensitivity = 10) {
             nose,
             sensitivity = chestWidth/3
           )
+        
           // if (isRightSnatch){
           //   console.log('right snatch!', rightShoulder,
           //   rightElbow,
@@ -257,6 +316,8 @@ export default function(sensitivity = 10) {
 
       // check left
       if (!!leftWrist && !!leftShoulder && !!leftElbow){
+        
+      
         isLeftSnatch = checkSnatchPisition(
           leftShoulder,
           leftElbow,
@@ -271,6 +332,7 @@ export default function(sensitivity = 10) {
           nose,
           sensitivity = chestWidth/3
         )
+      
         // if (isLeftSnatch){
         //   console.log('left snatch!', leftShoulder,
         //   leftElbow,
@@ -325,15 +387,16 @@ export default function(sensitivity = 10) {
             if (!!lastSide.current){
 
               if (prevSide != currentSide){
-                if (diffLifts>3500){
-                  upCounter.current =  3; // long time passed. it's ok to require less
+                if (diffLifts>2500){
+                  upCounter.current =  2; // long time passed. it's ok to require less
                 } else {
-                  upCounter.current =  6; //longer fixation required
+                  upCounter.current =  5; //longer fixation required
                 }
+              } else {
+                upCounter.current =  2;
               }
-              upCounter.current =  3.5;
             } else {
-              upCounter.current = 3;
+              upCounter.current = 2;
             }
 
             downCounter.current = -1;
