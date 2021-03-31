@@ -331,7 +331,7 @@ export default function(sensitivity = 10) {
                   upCounter.current =  6; //longer fixation required
                 }
               }
-              upCounter.current =  3;
+              upCounter.current =  3.5;
             } else {
               upCounter.current = 3;
             }
@@ -362,7 +362,7 @@ export default function(sensitivity = 10) {
 
               if ((side != sideCounter.current[sideCounter.current.length-1]) || (
                   !!secondMaxOccSide && 
-                    secondMaxOccSide[1]/maxOccSide[1]>0.4)){
+                    secondMaxOccSide[1]/maxOccSide[1]>0.3)){
                 upCounter.current+=1
                 console.log('side is not confident, adding more time for fixation')
                 return pose

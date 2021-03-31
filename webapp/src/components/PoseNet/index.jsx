@@ -20,7 +20,7 @@ import './style.scss'
 // import ksenya1Vid from 'assets/ksenya1.mp4';
 // import ksenya1Vid_problem_back_swing from 'assets/ksenya1_problem_back_swing.mp4';
 // import ksenya1Vid_problem_back_swing_2 from 'assets/ksenya1_back_swing_crazy.mp4';
-// import ksenya1Vid_problem_rep_110_120 from 'assets/ksenya_problem_rep_110_120.mov';
+// import ksenya1Vid_problem_rep_110_120 from 'assets/ksenya_problem_rep_110_120.mp4';
 // import ksenya1Vid_problem_back_swing_lefts from 'assets/ksenya1_back_swing_crazy_lefts.mp4';
 // import andrFastSnatchVid from 'assets/andr_fast.mp4';
 // import someGuyVid from 'assets/someguy.mp4'
@@ -41,8 +41,8 @@ export default class PoseNet extends React.Component {
     showVideo: true,
     showSkeleton: true,
     showPoints: false,
-    minPoseConfidence: 0.4,
-    minPartConfidence: 0.25,
+    minPoseConfidence: 0.3,
+    minPartConfidence: 0.2,
     maxPoseDetections: 2,
     nmsRadius: 20.0,
     outputStride: 16,
@@ -170,9 +170,9 @@ export default class PoseNet extends React.Component {
     const video = this.video
 
     const poseDetectionFrameInner = async () => {
+      let poses = []
       let pose;
 
-      
       switch (algorithm) {
         case 'single-pose':
           if (!!this.net){
@@ -182,8 +182,8 @@ export default class PoseNet extends React.Component {
               flipHorizontal,
               outputStride
             )
-            if (!!this.props.onEstimate){
-              pose = this.props.onEstimate([pose], minPoseConfidence);
+            if (!!this.props.onEstimate && !!pose){
+                pose = this.props.onEstimate([pose], minPoseConfidence);
             }
           }
           break
@@ -203,12 +203,12 @@ export default class PoseNet extends React.Component {
               if (!!this.props.onEstimate){
                 pose = this.props.onEstimate(rawPoses, minPoseConfidence);
               }
+                
             }
           }
 
           break
       }
-      
 
       ctx.clearRect(0, 0, videoWidth, videoHeight);
 
@@ -266,7 +266,7 @@ export default class PoseNet extends React.Component {
           mute
           playsInline
           ref={ this.getVideo }>
-            <source src={kim5Vid}></source>
+            <source src={kim4Vid}></source>
           </video> */}
       </div>
     )
