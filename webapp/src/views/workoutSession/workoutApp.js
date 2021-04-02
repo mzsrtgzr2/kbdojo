@@ -26,6 +26,7 @@ function App() {
   const [isWorkoutStarted, setIsWorkoutStarted] = useState(false);
   const [timeToStart, setTimeToStart] = useState(null);
   const [timeStr, setTimeStr] = useState('00:00:00');
+  const [isEndWorkout, setIsEndWorkout] = useState(false);
 
   useEffect(()=>{
     var total = count.bothTotal + count.leftTotal+count.rightTotal;
@@ -71,7 +72,18 @@ function App() {
     return (
       <div>
       <div className="topMenu">
-        
+      
+            <Button
+              className="stopButton"
+              variant="contained"
+              color="primary"
+              onClick={()=>{
+                setIsEndWorkout(true)
+              }}
+              >
+              {t('STOP')}
+              </Button>
+          
       </div>
       <div className="bottomMenu">
         <Grid container spacing={3}>
@@ -157,7 +169,7 @@ function App() {
               variant="contained"
               color="primary"
               onClick={()=>{
-                setTimeToStart(process.env.NODE_ENV=='development' ? 10: 10);
+                setTimeToStart(process.env.NODE_ENV=='development' ? 2: 2);
               }}
               >
               {t('START')}
@@ -177,6 +189,7 @@ function App() {
             onEstimate={isWorkoutStarted && onEstimate}
             videoWidth={forceWidth}
             videoHeight={forceHeight}
+            isEndWorkout={isEndWorkout}
             workoutNumbers={{
               time: timeStr,
               total: count.bothTotal + count.leftTotal + count.rightTotal,

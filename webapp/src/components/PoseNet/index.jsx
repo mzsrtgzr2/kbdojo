@@ -30,7 +30,7 @@ import ksenya1Vid from 'assets/ksenya1.mp4';
   // import kim5Vid_snatch from 'assets/kim5_gym_snatch.mp4'
   // import kim5Vid_snatch_problem_double_count from 'assets/kim5_gym_snatch_problem_double_count.mp4';
 
-const vid2Show = ksenya1Vid;
+const vid2Show = null; //ksenya1Vid;
 console.log('Using TensorFlow backend: ', tf.getBackend());
 
 export default class PoseNet extends React.Component {
@@ -54,7 +54,8 @@ export default class PoseNet extends React.Component {
     skeletonLineWidth: 7,
     loadingText: 'Loading...',
     className: '',
-    onEstimate: null
+    onEstimate: null,
+    isEndWorkout: false
   }
 
   constructor(props) {
@@ -101,13 +102,17 @@ export default class PoseNet extends React.Component {
 
     this.detectPose()
     setTimeout(async ()=>{
-      debugger;
       this.mediaRecord = await this.record(this.canvasRecord)
-      setTimeout(()=>{
-        this.mediaRecord.stop()
-      }, 5000)
+      // setTimeout(()=>{
+        
+      // }, 5000)
     }, 3000)
-    
+  }
+
+  componentWillReceiveProps(nextProps){
+    if (nextProps.isEndWorkout===true){
+      this.mediaRecord.stop()
+    }
   }
 
   async setupCamera() {
@@ -161,7 +166,7 @@ export default class PoseNet extends React.Component {
   record(canvas, time) {
     var recordedChunks = [];
     return new Promise(function (res, rej) {
-        var stream = canvas.captureStream(15 /*fps*/);
+        var stream = canvas.captureStream();
         const mediaRecorder = new MediaRecorder(stream, {
             mimeType: "video/webm; codecs=vp9"
         });
@@ -179,6 +184,7 @@ export default class PoseNet extends React.Component {
         }
 
         mediaRecorder.onstop = function (event) {
+          console.log('writing', recordedChunks);
             var blob = new Blob(recordedChunks, {
                 type: "video/webm"
             });
@@ -275,48 +281,56 @@ export default class PoseNet extends React.Component {
       // For each pose (i.e. person) detected in an image, loop through the poses
       // and draw the resulting skeleton and keypoints if over certain confidence
       // scores
-      if (process.env.NODE_ENV=='development'){
-        ctxRecord.clearRect(0, 0, ctxRecord.canvas.width, ctxRecord.canvas.height);
+      
+      ctxRecord.clearRect(0, 0, ctxRecord.canvas.width, ctxRecord.canvas.height);
 
-        // if (showVideo) {
-        //   ctx.save()
-        //   // ctx.scale(-1, 1)
-        //   // ctx.translate(-videoWidth, 0)
-        //   ctx.drawImage(video, 0, 0, this.video.width, this.video.height)
-        //   ctx.restore()
-        // }
-        ctxRecord.drawImage(video, 0, 0, ctxRecord.canvas.width, ctxRecord.canvas.height)
+      // if (showVideo) {
+      //   ctx.save()
+      //   // ctx.scale(-1, 1)
+      //   // ctx.translate(-videoWidth, 0)
+      //   ctx.drawImage(video, 0, 0, this.video.width, this.video.height)
+      //   ctx.restore()
+      // }
+      // ctxRecord.save()
+      ctxRecord.drawImage(video, 0, 0, ctxRecord.canvas.width, ctxRecord.canvas.height)
+      // ctxRecord.restore();
 
-        // draw background background
-        ctxRecord.fillStyle = 'rgba(225,225,225,0.4)';
-        ctxRecord.fillRect(0, ctxRecord.canvas.height*.5, ctxRecord.canvas.width, ctxRecord.canvas.height)
+  
+      let fontSize = 26;
+      let pad = 15;
+      if (window.innerWidth>=1400){
+        fontSize = 53;
+        pad = 20;
+      } else if (window.innerWidth>=1000){
+        fontSize = 26;
+        pad = 20;
+      }
+      ctxRecord.font = `${fontSize}px Arial`;
+      let y = ctxRecord.canvas.height-(fontSize);
+      let x = pad*2;
+      ctxRecord.fillStyle = 'rgba(225,225,225,0.4)';
+      ctxRecord.fillRect(0, ctxRecord.canvas.height - 6*(fontSize+pad), ctxRecord.canvas.width, ctxRecord.canvas.height)
 
-        ctxRecord.fillStyle = 'rgba(239,11,94,1)';
+      ctxRecord.fillStyle = 'rgba(239,11,94,1)';
+      ctxRecord.fillText(`Doubles: ${this.props.workoutNumbers.both}`, x, y);
+      ctxRecord.fillText(`Rights: ${this.props.workoutNumbers.right}`, x, y-1*(fontSize+pad));
+      ctxRecord.fillText(`Lefts: ${this.props.workoutNumbers.left}`, x, y-2*(fontSize+pad));
 
-        const fontSize = 26;
-        const pad = 15;
-        ctxRecord.font = `italic ${fontSize}pt Calibri`;
-        let y = ctxRecord.canvas.height-(fontSize);
-        let x = 15;
-
-        ctxRecord.fillText(`Doubles: ${this.props.workoutNumbers.both}`, x, y);
-        ctxRecord.fillText(`Rights: ${this.props.workoutNumbers.right}`, x, y-1*(fontSize+pad));
-        ctxRecord.fillText(`Lefts: ${this.props.workoutNumbers.left}`, x, y-2*(fontSize+pad));
-        ctxRecord.fillText(`Total: ${this.props.workoutNumbers.total}`, x, y-3*(fontSize+pad));
-        ctxRecord.fillText(`${this.props.workoutNumbers.time}`, x, y-4*(fontSize+pad));
+      ctxRecord.font = `bold ${fontSize}px Arial`;
+      ctxRecord.fillText(`Total: ${this.props.workoutNumbers.total}`, x, y-3*(fontSize+pad));
+      ctxRecord.fillText(`${this.props.workoutNumbers.time}`, x, y-4*(fontSize+pad));
         
-        
-        if (!!pose){
-          ctxPose.clearRect(0, 0, videoWidth, videoHeight);
-          const { keypoints } = pose;
-          if (showPoints) {
-            drawKeypoints(keypoints, minPartConfidence, skeletonColor, ctxPose);
-          }
-          if (showSkeleton) {
-            drawSkeleton(keypoints, minPartConfidence, skeletonColor, skeletonLineWidth, ctxPose);
-          }
+      if (process.env.NODE_ENV=='development' && !!pose){
+        ctxPose.clearRect(0, 0, videoWidth, videoHeight);
+        const { keypoints } = pose;
+        if (showPoints) {
+          drawKeypoints(keypoints, minPartConfidence, skeletonColor, ctxPose);
+        }
+        if (showSkeleton) {
+          drawSkeleton(keypoints, minPartConfidence, skeletonColor, skeletonLineWidth, ctxPose);
         }
       }
+      
 
       requestAnimationFrame(poseDetectionFrameInner)
     }
