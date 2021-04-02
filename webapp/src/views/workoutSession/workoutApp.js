@@ -23,11 +23,9 @@ function App() {
   const { t } = useTranslation();
   const [count, checkPoses] = usePullUpCounter()
   const onEstimate = useCallback(poses => checkPoses(poses), [checkPoses])
-  const [workout, setWorkout] = useState(null);
   const [isWorkoutStarted, setIsWorkoutStarted] = useState(false);
   const [timeToStart, setTimeToStart] = useState(null);
-  const timerInterval = useRef(null);
-
+  const [timeStr, setTimeStr] = useState('00:00:00');
 
   useEffect(()=>{
     var total = count.bothTotal + count.leftTotal+count.rightTotal;
@@ -82,6 +80,9 @@ function App() {
               className="timer"
               startAutomatically={isWorkoutStarted}
               showControllers={isWorkoutStarted}
+              onNewTime={(_timeStr)=>{
+                setTimeStr(_timeStr);
+              }}
               onMinute={(minute)=>{
                 if (!!minute){
                   speak(`${minute} minute passed`);
@@ -156,7 +157,7 @@ function App() {
               variant="contained"
               color="primary"
               onClick={()=>{
-                setTimeToStart(process.env.NODE_ENV=='development' ? 2: 10);
+                setTimeToStart(process.env.NODE_ENV=='development' ? 10: 10);
               }}
               >
               {t('START')}
@@ -176,6 +177,13 @@ function App() {
             onEstimate={isWorkoutStarted && onEstimate}
             videoWidth={forceWidth}
             videoHeight={forceHeight}
+            workoutNumbers={{
+              time: timeStr,
+              total: count.bothTotal + count.leftTotal + count.rightTotal,
+              left: count.leftTotal,
+              right: count.rightTotal,
+              both: count.bothTotal
+            }}
           />
           {/* {renderPositionMessage()} */}
           {/* {!!workout ? renderWorkout(): renderWorkoutSetup()} */}

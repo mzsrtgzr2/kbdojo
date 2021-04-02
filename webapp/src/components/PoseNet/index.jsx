@@ -17,7 +17,7 @@ import './style.scss'
 // import kim4Vid from 'assets/kim4_problem_min_1.mp4';
 // import kim4Vid from 'assets/kim4.mp4';
 // import kim4Vid from 'assets/kim4_problem_min_1_2.mp4'
-// import ksenya1Vid from 'assets/ksenya1.mp4';
+import ksenya1Vid from 'assets/ksenya1.mp4';
 // import ksenya1Vid_problem_back_swing from 'assets/ksenya1_problem_back_swing.mp4';
 // import ksenya1Vid_problem_back_swing_2 from 'assets/ksenya1_back_swing_crazy.mp4';
 // import ksenya1Vid_problem_rep_110_120 from 'assets/ksenya_problem_rep_110_120.mp4';
@@ -30,6 +30,7 @@ import './style.scss'
   // import kim5Vid_snatch from 'assets/kim5_gym_snatch.mp4'
   // import kim5Vid_snatch_problem_double_count from 'assets/kim5_gym_snatch_problem_double_count.mp4';
 
+const vid2Show = ksenya1Vid;
 console.log('Using TensorFlow backend: ', tf.getBackend());
 
 export default class PoseNet extends React.Component {
@@ -65,6 +66,14 @@ export default class PoseNet extends React.Component {
     this.canvas = elem
   }
 
+  getCanvasPose = elem => {
+    this.canvasPose = elem
+  }
+
+  getCanvasRecord = elem => {
+    this.canvasRecord = elem
+  }
+
   getVideo = elem => {
     this.video = elem
   }
@@ -93,10 +102,10 @@ export default class PoseNet extends React.Component {
     this.detectPose()
     setTimeout(async ()=>{
       debugger;
-      this.mediaRecord = await this.record(this.canvas)
+      this.mediaRecord = await this.record(this.canvasRecord)
       setTimeout(()=>{
         this.mediaRecord.stop()
-      }, 3000)
+      }, 5000)
     }, 3000)
     
   }
@@ -115,14 +124,16 @@ export default class PoseNet extends React.Component {
     // video.height = videoHeight
 
     // MDN: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: false,
-      video: {
-        facingMode: 'user',
-      }
-    });
+    if (!vid2Show){
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: {
+          facingMode: 'user',
+        }
+      });
 
-    video.srcObject = stream
+      video.srcObject = stream
+    }
     
     return new Promise(resolve => {
       
@@ -150,7 +161,7 @@ export default class PoseNet extends React.Component {
   record(canvas, time) {
     var recordedChunks = [];
     return new Promise(function (res, rej) {
-        var stream = canvas.captureStream(25 /*fps*/);
+        var stream = canvas.captureStream(15 /*fps*/);
         const mediaRecorder = new MediaRecorder(stream, {
             mimeType: "video/webm; codecs=vp9"
         });
@@ -177,7 +188,7 @@ export default class PoseNet extends React.Component {
             document.body.appendChild(a);
             a.style = "display: none";
             a.href = url;
-            a.download = 'session_1.webm';
+            a.download = `session_${Date.now()}.webm`;
             a.click();
         }
 
@@ -187,17 +198,20 @@ export default class PoseNet extends React.Component {
 
 
   detectPose() {
-    const { videoWidth, videoHeight } = this.props
-    const canvas = this.canvas
-    const ctx = canvas.getContext('2d')
+    const {canvasPose, canvasRecord} = this
+    const ctxPose = canvasPose.getContext('2d')
+    const ctxRecord = canvasRecord.getContext('2d')
 
-    canvas.width = this.video.width
-    canvas.height = this.video.height
+    canvasRecord.width = window.innerWidth;
+    canvasRecord.height = window.innerHeight
 
-    this.poseDetectionFrame(ctx)
+    canvasPose.width = this.video.width
+    canvasPose.height = this.video.height
+
+    this.poseDetectionFrame(ctxPose, ctxRecord)
   }
 
-  poseDetectionFrame(ctx) {
+  poseDetectionFrame(ctxPose, ctxRecord) {
     const {
       algorithm,
       imageScaleFactor,
@@ -219,7 +233,6 @@ export default class PoseNet extends React.Component {
     const video = this.video
 
     const poseDetectionFrameInner = async () => {
-      let poses = []
       let pose;
 
       switch (algorithm) {
@@ -259,27 +272,48 @@ export default class PoseNet extends React.Component {
           break
       }
 
-      ctx.clearRect(0, 0, videoWidth, videoHeight);
-
-      if (showVideo) {
-        ctx.save()
-        // ctx.scale(-1, 1)
-        // ctx.translate(-videoWidth, 0)
-        ctx.drawImage(video, 0, 0, this.video.width, this.video.height)
-        ctx.restore()
-      }
-
       // For each pose (i.e. person) detected in an image, loop through the poses
       // and draw the resulting skeleton and keypoints if over certain confidence
       // scores
       if (process.env.NODE_ENV=='development'){
+        ctxRecord.clearRect(0, 0, ctxRecord.canvas.width, ctxRecord.canvas.height);
+
+        // if (showVideo) {
+        //   ctx.save()
+        //   // ctx.scale(-1, 1)
+        //   // ctx.translate(-videoWidth, 0)
+        //   ctx.drawImage(video, 0, 0, this.video.width, this.video.height)
+        //   ctx.restore()
+        // }
+        ctxRecord.drawImage(video, 0, 0, ctxRecord.canvas.width, ctxRecord.canvas.height)
+
+        // draw background background
+        ctxRecord.fillStyle = 'rgba(225,225,225,0.4)';
+        ctxRecord.fillRect(0, ctxRecord.canvas.height*.5, ctxRecord.canvas.width, ctxRecord.canvas.height)
+
+        ctxRecord.fillStyle = 'rgba(239,11,94,1)';
+
+        const fontSize = 26;
+        const pad = 15;
+        ctxRecord.font = `italic ${fontSize}pt Calibri`;
+        let y = ctxRecord.canvas.height-(fontSize);
+        let x = 15;
+
+        ctxRecord.fillText(`Doubles: ${this.props.workoutNumbers.both}`, x, y);
+        ctxRecord.fillText(`Rights: ${this.props.workoutNumbers.right}`, x, y-1*(fontSize+pad));
+        ctxRecord.fillText(`Lefts: ${this.props.workoutNumbers.left}`, x, y-2*(fontSize+pad));
+        ctxRecord.fillText(`Total: ${this.props.workoutNumbers.total}`, x, y-3*(fontSize+pad));
+        ctxRecord.fillText(`${this.props.workoutNumbers.time}`, x, y-4*(fontSize+pad));
+        
+        
         if (!!pose){
+          ctxPose.clearRect(0, 0, videoWidth, videoHeight);
           const { keypoints } = pose;
           if (showPoints) {
-            drawKeypoints(keypoints, minPartConfidence, skeletonColor, ctx);
+            drawKeypoints(keypoints, minPartConfidence, skeletonColor, ctxPose);
           }
           if (showSkeleton) {
-            drawSkeleton(keypoints, minPartConfidence, skeletonColor, skeletonLineWidth, ctx);
+            drawSkeleton(keypoints, minPartConfidence, skeletonColor, skeletonLineWidth, ctxPose);
           }
         }
       }
@@ -304,19 +338,30 @@ export default class PoseNet extends React.Component {
           { loading }
         </Grid>
         
-        <canvas 
-          className={this.props.className}
-          ref={ this.getCanvas }></canvas>
+        
+        
+        
+
+        {!!vid2Show ?
         <video
-          playsInline
-          ref={ this.getVideo }>
-          </video>
-        {/* <video
           mute
           playsInline
+          className={this.props.className}
           ref={ this.getVideo }>
-            <source src={ksenya1Vid_108_120}></source>
-          </video> */}
+            <source src={vid2Show}></source>
+          </video>: <video
+            playsInline
+            className={this.props.className}
+            ref={ this.getVideo }>
+            </video>}
+          
+          <canvas 
+            className={this.props.className}
+            ref={ this.getCanvasPose }></canvas>
+
+          <canvas 
+            className="recordCanvas"
+            ref={ this.getCanvasRecord }></canvas>
       </div>
     )
   }
