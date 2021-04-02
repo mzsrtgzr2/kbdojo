@@ -24,16 +24,11 @@ export default class Timer extends Component {
   }
 
   componentDidMount() {
+    this.play();
   }
 
   componentWillUnmount() {
     this.pause()
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.startAutomatically == true && !this.props.startAutomatically) {
-        this.play();
-    }
   }
 
   pause() {
@@ -68,7 +63,6 @@ export default class Timer extends Component {
   }
 
   update() {
-    debugger;
     const clock = this.currentClock() + durations.reduce((a, b) => a + b, 0) / 1000;
     this.setState({clock: clock })
     let time = SecondsTohhmmss(clock)

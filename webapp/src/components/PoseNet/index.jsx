@@ -8,14 +8,35 @@ import {
 } from '@material-ui/core';
 import { isMobile, drawKeypoints, drawSkeleton } from './utils'
 import './style.scss'
+// import kimVid from 'assets/kim1.mp4';
+// import andr1Vid from 'assets/andr1.mp4';
+// import andr2Vid from 'assets/andr2.mp4';
+// import kim2Vid from 'assets/kim2.mp4';
+// import kim3Vid from 'assets/kim3.mp4';
+// import kim3Vid from 'assets/kim3_problem.mp4';
+// import kim4Vid from 'assets/kim4_problem_min_1.mp4';
+// import kim4Vid from 'assets/kim4.mp4';
+// import kim4Vid from 'assets/kim4_problem_min_1_2.mp4'
+// import ksenya1Vid from 'assets/ksenya1.mp4';
+// import ksenya1Vid_problem_back_swing from 'assets/ksenya1_problem_back_swing.mp4';
+// import ksenya1Vid_problem_back_swing_2 from 'assets/ksenya1_back_swing_crazy.mp4';
+// import ksenya1Vid_problem_rep_110_120 from 'assets/ksenya_problem_rep_110_120.mp4';
+// import ksenya1Vid_problem_back_swing_lefts from 'assets/ksenya1_back_swing_crazy_lefts.mp4';
+// import ksenya1Vid_108_120 from 'assets/ksenya_1_108_120.mp4';
+// import andrFastSnatchVid from 'assets/andr_fast.mp4';
+// import someGuyVid from 'assets/someguy.mp4'
+// import denis1Vid from 'assets/denis1.mp4'
+// import kim5Vid from 'assets/kim5_gym.mp4'
+  // import kim5Vid_snatch from 'assets/kim5_gym_snatch.mp4'
+  // import kim5Vid_snatch_problem_double_count from 'assets/kim5_gym_snatch_problem_double_count.mp4';
 
 console.log('Using TensorFlow backend: ', tf.getBackend());
 
 export default class PoseNet extends React.Component {
 
   static defaultProps = {
-    videoWidth: 600,
-    videoHeight: 500,
+    videoWidth: 250,
+    videoHeight: 250,
     flipHorizontal: false,
     algorithm: 'multi-pose',
     mobileNetArchitecture: isMobile() ? 'MobileNetV1' : 'MobileNetV1',
@@ -23,13 +44,13 @@ export default class PoseNet extends React.Component {
     showSkeleton: true,
     showPoints: false,
     minPoseConfidence: 0.4,
-    minPartConfidence: 0.5,
+    minPartConfidence: 0.2,
     maxPoseDetections: 2,
     nmsRadius: 20.0,
     outputStride: 16,
-    imageScaleFactor: 0.6,
+    imageScaleFactor: 1,
     skeletonColor: 'rgba(239,11,94,0.3)',
-    skeletonLineWidth: 10,
+    skeletonLineWidth: 7,
     loadingText: 'Loading...',
     className: '',
     onEstimate: null
@@ -52,10 +73,9 @@ export default class PoseNet extends React.Component {
     // Loads the pre-trained PoseNet model
     this.net = await posenet.load({
       architecture: 'MobileNetV1',
-      inputResolution: isMobile() ? 200: 200,
       // outputStride: 8,
       // multiplier: 0.75,
-      // inputResolution: { width: this.props.videoWidth, height: this.props.videoHeight },
+      inputResolution: { width: this.props.videoWidth, height: this.props.videoHeight },
     });
     console.log('posnet loaded', this.net);
   }
@@ -64,7 +84,8 @@ export default class PoseNet extends React.Component {
     try {
       await this.setupCamera()
     } catch(e) {
-      throw 'This browser does not support video capture, or this device does not have a camera'
+      alert('This browser does not support video capture, or this device does not have a camera')
+      throw e
     } finally {
       this.setState({ loading: false })
     }
@@ -90,25 +111,37 @@ export default class PoseNet extends React.Component {
     const video = this.video
     const mobile = isMobile()
 
-    video.width = videoWidth
-    video.height = videoHeight
+    // video.width = videoWidth
+    // video.height = videoHeight
 
     // MDN: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: false,
       video: {
         facingMode: 'user',
-        width: {max: videoWidth},
-        height: {max: videoHeight},
       }
     });
 
     video.srcObject = stream
-
+    
     return new Promise(resolve => {
+      
       video.onloadedmetadata = () => {
         // Once the video metadata is ready, we can start streaming video
-        video.play()
+        setTimeout(()=>video.play(), 0)
+        video.muted = true;
+
+        console.log('raw video:', video.videoWidth, video.videoHeight)
+
+        if (video.videoWidth > video.videoHeight){
+          video.width = videoWidth
+          video.height = videoWidth / video.videoWidth * video.videoHeight;
+        } else {
+          video.width = videoHeight / video.videoHeight * video.videoWidth;
+          video.height = videoHeight
+        }
+
+
         resolve(video)
       }
     })
@@ -158,8 +191,8 @@ export default class PoseNet extends React.Component {
     const canvas = this.canvas
     const ctx = canvas.getContext('2d')
 
-    canvas.width = videoWidth
-    canvas.height = videoHeight
+    canvas.width = this.video.width
+    canvas.height = this.video.height
 
     this.poseDetectionFrame(ctx)
   }
@@ -187,19 +220,20 @@ export default class PoseNet extends React.Component {
 
     const poseDetectionFrameInner = async () => {
       let poses = []
+      let pose;
 
       switch (algorithm) {
         case 'single-pose':
-
           if (!!this.net){
-            const pose = await this.net.estimateSinglePose(
+            pose = await this.net.estimateSinglePose(
               video,
               imageScaleFactor,
               flipHorizontal,
               outputStride
             )
-            this.props.onEstimate(pose);
-            poses.push(pose)
+            if (!!this.props.onEstimate && !!pose){
+                pose = this.props.onEstimate([pose], minPoseConfidence);
+            }
           }
           break
         case 'multi-pose':
@@ -215,9 +249,10 @@ export default class PoseNet extends React.Component {
             )
             if (rawPoses.length>0){
 
-              const pose = rawPoses[0];
-              this.props.onEstimate(pose);
-              poses.push(pose)
+              if (!!this.props.onEstimate){
+                pose = this.props.onEstimate(rawPoses, minPoseConfidence);
+              }
+                
             }
           }
 
@@ -230,15 +265,16 @@ export default class PoseNet extends React.Component {
         ctx.save()
         // ctx.scale(-1, 1)
         // ctx.translate(-videoWidth, 0)
-        ctx.drawImage(video, 0, 0, videoWidth, videoHeight)
+        ctx.drawImage(video, 0, 0, this.video.width, this.video.height)
         ctx.restore()
       }
 
       // For each pose (i.e. person) detected in an image, loop through the poses
       // and draw the resulting skeleton and keypoints if over certain confidence
       // scores
-      poses.forEach(({ score, keypoints }) => {
-        if (score >= minPoseConfidence) {
+      if (process.env.NODE_ENV=='development'){
+        if (!!pose){
+          const { keypoints } = pose;
           if (showPoints) {
             drawKeypoints(keypoints, minPartConfidence, skeletonColor, ctx);
           }
@@ -246,7 +282,7 @@ export default class PoseNet extends React.Component {
             drawSkeleton(keypoints, minPartConfidence, skeletonColor, skeletonLineWidth, ctx);
           }
         }
-      })
+      }
 
       requestAnimationFrame(poseDetectionFrameInner)
     }
@@ -271,7 +307,16 @@ export default class PoseNet extends React.Component {
         <canvas 
           className={this.props.className}
           ref={ this.getCanvas }></canvas>
-        <video playsInline ref={ this.getVideo }></video>
+        <video
+          playsInline
+          ref={ this.getVideo }>
+          </video>
+        {/* <video
+          mute
+          playsInline
+          ref={ this.getVideo }>
+            <source src={ksenya1Vid_108_120}></source>
+          </video> */}
       </div>
     )
   }
