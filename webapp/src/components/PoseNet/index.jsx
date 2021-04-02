@@ -100,13 +100,13 @@ export default class PoseNet extends React.Component {
     }
 
     this.detectPose()
-    // setTimeout(async ()=>{
-      // debugger;
-      // this.mediaRecord = await this.record(this.canvas)
-      // setTimeout(()=>{
-      //   this.mediaRecord.stop()
-      // }, 5000)
-    // }, 3000)
+    setTimeout(async ()=>{
+      debugger;
+      this.mediaRecord = await this.record(this.canvasRecord)
+      setTimeout(()=>{
+        this.mediaRecord.stop()
+      }, 5000)
+    }, 3000)
     
   }
 
@@ -167,30 +167,30 @@ export default class PoseNet extends React.Component {
         });
 
         //ondataavailable will fire in interval of `time || 4000 ms`
-        // mediaRecorder.start();
+        mediaRecorder.start();
 
-        // mediaRecorder.ondataavailable = function (e) {
-        //     recordedChunks.push(e.data);
-        //     if (mediaRecorder.state === 'recording') {
-        //         // after stop data avilable event run one more time
-        //         mediaRecorder.stop();
-        //     }
+        mediaRecorder.ondataavailable = function (e) {
+            recordedChunks.push(e.data);
+            if (mediaRecorder.state === 'recording') {
+                // after stop data avilable event run one more time
+                mediaRecorder.stop();
+            }
 
-        // }
+        }
 
-        // mediaRecorder.onstop = function (event) {
-        //     var blob = new Blob(recordedChunks, {
-        //         type: "video/webm"
-        //     });
-        //     var url = URL.createObjectURL(blob);
+        mediaRecorder.onstop = function (event) {
+            var blob = new Blob(recordedChunks, {
+                type: "video/webm"
+            });
+            var url = URL.createObjectURL(blob);
 
-        //     var a = document.createElement("a");
-        //     document.body.appendChild(a);
-        //     a.style = "display: none";
-        //     a.href = url;
-        //     a.download = 'session_1.webm';
-        //     a.click();
-        // }
+            var a = document.createElement("a");
+            document.body.appendChild(a);
+            a.style = "display: none";
+            a.href = url;
+            a.download = `session_${Date.now()}.webm`;
+            a.click();
+        }
 
         res(mediaRecorder);
     })
@@ -198,7 +198,6 @@ export default class PoseNet extends React.Component {
 
 
   detectPose() {
-    const { videoWidth, videoHeight } = this.props
     const {canvasPose, canvasRecord} = this
     const ctxPose = canvasPose.getContext('2d')
     const ctxRecord = canvasRecord.getContext('2d')
@@ -206,8 +205,8 @@ export default class PoseNet extends React.Component {
     canvasRecord.width = window.innerWidth;
     canvasRecord.height = window.innerHeight
 
-    canvasPose.width = videoWidth;
-    canvasPose.height = videoHeight
+    canvasPose.width = this.video.width
+    canvasPose.height = this.video.height
 
     this.poseDetectionFrame(ctxPose, ctxRecord)
   }
@@ -234,7 +233,6 @@ export default class PoseNet extends React.Component {
     const video = this.video
 
     const poseDetectionFrameInner = async () => {
-      let poses = []
       let pose;
 
       switch (algorithm) {
@@ -287,15 +285,26 @@ export default class PoseNet extends React.Component {
         //   ctx.drawImage(video, 0, 0, this.video.width, this.video.height)
         //   ctx.restore()
         // }
+        ctxRecord.drawImage(video, 0, 0, ctxRecord.canvas.width, ctxRecord.canvas.height)
 
         // draw background background
         ctxRecord.fillStyle = 'rgba(225,225,225,0.4)';
-        ctxRecord.fillRect(0, ctxRecord.canvas.height*.75, ctxRecord.canvas.width, ctxRecord.canvas.height)
+        ctxRecord.fillRect(0, ctxRecord.canvas.height*.5, ctxRecord.canvas.width, ctxRecord.canvas.height)
 
-        ctxRecord.fillStyle = 'rgba(255,0,0,1)';
+        ctxRecord.fillStyle = 'rgba(239,11,94,1)';
 
-        ctxRecord.font = 'italic 12pt Calibri';
-        ctxRecord.fillText('Hello World!', 0, ctxRecord.canvas.height*.75);
+        const fontSize = 26;
+        const pad = 15;
+        ctxRecord.font = `italic ${fontSize}pt Calibri`;
+        let y = ctxRecord.canvas.height-(fontSize);
+        let x = 15;
+
+        ctxRecord.fillText(`Doubles: ${this.props.workoutNumbers.both}`, x, y);
+        ctxRecord.fillText(`Rights: ${this.props.workoutNumbers.right}`, x, y-1*(fontSize+pad));
+        ctxRecord.fillText(`Lefts: ${this.props.workoutNumbers.left}`, x, y-2*(fontSize+pad));
+        ctxRecord.fillText(`Total: ${this.props.workoutNumbers.total}`, x, y-3*(fontSize+pad));
+        ctxRecord.fillText(`${this.props.workoutNumbers.time}`, x, y-4*(fontSize+pad));
+        
         
         if (!!pose){
           ctxPose.clearRect(0, 0, videoWidth, videoHeight);
@@ -351,7 +360,7 @@ export default class PoseNet extends React.Component {
             ref={ this.getCanvasPose }></canvas>
 
           <canvas 
-            className={this.props.className}
+            className="recordCanvas"
             ref={ this.getCanvasRecord }></canvas>
       </div>
     )

@@ -14,7 +14,8 @@ export default class Timer extends Component {
       className: PropTypes.string,
       startAutomatically: PropTypes.bool,
       onMinute: PropTypes.func,
-      showControllers: PropTypes.bool
+      showControllers: PropTypes.bool,
+      onNewTime: PropTypes.func,
     }
   }
 
@@ -67,6 +68,7 @@ export default class Timer extends Component {
     this.setState({clock: clock })
     let time = SecondsTohhmmss(clock)
     this.setState({time: time })
+    this.props.onNewTime(time);
     // notify for 1 minute threshold
     if (!!this.props.onMinute){
       const seconds = parseInt(clock);
