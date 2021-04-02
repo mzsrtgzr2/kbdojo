@@ -32,7 +32,15 @@ function App() {
   useEffect(()=>{
     var total = count.bothTotal + count.leftTotal+count.rightTotal;
     if (total>0){
-      speak(total);
+      let rate = 1.1;
+      if (total>9999){
+        rate = 1.6;
+      } else if (total>999) {
+        rate = 1.4;
+      } else if (total>99){
+        rate = 1.2;
+      }
+      speak(total, rate);
     } 
     
   }, [count]);
@@ -123,7 +131,7 @@ function App() {
   useEffect(() => {
     if (timeToStart==0){
       setIsWorkoutStarted(true);
-      speak('Start working out')
+      speak('Start working out', 1.2)
     }
     if(timeToStart > 0){
       speak(timeToStart);

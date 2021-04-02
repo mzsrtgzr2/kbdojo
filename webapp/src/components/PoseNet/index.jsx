@@ -20,13 +20,15 @@ import './style.scss'
 // import ksenya1Vid from 'assets/ksenya1.mp4';
 // import ksenya1Vid_problem_back_swing from 'assets/ksenya1_problem_back_swing.mp4';
 // import ksenya1Vid_problem_back_swing_2 from 'assets/ksenya1_back_swing_crazy.mp4';
-// import ksenya1Vid_problem_rep_110_120 from 'assets/ksenya_problem_rep_110_120.mov';
+// import ksenya1Vid_problem_rep_110_120 from 'assets/ksenya_problem_rep_110_120.mp4';
 // import ksenya1Vid_problem_back_swing_lefts from 'assets/ksenya1_back_swing_crazy_lefts.mp4';
+// import ksenya1Vid_108_120 from 'assets/ksenya_1_108_120.mp4';
 // import andrFastSnatchVid from 'assets/andr_fast.mp4';
 // import someGuyVid from 'assets/someguy.mp4'
 // import denis1Vid from 'assets/denis1.mp4'
 // import kim5Vid from 'assets/kim5_gym.mp4'
-// import kim5Vid_snatch from 'assets/kim5_gym_snatch.mp4'
+  // import kim5Vid_snatch from 'assets/kim5_gym_snatch.mp4'
+  // import kim5Vid_snatch_problem_double_count from 'assets/kim5_gym_snatch_problem_double_count.mp4';
 
 console.log('Using TensorFlow backend: ', tf.getBackend());
 
@@ -42,7 +44,7 @@ export default class PoseNet extends React.Component {
     showSkeleton: true,
     showPoints: false,
     minPoseConfidence: 0.4,
-    minPartConfidence: 0.25,
+    minPartConfidence: 0.2,
     maxPoseDetections: 2,
     nmsRadius: 20.0,
     outputStride: 16,
@@ -217,9 +219,9 @@ export default class PoseNet extends React.Component {
     const video = this.video
 
     const poseDetectionFrameInner = async () => {
+      let poses = []
       let pose;
 
-      
       switch (algorithm) {
         case 'single-pose':
           if (!!this.net){
@@ -229,8 +231,8 @@ export default class PoseNet extends React.Component {
               flipHorizontal,
               outputStride
             )
-            if (!!this.props.onEstimate){
-              pose = this.props.onEstimate([pose], minPoseConfidence);
+            if (!!this.props.onEstimate && !!pose){
+                pose = this.props.onEstimate([pose], minPoseConfidence);
             }
           }
           break
@@ -250,12 +252,12 @@ export default class PoseNet extends React.Component {
               if (!!this.props.onEstimate){
                 pose = this.props.onEstimate(rawPoses, minPoseConfidence);
               }
+                
             }
           }
 
           break
       }
-      
 
       // For each pose (i.e. person) detected in an image, loop through the poses
       // and draw the resulting skeleton and keypoints if over certain confidence
@@ -322,7 +324,7 @@ export default class PoseNet extends React.Component {
           mute
           playsInline
           ref={ this.getVideo }>
-            <source src={kim5Vid}></source>
+            <source src={ksenya1Vid_108_120}></source>
           </video> */}
       </div>
     )
