@@ -270,6 +270,13 @@ export default class PoseNet extends React.Component {
         //   ctx.drawImage(video, 0, 0, this.video.width, this.video.height)
         //   ctx.restore()
         // }
+
+        // draw background background
+        ctx.fillStyle = 'rgba(225,225,225,0.4)';
+        ctx.fillRect(0, ctx.canvas.height*.75, ctx.canvas.width, ctx.canvas.height)
+
+        ctx.font = 'italic 40pt Calibri';
+        ctx.fillText('Hello World!', 10, 20);
         
         if (!!pose){
           const { keypoints } = pose;
