@@ -17,17 +17,20 @@ import './style.scss'
 // import kim4Vid from 'assets/kim4_problem_min_1.mp4';
 // import kim4Vid from 'assets/kim4.mp4';
 // import kim4Vid from 'assets/kim4_problem_min_1_2.mp4'
-// import ksenya1Vid from 'assets/ksenya1.mp4';
+import ksenya1Vid from 'assets/ksenya1.mp4';
 // import ksenya1Vid_problem_back_swing from 'assets/ksenya1_problem_back_swing.mp4';
 // import ksenya1Vid_problem_back_swing_2 from 'assets/ksenya1_back_swing_crazy.mp4';
-// import ksenya1Vid_problem_rep_110_120 from 'assets/ksenya_problem_rep_110_120.mov';
+// import ksenya1Vid_problem_rep_110_120 from 'assets/ksenya_problem_rep_110_120.mp4';
 // import ksenya1Vid_problem_back_swing_lefts from 'assets/ksenya1_back_swing_crazy_lefts.mp4';
+// import ksenya1Vid_108_120 from 'assets/ksenya_1_108_120.mp4';
 // import andrFastSnatchVid from 'assets/andr_fast.mp4';
 // import someGuyVid from 'assets/someguy.mp4'
 // import denis1Vid from 'assets/denis1.mp4'
 // import kim5Vid from 'assets/kim5_gym.mp4'
-// import kim5Vid_snatch from 'assets/kim5_gym_snatch.mp4'
+  // import kim5Vid_snatch from 'assets/kim5_gym_snatch.mp4'
+  // import kim5Vid_snatch_problem_double_count from 'assets/kim5_gym_snatch_problem_double_count.mp4';
 
+const vid2Show = ksenya1Vid;
 console.log('Using TensorFlow backend: ', tf.getBackend());
 
 export default class PoseNet extends React.Component {
@@ -42,7 +45,7 @@ export default class PoseNet extends React.Component {
     showSkeleton: true,
     showPoints: false,
     minPoseConfidence: 0.4,
-    minPartConfidence: 0.25,
+    minPartConfidence: 0.2,
     maxPoseDetections: 2,
     nmsRadius: 20.0,
     outputStride: 16,
@@ -61,6 +64,14 @@ export default class PoseNet extends React.Component {
 
   getCanvas = elem => {
     this.canvas = elem
+  }
+
+  getCanvasPose = elem => {
+    this.canvasPose = elem
+  }
+
+  getCanvasRecord = elem => {
+    this.canvasRecord = elem
   }
 
   getVideo = elem => {
@@ -113,14 +124,16 @@ export default class PoseNet extends React.Component {
     // video.height = videoHeight
 
     // MDN: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: false,
-      video: {
-        facingMode: 'user',
-      }
-    });
+    if (!vid2Show){
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: {
+          facingMode: 'user',
+        }
+      });
 
-    video.srcObject = stream
+      video.srcObject = stream
+    }
     
     return new Promise(resolve => {
       
@@ -186,16 +199,20 @@ export default class PoseNet extends React.Component {
 
   detectPose() {
     const { videoWidth, videoHeight } = this.props
-    const canvas = this.canvas
-    const ctx = canvas.getContext('2d')
+    const {canvasPose, canvasRecord} = this
+    const ctxPose = canvasPose.getContext('2d')
+    const ctxRecord = canvasRecord.getContext('2d')
 
-    canvas.width = this.video.width
-    canvas.height = this.video.height
+    canvasRecord.width = window.innerWidth;
+    canvasRecord.height = window.innerHeight
 
-    this.poseDetectionFrame(ctx)
+    canvasPose.width = videoWidth;
+    canvasPose.height = videoHeight
+
+    this.poseDetectionFrame(ctxPose, ctxRecord)
   }
 
-  poseDetectionFrame(ctx) {
+  poseDetectionFrame(ctxPose, ctxRecord) {
     const {
       algorithm,
       imageScaleFactor,
@@ -217,9 +234,9 @@ export default class PoseNet extends React.Component {
     const video = this.video
 
     const poseDetectionFrameInner = async () => {
+      let poses = []
       let pose;
 
-      
       switch (algorithm) {
         case 'single-pose':
           if (!!this.net){
@@ -229,8 +246,8 @@ export default class PoseNet extends React.Component {
               flipHorizontal,
               outputStride
             )
-            if (!!this.props.onEstimate){
-              pose = this.props.onEstimate([pose], minPoseConfidence);
+            if (!!this.props.onEstimate && !!pose){
+                pose = this.props.onEstimate([pose], minPoseConfidence);
             }
           }
           break
@@ -250,18 +267,18 @@ export default class PoseNet extends React.Component {
               if (!!this.props.onEstimate){
                 pose = this.props.onEstimate(rawPoses, minPoseConfidence);
               }
+                
             }
           }
 
           break
       }
-      
 
       // For each pose (i.e. person) detected in an image, loop through the poses
       // and draw the resulting skeleton and keypoints if over certain confidence
       // scores
       if (process.env.NODE_ENV=='development'){
-        ctx.clearRect(0, 0, videoWidth, videoHeight);
+        ctxRecord.clearRect(0, 0, ctxRecord.canvas.width, ctxRecord.canvas.height);
 
         // if (showVideo) {
         //   ctx.save()
@@ -272,19 +289,22 @@ export default class PoseNet extends React.Component {
         // }
 
         // draw background background
-        ctx.fillStyle = 'rgba(225,225,225,0.4)';
-        ctx.fillRect(0, ctx.canvas.height*.75, ctx.canvas.width, ctx.canvas.height)
+        ctxRecord.fillStyle = 'rgba(225,225,225,0.4)';
+        ctxRecord.fillRect(0, ctxRecord.canvas.height*.75, ctxRecord.canvas.width, ctxRecord.canvas.height)
 
-        ctx.font = 'italic 40pt Calibri';
-        ctx.fillText('Hello World!', 10, 20);
+        ctxRecord.fillStyle = 'rgba(255,0,0,1)';
+
+        ctxRecord.font = 'italic 12pt Calibri';
+        ctxRecord.fillText('Hello World!', 0, ctxRecord.canvas.height*.75);
         
         if (!!pose){
+          ctxPose.clearRect(0, 0, videoWidth, videoHeight);
           const { keypoints } = pose;
           if (showPoints) {
-            drawKeypoints(keypoints, minPartConfidence, skeletonColor, ctx);
+            drawKeypoints(keypoints, minPartConfidence, skeletonColor, ctxPose);
           }
           if (showSkeleton) {
-            drawSkeleton(keypoints, minPartConfidence, skeletonColor, skeletonLineWidth, ctx);
+            drawSkeleton(keypoints, minPartConfidence, skeletonColor, skeletonLineWidth, ctxPose);
           }
         }
       }
@@ -310,20 +330,29 @@ export default class PoseNet extends React.Component {
         </Grid>
         
         
+        
+        
+
+        {!!vid2Show ?
         <video
-          playsInline
-          className={this.props.className}
-          ref={ this.getVideo }>
-          </video>
-        <canvas 
-          className={this.props.className}
-          ref={ this.getCanvas }></canvas>
-        {/* <video
           mute
           playsInline
+          className={this.props.className}
           ref={ this.getVideo }>
-            <source src={kim5Vid}></source>
-          </video> */}
+            <source src={vid2Show}></source>
+          </video>: <video
+            playsInline
+            className={this.props.className}
+            ref={ this.getVideo }>
+            </video>}
+          
+          <canvas 
+            className={this.props.className}
+            ref={ this.getCanvasPose }></canvas>
+
+          <canvas 
+            className={this.props.className}
+            ref={ this.getCanvasRecord }></canvas>
       </div>
     )
   }
