@@ -8,6 +8,8 @@ import { useParams, useHistory, Redirect } from "react-router-dom";
 import {speak} from './utils';
 import { Mixpanel } from 'mixpanel';
 import { isMobile } from 'components/PoseNet/utils'
+import NoSleep from 'nosleep.js';
+
 import {
   Grid,
   Button,
@@ -19,6 +21,8 @@ import { useTranslation } from 'react-i18next';
 import StopImage from 'assets/stop.png';
 import './App.css';
 
+
+const noSleep = new NoSleep();
 
 
 function App() {
@@ -146,6 +150,7 @@ function App() {
     if (timeToStart==0){
       setIsWorkoutStarted(true);
       speak('Start working out', 1.2)
+      noSleep.enable();
     }
     if(timeToStart > 0){
       speak(timeToStart);
