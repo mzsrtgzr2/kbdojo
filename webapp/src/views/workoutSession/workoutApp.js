@@ -262,8 +262,8 @@ function App() {
           <Typography variant="h3" color="primary">Set complete!</Typography>
           {
             dataByMinute.map(({minute, pace, right, left, both})=>(
-              <Typography variant="h6">
-                  - Minute {minute-1}: R: {right}, L: {left}, D: {both} at pace {pace} reps/minute
+              <Typography>
+                  - Minute {minute-1}: R: {right}, L: {left}, D: {both} at {pace} rpm
               </Typography>
             ))
           }
