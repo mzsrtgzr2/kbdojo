@@ -102,21 +102,24 @@ export default class PoseNet extends React.Component {
 
     this.detectPose()
     this.recordCanvas()
-    
-    setTimeout(async ()=>{
-      this.mediaRecord = await this.record(this.canvasRecord)
-      // setTimeout(()=>{
-        
-      // }, 5000)
-    }, 10)
   }
 
-  componentWillReceiveProps(nextProps){
+  async componentWillReceiveProps(nextProps){
     if (nextProps.isEndWorkout===true){
-      if (this.mediaRecord.state === 'recording') {
-        // after stop data avilable event run one more time
-        this.mediaRecord.stop();
+        if (this.mediaRecord.state === 'recording') {
+          // after stop data avilable event run one more time
+          this.mediaRecord.stop();
+          console.log('stopping tracks');
+          this.video.srcObject.getTracks().forEach(function(track) {
+            track.stop();
+          });
+      }
     }
+    if (nextProps.isWorkoutStarted===true){
+      if (!this.mediaRecord) {
+          // after stop data avilable event run one more time
+          this.mediaRecord = await this.record(this.canvasRecord)
+      }
     }
   }
 
@@ -170,7 +173,7 @@ export default class PoseNet extends React.Component {
 
   record(canvas, time) {
     var recordedChunks = [];
-    return new Promise(function (res, rej) {
+    return new Promise((res, rej) => {
         var stream = canvas.captureStream();
         const mediaRecorder = new MediaRecorder(stream, {
             mimeType: "video/webm;codecs=vp8,vp9,opus"
@@ -187,18 +190,13 @@ export default class PoseNet extends React.Component {
             }
         }
 
-        mediaRecorder.onstop = function (event) {
+        mediaRecorder.onstop = (event) =>{
             var blob = new Blob(recordedChunks, {
                 type: "video/webm"
             });
             var url = URL.createObjectURL(blob);
 
-            var a = document.createElement("a");
-            document.body.appendChild(a);
-            a.style = "display: none";
-            a.href = url;
-            a.download = `kbbuddy_${Date.now()}.webm`;
-            a.click();            
+            this.props.onVideoUrl(url);       
         }
 
         res(mediaRecorder);

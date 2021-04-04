@@ -115,3 +115,7 @@
 .stopButton > span > span> img{
   height: 3vw!important;
 }
+
+.paddedContainer {
+  padding: 4vw;
+}

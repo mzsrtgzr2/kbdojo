@@ -20,6 +20,7 @@ import { useTranslation } from 'react-i18next';
 
 import StopImage from 'assets/stop.png';
 import './App.css';
+import './blinking.css';
 
 
 const noSleep = new NoSleep();
@@ -30,9 +31,13 @@ function App() {
   const [count, checkPoses] = usePullUpCounter()
   const onEstimate = useCallback(poses => checkPoses(poses), [checkPoses])
   const [isWorkoutStarted, setIsWorkoutStarted] = useState(false);
+  const [isEndWorkout, setIsEndWorkout] = useState(false);
+
   const [timeToStart, setTimeToStart] = useState(null);
   const [timeStr, setTimeStr] = useState('00:00:00');
-  const [isEndWorkout, setIsEndWorkout] = useState(false);
+  const [dataByMinute, setDataByMinute]  = useState([]);
+  const [videoUrl, setVideoUrl]  = useState(null);
+
 
   useEffect(()=>{
     var total = count.bothTotal + count.leftTotal+count.rightTotal;
@@ -49,6 +54,45 @@ function App() {
     } 
     
   }, [count]);
+
+  const updateDataByMinute = (minute)=>{
+    if (minute===undefined){
+      minute = dataByMinute.length>0 ? dataByMinute[dataByMinute.length-1].minute+1: 1
+    }
+    // calc data per minute
+    const lastMinute = dataByMinute.length>0 ? dataByMinute[dataByMinute.length-1]: null;
+    let pace = calcPace();
+    let right = count.rightTotal;
+    let left = count.leftTotal;
+    let both = count.bothTotal;
+
+    if (!!lastMinute){
+      pace -= lastMinute.pace;
+      left -= lastMinute.left;
+      right -= lastMinute.right;
+      both -= lastMinute.both;
+    }
+
+    setDataByMinute([
+      ...dataByMinute,
+      {
+        pace, left, right, both, minute
+      }
+    ])
+  }
+
+  const onMinute = (minute)=>{
+    if (!!minute){
+      speak(`${minute} minute passed`);
+      setTimeout(()=>{
+        Mixpanel.track('minute_update', {
+          totalMinutes: minute
+        })
+      }, 0)
+
+      updateDataByMinute(minute)
+    }
+  }
 
   const calcPace = () => {
     if (!count.reps || count.reps.length==0){
@@ -77,18 +121,18 @@ function App() {
   const renderWorkout = ()=>{
     return (
       <div>
+      
       <div className="topMenu">
-
-            
-            <Button
-              className="stopButton"
-              startIcon={<img src={StopImage} />}
-              onClick={()=>{
-                setIsEndWorkout(true)
-              }}
-              >
-              {t('STOP')}
-              </Button>             
+        <Button
+          className="stopButton"
+          startIcon={<img src={StopImage} className="blinking"/>}
+          onClick={()=>{
+            setIsEndWorkout(true)
+            updateDataByMinute()
+          }}
+          >
+          {t('STOP')}
+          </Button>             
       </div>
       <div className="bottomMenu">
         <Grid container spacing={3}>
@@ -100,16 +144,7 @@ function App() {
               onNewTime={(_timeStr)=>{
                 setTimeStr(_timeStr);
               }}
-              onMinute={(minute)=>{
-                if (!!minute){
-                  speak(`${minute} minute passed`);
-                  setTimeout(()=>{
-                    Mixpanel.track('minute_update', {
-                      totalMinutes: minute
-                    })
-                  }, 0)
-                }
-              }}
+              onMinute={onMinute}
             />
           </Grid>
           <Grid item xs={2.2} className="topMenuCell">
@@ -187,30 +222,78 @@ function App() {
 
   let forceWidth = 250;
   let forceHeight = 250;
+  
+  if (!isEndWorkout || !videoUrl){
+    return (
+      <div>
+        <PoseNet
+              className="videoClass"
+              onEstimate={isWorkoutStarted && onEstimate}
+              videoWidth={forceWidth}
+              videoHeight={forceHeight}
+              isEndWorkout={isEndWorkout}
+              isWorkoutStarted={isWorkoutStarted}
+              workoutNumbers={{
+                time: timeStr,
+                total: count.bothTotal + count.leftTotal + count.rightTotal,
+                left: count.leftTotal,
+                right: count.rightTotal,
+                both: count.bothTotal
+              }}
+              onVideoUrl={(url)=>{
+                setVideoUrl(url);
+              }}
+            />
+            {/* {renderPositionMessage()} */}
+            {/* {!!workout ? renderWorkout(): renderWorkoutSetup()} */}
+            {isWorkoutStarted && renderWorkout()}
+            {!isWorkoutStarted && renderTimerToStart()}
+        
+      </div>
+    );
+  } else {
+    return (<div>
+      <Grid
+      container
+      direction="column"
+      alignItems="center"
+      justify="center">
 
-  return (
-    <div>
-      <PoseNet
-            className="videoClass"
-            onEstimate={isWorkoutStarted && onEstimate}
-            videoWidth={forceWidth}
-            videoHeight={forceHeight}
-            isEndWorkout={isEndWorkout}
-            workoutNumbers={{
-              time: timeStr,
-              total: count.bothTotal + count.leftTotal + count.rightTotal,
-              left: count.leftTotal,
-              right: count.rightTotal,
-              both: count.bothTotal
-            }}
-          />
-          {/* {renderPositionMessage()} */}
-          {/* {!!workout ? renderWorkout(): renderWorkoutSetup()} */}
-          {isWorkoutStarted && renderWorkout()}
-          {!isWorkoutStarted && renderTimerToStart()}
-       
-    </div>
-  );
+          <Typography variant="h3" color="primary">Set complete!</Typography>
+          {
+            dataByMinute.map(({minute, pace, right, left, both})=>(
+              <Typography variant="h6">
+                  - Minute {minute-1}: R: {right}, L: {left}, D: {both} at pace {pace} reps/minute
+              </Typography>
+            ))
+          }
+
+          <Grid className="paddedContainer">
+            <Button variant="contained"
+                color="primary"
+                onClick={()=>{
+              var a = document.createElement("a");
+              document.body.appendChild(a);
+              a.style = "display: none";
+              a.href = videoUrl;
+              a.download = `kbbuddy_${Date.now()}.webm`;
+              a.click();     
+            }}>Download Video</Button>
+          </Grid>
+          
+            <video src={videoUrl} controls playsinline></video>
+          
+          
+          <Grid className="paddedContainer">
+            <Button variant="contained"
+                color="primary" onClick={window.location.reload}>
+                  Do another set!</Button>
+          </Grid>
+          
+
+      </Grid>
+    </div>);
+  }
 }
 
 export default App;
