@@ -7,7 +7,7 @@
   
   color: white;
   
-  padding-top: 30px;
+  padding-top: 5px;
   padding-bottom: 10px;
   flex-direction: row;
   flex: 1;
@@ -53,7 +53,7 @@
 .bottomMenu{
   position: fixed;
   bottom: 0;
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.0);
   width: 100%;
   text-align: center;
 
@@ -106,15 +106,30 @@
   object-fit: cover
 }
 
-.stopButton{
-  font-size: 3vw!important;
-  color: #EF0B5E !important;
-  font-weight: 700!important;
+@media only screen and (max-width: 768px) {
+  .stopButton{
+    font-size: 6vw!important;
+    color: #EF0B5E !important;
+    font-weight: 700!important;
+  }
+  .stopButton > span > span> img{
+    height: 6vw!important;
+  }
 }
 
-.stopButton > span > span> img{
-  height: 3vw!important;
+
+@media only screen and (min-width: 768px) {
+  .stopButton{
+    font-size: 3vw!important;
+    color: #EF0B5E !important;
+    font-weight: 700!important;
+  }
+  .stopButton > span > span> img{
+    height: 3vw!important;
+  }
 }
+
+
 
 .paddedContainer {
   padding: 4vw;

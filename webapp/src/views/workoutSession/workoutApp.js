@@ -67,7 +67,6 @@ function App() {
     let both = count.bothTotal;
 
     if (!!lastMinute){
-      pace -= lastMinute.pace;
       left -= lastMinute.left;
       right -= lastMinute.right;
       both -= lastMinute.both;
@@ -238,7 +237,8 @@ function App() {
                 total: count.bothTotal + count.leftTotal + count.rightTotal,
                 left: count.leftTotal,
                 right: count.rightTotal,
-                both: count.bothTotal
+                both: count.bothTotal,
+                pace: calcPace()
               }}
               onVideoUrl={(url)=>{
                 setVideoUrl(url);

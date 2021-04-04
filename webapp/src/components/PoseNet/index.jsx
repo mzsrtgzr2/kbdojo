@@ -325,7 +325,7 @@ export default class PoseNet extends React.Component {
       ctxRecord.font = `${fontSize}px Arial`;
       let y = ctxRecord.canvas.height-(fontSize);
       let x = pad*2;
-      ctxRecord.fillStyle = 'rgba(225,225,225,0.4)';
+      ctxRecord.fillStyle = 'rgba(225,225,225,0.0)';
       ctxRecord.fillRect(0, ctxRecord.canvas.height - 6*(fontSize+pad), ctxRecord.canvas.width, ctxRecord.canvas.height)
 
       ctxRecord.fillStyle = 'rgba(239,11,94,1)';
@@ -334,8 +334,9 @@ export default class PoseNet extends React.Component {
       ctxRecord.fillText(`Lefts: ${this.props.workoutNumbers.left}`, x, y-2*(fontSize+pad));
 
       ctxRecord.font = `bold ${fontSize}px Arial`;
-      ctxRecord.fillText(`Total: ${this.props.workoutNumbers.total}`, x, y-3*(fontSize+pad));
-      ctxRecord.fillText(`${this.props.workoutNumbers.time}`, x, y-4*(fontSize+pad));      
+      ctxRecord.fillText(`Pace: ${this.props.workoutNumbers.pace}`, x, y-3*(fontSize+pad));
+      ctxRecord.fillText(`Total: ${this.props.workoutNumbers.total}`, x, y-4*(fontSize+pad));
+      ctxRecord.fillText(`${this.props.workoutNumbers.time}`, x, y-5*(fontSize+pad));      
 
       requestAnimationFrame(inner)
     }
