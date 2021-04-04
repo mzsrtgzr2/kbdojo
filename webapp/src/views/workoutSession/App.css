@@ -12,11 +12,14 @@
   flex-direction: row;
   flex: 1;
   display: flex;
+  padding-left: 3vw;
+  
 }
 
 .topMenuCell {
   flex-grow: 1;
   flex-basis: 0;
+  
   text-align: center;
 }
 
@@ -101,4 +104,14 @@
   height: 100vh;
   overflow:hidden;
   object-fit: cover
+}
+
+.stopButton{
+  font-size: 3vw!important;
+  color: #EF0B5E !important;
+  font-weight: 700!important;
+}
+
+.stopButton > span > span> img{
+  height: 3vw!important;
 }

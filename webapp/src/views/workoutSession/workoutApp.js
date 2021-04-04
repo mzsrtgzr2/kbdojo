@@ -12,9 +12,11 @@ import {
   Grid,
   Button,
   Typography,
+  Avatar
 } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 
+import StopImage from 'assets/stop.png';
 import './App.css';
 
 
@@ -72,18 +74,17 @@ function App() {
     return (
       <div>
       <div className="topMenu">
-      
+
+            
             <Button
               className="stopButton"
-              variant="contained"
-              color="primary"
+              startIcon={<img src={StopImage} />}
               onClick={()=>{
                 setIsEndWorkout(true)
               }}
               >
               {t('STOP')}
-              </Button>
-          
+              </Button>             
       </div>
       <div className="bottomMenu">
         <Grid container spacing={3}>
@@ -169,7 +170,7 @@ function App() {
               variant="contained"
               color="primary"
               onClick={()=>{
-                setTimeToStart(process.env.NODE_ENV=='development' ? 2: 2);
+                setTimeToStart(process.env.NODE_ENV=='development' ? 2: 10);
               }}
               >
               {t('START')}
@@ -184,7 +185,7 @@ function App() {
 
   return (
     <div>
-      <PoseNet 
+      <PoseNet
             className="videoClass"
             onEstimate={isWorkoutStarted && onEstimate}
             videoWidth={forceWidth}

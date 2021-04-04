@@ -37,7 +37,7 @@ export default class Timer extends Component {
       clearInterval(interval)
       interval = null
       this.setState({active: false})
-      durations.append(this.currentClock())
+      durations.push(this.currentClock())
     }
   }
 

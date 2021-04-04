@@ -149,7 +149,7 @@ const signInAnonymousFunc = async ()=>{
       alignItems="center"
       justify="center"
       className="preWorkoutContainer">
-        <Typography variant="h1">loading...</Typography></Grid>);
+        <Typography variant="h2">loading...</Typography></Grid>);
   }
 
   const authenticated = !!user
