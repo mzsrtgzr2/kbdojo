@@ -9,6 +9,7 @@ import {speak} from './utils';
 import { Mixpanel } from 'mixpanel';
 import { isMobile } from 'components/PoseNet/utils'
 import NoSleep from 'nosleep.js';
+var ffmpeg = require('ffmpeg.js/ffmpeg-mp4.js')
 
 import {
   Grid,
