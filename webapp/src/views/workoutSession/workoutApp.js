@@ -9,7 +9,7 @@ import {speak} from './utils';
 import { Mixpanel } from 'mixpanel';
 import { isMobile } from 'components/PoseNet/utils'
 import NoSleep from 'nosleep.js';
-var ffmpeg = require('ffmpeg.js/ffmpeg-mp4.js')
+import {convertStreams} from './mp4convert';
 
 import {
   Grid,
@@ -37,7 +37,9 @@ function App() {
   const [timeToStart, setTimeToStart] = useState(null);
   const [timeStr, setTimeStr] = useState('00:00:00');
   const [dataByMinute, setDataByMinute]  = useState([]);
-  const [videoUrl, setVideoUrl]  = useState(null);
+  const [videoWebmData, setVideoWebmData]  = useState(null);
+  const [videoMp4Url, setVideoMp4Url]  = useState(null);
+  const [videoWebmUrl, setVideoWebmUrl]  = useState(null);
 
 
   useEffect(()=>{
@@ -55,6 +57,21 @@ function App() {
     } 
     
   }, [count]);
+
+  useEffect(()=>{
+    if (!!videoWebmData){
+      var blob = new Blob(videoWebmData, {
+          type: "video/webm"
+        });
+      var dataUrl = window.URL.createObjectURL(blob);
+      setVideoWebmUrl(dataUrl);
+      // console.log('starting to convert');
+      // convertStreams(blob).then(mp4Blob=>{
+      //   var dataUrl = window.URL.createObjectURL(mp4Blob);
+      //   setVideoMp4Url(dataUrl);
+      // })
+    }
+  }, [videoWebmData]);
 
   const updateDataByMinute = (minute)=>{
     if (minute===undefined){
@@ -223,7 +240,7 @@ function App() {
   let forceWidth = 250;
   let forceHeight = 250;
   
-  if (!isEndWorkout || !videoUrl){
+  if (!isEndWorkout || !videoWebmData){
     return (
       <div>
         <PoseNet
@@ -241,8 +258,8 @@ function App() {
                 both: count.bothTotal,
                 pace: calcPace()
               }}
-              onVideoUrl={(url)=>{
-                setVideoUrl(url);
+              onVideoData={(blob)=>{
+                setVideoWebmData(blob);
               }}
             />
             {/* {renderPositionMessage()} */}
@@ -269,21 +286,28 @@ function App() {
             ))
           }
 
-          <Grid className="paddedContainer">
-            <Button variant="contained"
-                color="primary"
-                onClick={()=>{
-              var a = document.createElement("a");
-              document.body.appendChild(a);
-              a.style = "display: none";
-              a.href = videoUrl;
-              a.download = `kbbuddy_${Date.now()}.webm`;
-              a.click();     
-            }}>Download Video</Button>
-          </Grid>
-          
-            <video src={videoUrl} controls playsinline></video>
-          
+          {
+            !!videoWebmUrl ? (
+              <>
+                  <Grid className="paddedContainer">
+                    <Button variant="contained"
+                        color="primary"
+                        onClick={()=>{
+                        
+                        var a = document.createElement("a");
+                        document.body.appendChild(a);
+                        a.style = "display: none";
+                        a.href = videoWebmUrl;
+                        a.download = `kbbuddy_${Date.now()}.wavm`;
+                        a.click(); 
+                    }}>Download Video</Button>
+                  </Grid>
+                  
+                  <video src={videoWebmUrl} controls playsinline></video>
+              </>
+            ) : <div>creating video...</div>
+          }
+                   
           
           <Grid className="paddedContainer">
             <Button variant="contained"

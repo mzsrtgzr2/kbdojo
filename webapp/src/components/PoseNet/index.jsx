@@ -176,7 +176,7 @@ export default class PoseNet extends React.Component {
     return new Promise((res, rej) => {
         var stream = canvas.captureStream();
         const mediaRecorder = new MediaRecorder(stream, {
-            mimeType: "video/webm;codecs=vp8,vp9,opus"
+            mimeType: "video/webm"
         });
 
         //ondataavailable will fire in interval of `time || 4000 ms`
@@ -190,13 +190,8 @@ export default class PoseNet extends React.Component {
             }
         }
 
-        mediaRecorder.onstop = (event) =>{
-            var blob = new Blob(recordedChunks, {
-                type: "video/webm"
-            });
-            var url = URL.createObjectURL(blob);
-
-            this.props.onVideoUrl(url);       
+        mediaRecorder.onstop = (event) =>{            
+            this.props.onVideoData(recordedChunks);       
         }
 
         res(mediaRecorder);
