@@ -130,6 +130,7 @@ function App() {
           startIcon={<img src={StopImage} className="blinking"/>}
           onClick={()=>{
             setIsEndWorkout(true)
+            Mixpanel.track('end_workout_clicked')
             updateDataByMinute()
           }}
           >
@@ -285,6 +286,7 @@ function App() {
               a.href = videoUrl;
               a.download = `kbbuddy_${Date.now()}.webm`;
               a.click();     
+              Mixpanel.track('download_video_clicked')
             }}>Download Video</Button>
           </Grid>
           
