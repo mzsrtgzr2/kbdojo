@@ -67,15 +67,18 @@ function App() {
     let both = count.bothTotal;
 
     if (!!lastMinute){
-      left -= lastMinute.left;
-      right -= lastMinute.right;
-      both -= lastMinute.both;
+      left -= lastMinute.leftTotal;
+      right -= lastMinute.rightTotal;
+      both -= lastMinute.bothTotal;
     }
 
     setDataByMinute([
       ...dataByMinute,
       {
-        pace, left, right, both, minute
+        pace, left, right, both, minute,
+        rightTotal: count.rightTotal,
+        leftTotal: count.leftTotal,
+        bothTotal: count.bothTotal
       }
     ])
   }
@@ -260,6 +263,10 @@ function App() {
       justify="center">
 
           <Typography variant="h3" color="primary">Set complete!</Typography>
+          <Typography variant="h6" color="primary">
+            Total: {count.bothTotal + count.leftTotal+count.rightTotal} Rights: {count.rightTotal} Lefts: {count.leftTotal}, Doubles: {count.bothTotal}
+
+          </Typography>
           {
             dataByMinute.map(({minute, pace, right, left, both})=>(
               <Typography>
