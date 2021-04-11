@@ -17,7 +17,8 @@ import './style.scss'
 // import kim4Vid from 'assets/kim4_problem_min_1.mp4';
 // import kim4Vid from 'assets/kim4.mp4';
 // import kim4Vid from 'assets/kim4_problem_min_1_2.mp4'
-import ksenya1Vid from 'assets/ksenya1.mp4';
+
+// import ksenya1Vid from 'assets/ksenya1.mp4';
 // import ksenya1Vid_problem_back_swing from 'assets/ksenya1_problem_back_swing.mp4';
 // import ksenya1Vid_problem_back_swing_2 from 'assets/ksenya1_back_swing_crazy.mp4';
 // import ksenya1Vid_problem_rep_110_120 from 'assets/ksenya_problem_rep_110_120.mp4';
@@ -176,7 +177,7 @@ export default class PoseNet extends React.Component {
     return new Promise((res, rej) => {
         var stream = canvas.captureStream();
         const mediaRecorder = new MediaRecorder(stream, {
-            mimeType: "video/webm;codecs=vp8,vp9,opus"
+            mimeType: "video/webm"
         });
 
         //ondataavailable will fire in interval of `time || 4000 ms`
