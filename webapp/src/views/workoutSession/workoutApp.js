@@ -29,7 +29,7 @@ const noSleep = new NoSleep();
 function App() {
   const { t } = useTranslation();
   const [count, checkPoses] = usePullUpCounter()
-  const onEstimate = useCallback(poses => checkPoses(poses), [checkPoses])
+  const onEstimate = useCallback((poses,minPoseConfidence) => checkPoses(poses, minPoseConfidence), [checkPoses])
   const [isWorkoutStarted, setIsWorkoutStarted] = useState(false);
   const [isEndWorkout, setIsEndWorkout] = useState(false);
 
