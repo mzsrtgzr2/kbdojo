@@ -193,7 +193,7 @@ export default function(sensitivity = 10) {
         return 0;
       })
 
-      const poseIndex = chestWidths.reduce((iMax, val, i, arr) => val > arr[iMax].score ? i : iMax, 0);
+      const poseIndex = chestWidths.reduce((iMax, val, i, arr) => val > arr[iMax] ? i : iMax, 0);
       
       pose = poses[poseIndex];
 

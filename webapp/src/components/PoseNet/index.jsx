@@ -29,9 +29,9 @@ import './style.scss'
 // import denis1Vid from 'assets/denis1.mp4'
 // import kim5Vid from 'assets/kim5_gym.mp4'
   // import kim5Vid_snatch from 'assets/kim5_gym_snatch.mp4'
-  // import kim5Vid_snatch_problem_double_count from 'assets/kim5_gym_snatch_problem_double_count.mp4';
+  import kim5Vid_snatch_problem_double_count from 'assets/kim5_gym_snatch_problem_double_count.mp4';
 
-const vid2Show = null; //ksenya1Vid;
+const vid2Show = kim5Vid_snatch_problem_double_count; //ksenya1Vid;
 console.log('Using TensorFlow backend: ', tf.getBackend());
 
 export default class PoseNet extends React.Component {
