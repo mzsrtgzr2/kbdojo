@@ -402,8 +402,13 @@ export default function(sensitivity = 10) {
               var counts = {};
               const arr = sideCounter.current;
 
-              for (var i = 0; i < arr.length; i++) {
+              let pointer=null;
+              for (var i = arr.length-1; i >=0; i--) {
                 var val = arr[i];
+                if (!!pointer && pointer!=val && !!counts[val]){
+                  break;
+                }
+                pointer = val;
                 counts[val] = counts[val] ? counts[val] + 1 : 1;
               }
 
