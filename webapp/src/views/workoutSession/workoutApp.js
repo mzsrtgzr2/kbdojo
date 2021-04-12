@@ -213,7 +213,7 @@ function App() {
               variant="contained"
               color="primary"
               onClick={()=>{
-                setTimeToStart(process.env.NODE_ENV=='development' ? 2: 10);
+                setTimeToStart(process.env.NODE_ENV=='development' ? 0: 10);
               }}
               >
               {t('START')}

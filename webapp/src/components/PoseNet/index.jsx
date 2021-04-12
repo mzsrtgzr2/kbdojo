@@ -29,9 +29,10 @@ import './style.scss'
 // import denis1Vid from 'assets/denis1.mp4'
 // import kim5Vid from 'assets/kim5_gym.mp4'
   // import kim5Vid_snatch from 'assets/kim5_gym_snatch.mp4'
-  import kim5Vid_snatch_problem_double_count from 'assets/kim5_gym_snatch_problem_double_count.mp4';
+  import kim5Vid_fast_left_snatch from 'assets/kim5_gym_snatch_fast_left.mp4';
+  // import kim5Vid_snatch_problem_double_count from 'assets/kim5_gym_snatch_problem_double_count.mp4';
 
-const vid2Show = kim5Vid_snatch_problem_double_count; //ksenya1Vid;
+const vid2Show = kim5Vid_fast_left_snatch; //ksenya1Vid;
 console.log('Using TensorFlow backend: ', tf.getBackend());
 
 export default class PoseNet extends React.Component {
@@ -45,7 +46,7 @@ export default class PoseNet extends React.Component {
     showVideo: true,
     showSkeleton: true,
     showPoints: false,
-    minPoseConfidence: 0.4,
+    minPoseConfidence: 0.1,
     minPartConfidence: 0.2,
     maxPoseDetections: 2,
     nmsRadius: 20.0,
