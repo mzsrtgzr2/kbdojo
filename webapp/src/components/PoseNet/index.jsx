@@ -11,7 +11,7 @@ import './style.scss'
 // import kimVid from 'assets/kim1.mp4';
 // import andr1Vid from 'assets/andr1.mp4';
 // import andr2Vid from 'assets/andr2.mp4';
-// import kim2Vid from 'assets/kim2.mp4';
+import kim2Vid from 'assets/kim2.mp4';
 // import kim3Vid from 'assets/kim3.mp4';
 // import kim3Vid from 'assets/kim3_problem.mp4';
 // import kim4Vid from 'assets/kim4_problem_min_1.mp4';
@@ -27,12 +27,12 @@ import './style.scss'
 // import andrFastSnatchVid from 'assets/andr_fast.mp4';
 // import someGuyVid from 'assets/someguy.mp4'
 // import denis1Vid from 'assets/denis1.mp4'
-// import kim5Vid from 'assets/kim5_gym.mp4'
+import kim5Vid from 'assets/kim5_gym.mp4'
   // import kim5Vid_snatch from 'assets/kim5_gym_snatch.mp4'
-  import kim5Vid_fast_left_snatch from 'assets/kim5_gym_snatch_fast_left.mp4';
+  // import kim5Vid_fast_left_snatch from 'assets/kim5_gym_snatch_fast_left.mp4';
   // import kim5Vid_snatch_problem_double_count from 'assets/kim5_gym_snatch_problem_double_count.mp4';
 
-const vid2Show = kim5Vid_fast_left_snatch; //ksenya1Vid;
+const vid2Show = kim5Vid; //ksenya1Vid;
 console.log('Using TensorFlow backend: ', tf.getBackend());
 
 export default class PoseNet extends React.Component {
@@ -46,8 +46,8 @@ export default class PoseNet extends React.Component {
     showVideo: true,
     showSkeleton: true,
     showPoints: false,
-    minPoseConfidence: 0.1,
-    minPartConfidence: 0.2,
+    minPoseConfidence: 0.25,
+    minPartConfidence: 0.35,
     maxPoseDetections: 2,
     nmsRadius: 20.0,
     outputStride: 16,
@@ -86,8 +86,9 @@ export default class PoseNet extends React.Component {
     this.net = await posenet.load({
       architecture: 'MobileNetV1',
       // outputStride: 8,
-      // multiplier: 0.75,
+      // multiplier: 1,
       inputResolution: { width: this.props.videoWidth, height: this.props.videoHeight },
+      // quantBytes: 2
     });
     console.log('posnet loaded', this.net);
   }
@@ -135,8 +136,8 @@ export default class PoseNet extends React.Component {
     const video = this.video
     const mobile = isMobile()
 
-    // video.width = videoWidth
-    // video.height = videoHeight
+    video.width = videoWidth
+    video.height = videoHeight
 
     // MDN: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
     if (!vid2Show){
