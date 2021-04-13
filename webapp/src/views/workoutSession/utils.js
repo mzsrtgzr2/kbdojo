@@ -4,6 +4,6 @@ export const speak = (text, rate=1)=>{
     msg.lang = 'en-EN';
     msg.rate = rate;
     msg.text=text;
-    // window.speechSynthesis.speak(msg);
+    window.speechSynthesis.speak(msg);
   }
 }

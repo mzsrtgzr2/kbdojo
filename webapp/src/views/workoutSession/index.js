@@ -26,36 +26,17 @@ import './preworkout.css';
 
 const generateStringArray = (pat)=>[...Array(10)].map((_, i) => `${pat}${i}`)
 
-const hommies = 'raanana';
-const codes = [
-  hommies].concat(
-    generateStringArray('13252')  
-  ).concat(
-    generateStringArray('23252')  
-  ).concat(
-    generateStringArray('kbpr0')  
-  ).concat(
-    generateStringArray('kb1ui')  
-  ).concat(
-    generateStringArray('zulu7')  
-  ).concat(
-    generateStringArray('grvk')  
-  )
-
 const sawHelpPage = localStorage.getItem('saw_help_page')
 
 function App() {
   const [stage, setStage] = useState(
     sawHelpPage=='yes' || process.env.NODE_ENV=='development' ? 'workout': 'not_started');
-  const { code } = useParams();
   const [loadingAuthState, setLoadingAuthState] = useState(true);
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const { t } = useTranslation();
 
   useEffect(() => {
-    localStorage.setItem('code', code);
-    
 
     FirebaseOps.auth.onAuthStateChanged((user) => {
         setUser(user);
@@ -102,10 +83,7 @@ const signInAnonymousFunc = async ()=>{
 
   const renderAuthed = ()=>(
     <div>
-      {
-        codes.indexOf(code)<0 ? 
-          <Redirect to='/restricted'/>
-        : <>
+
         {
           stage == 'not_started' ? <>
               <Grid
@@ -115,7 +93,6 @@ const signInAnonymousFunc = async ()=>{
               justify="center"
               className="preWorkoutContainer">
 
-              
                   <img src={MainImage} className="instructionsImage"/>
                   {process.env.NODE_ENV=='development' && <Typography>development env</Typography>}
                   <p className="preWorkoutActions">
@@ -134,10 +111,7 @@ const signInAnonymousFunc = async ()=>{
           </> : <>
             <WorkoutApp/>
           </>
-        }
-        </>
-      }
-      
+        }      
     </div>
   );
     

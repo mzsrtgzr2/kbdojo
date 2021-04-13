@@ -127,8 +127,8 @@ function checkBallDown(shoulder, elbow, wrist, nose, sensitivity=50){
 
 function checkHandsParallel(rightElbow, leftElbow, rightWrist, leftWrist, sensitivity){
   return (
-    (sensitivity>=Math.abs(rightElbow.y-leftElbow.y)) ||
-    (sensitivity>=Math.abs(rightWrist.y-leftWrist.y))
+    (sensitivity>=Math.abs(rightElbow.y-leftElbow.y)) &&
+    (sensitivity*1.5>=Math.abs(rightWrist.y-leftWrist.y))
   )
 }
 
@@ -317,7 +317,7 @@ export default function(sensitivity = 10) {
       //   return pose;
       // }
 
-      if (velocity>=chestWidth/3){
+      if (velocity>=chestWidth/2){
         console.log('pose moving', velocity)
         upLastTimestamp.current = 0; //zero other option
         fixationTimeSafetyIncreases.current = 0;
@@ -380,8 +380,7 @@ export default function(sensitivity = 10) {
         if (
           areHandsParallel && 
           (
-            (isLeftSnatch && (isRightHandAboveHead || isRightSnatch)) || 
-            (isRightSnatch && (isLeftHandAboveHead || isLeftSnatch))
+            ((isRightHandAboveHead || isRightSnatch) && (isLeftHandAboveHead || isLeftSnatch))
           )){
           currentSide = 'both';
         } else if (isLeftSnatch){

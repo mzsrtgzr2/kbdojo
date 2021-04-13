@@ -16,12 +16,9 @@ function Routes() {
 
             <Route
                 exact
-                path="/beta/:code"
+                path="/"
                 component={WorkoutSession}/>
-
-            <Redirect to="/beta/raanana" />
             
-            <Route exact path="/" component={Home} />
             <Redirect to="/" />
         </Switch>
     );

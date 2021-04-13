@@ -295,7 +295,7 @@ function App() {
           
           <Grid className="paddedContainer">
             <Button variant="contained"
-                color="primary" onClick={window.location.reload}>
+                color="primary" onClick={()=>window.location.reload()}>
                   Do another set!</Button>
           </Grid>
           
