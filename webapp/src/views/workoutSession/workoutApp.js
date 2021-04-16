@@ -5,10 +5,11 @@ import usePullUpCounter from "./usePullUpCounter"
 import Timer from 'components/Timer/Timer';
 import PoseNet from 'components/PoseNet'
 import { useParams, useHistory, Redirect } from "react-router-dom";
-import {speak} from './utils';
+import {speak, beep} from './utils';
 import { Mixpanel } from 'mixpanel';
 import { isMobile } from 'components/PoseNet/utils'
 import NoSleep from 'nosleep.js';
+import _ from 'underscore';
 
 import {
   Grid,
@@ -29,8 +30,16 @@ const noSleep = new NoSleep();
 function App() {
   const { t } = useTranslation();
   const [count, checkPoses] = usePullUpCounter()
-  const onEstimate = useCallback((poses,minPoseConfidence) => checkPoses(poses, minPoseConfidence), [checkPoses])
   const [isWorkoutStarted, setIsWorkoutStarted] = useState(false);
+  const [poseScore, setPoseScore] = useState(0);
+
+  const onEstimate = useCallback((poses,minPoseConfidence) => {
+    const pose = checkPoses(poses, minPoseConfidence, isWorkoutStarted)
+    // console.log('score=', pose.score);
+    setPoseScore(pose.score)
+    return isWorkoutStarted ? pose : null;
+  }, [checkPoses, poseScore, setPoseScore])
+  
   const [isEndWorkout, setIsEndWorkout] = useState(false);
 
   const [timeToStart, setTimeToStart] = useState(null);
@@ -40,18 +49,8 @@ function App() {
 
 
   useEffect(()=>{
-    var total = count.bothTotal + count.leftTotal+count.rightTotal;
-    if (total>0){
-      let rate = 1.1;
-      if (total>9999){
-        rate = 1.6;
-      } else if (total>999) {
-        rate = 1.4;
-      } else if (total>99){
-        rate = 1.2;
-      }
-      speak(total, rate);
-    } 
+    
+      beep();
     
   }, [count]);
 
@@ -86,6 +85,19 @@ function App() {
   const onMinute = (minute)=>{
     if (!!minute){
       speak(`${minute} minute passed`);
+      var total = count.bothTotal + count.leftTotal+count.rightTotal;
+      
+      let rate = 1.1;
+      if (total>9999){
+        rate = 1.6;
+      } else if (total>999) {
+        rate = 1.4;
+      } else if (total>99){
+        rate = 1.2;
+      }
+    
+      speak(`${total} lifts done`, rate);
+      
       setTimeout(()=>{
         Mixpanel.track('minute_update', {
           totalMinutes: minute
@@ -231,7 +243,7 @@ function App() {
       <div>
         <PoseNet
               className="videoClass"
-              onEstimate={isWorkoutStarted && onEstimate}
+              onEstimate={onEstimate}
               videoWidth={forceWidth}
               videoHeight={forceHeight}
               isEndWorkout={isEndWorkout}
@@ -252,6 +264,8 @@ function App() {
             {/* {!!workout ? renderWorkout(): renderWorkoutSetup()} */}
             {isWorkoutStarted && renderWorkout()}
             {!isWorkoutStarted && renderTimerToStart()}
+            {/* {isWorkoutStarted && <div className="poseQualityBox"> {
+              poseScore<=0.3 && 'FIX YOUR POSE!'}</div>} */}
         
       </div>
     );

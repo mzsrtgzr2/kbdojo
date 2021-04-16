@@ -23,7 +23,7 @@ import './style.scss'
 // import ksenya1Vid_problem_back_swing_2 from 'assets/ksenya1_back_swing_crazy.mp4';
 // import ksenya1Vid_problem_rep_110_120 from 'assets/ksenya_problem_rep_110_120.mp4';
 // import ksenya1Vid_problem_back_swing_lefts from 'assets/ksenya1_back_swing_crazy_lefts.mp4';
-// import ksenya1Vid_108_120 from 'assets/ksenya_1_108_120.mp4';
+import ksenya1Vid_108_120 from 'assets/ksenya_1_108_120.mp4';
 // import andrFastSnatchVid from 'assets/andr_fast.mp4';
 // import someGuyVid from 'assets/someguy.mp4'
 // import denis1Vid from 'assets/denis1.mp4'
@@ -32,7 +32,8 @@ import './style.scss'
   // import kim5Vid_fast_left_snatch from 'assets/kim5_gym_snatch_fast_left.mp4';
   // import kim5Vid_snatch_problem_double_count from 'assets/kim5_gym_snatch_problem_double_count.mp4';
 // import kim7Vid_double_snatches from 'assets/kim7_doublesnatches.mp4';
-const vid2Show = null; //ksenya1Vid;
+// import moshe1Vid from 'assets/moshe_1.webm'
+const vid2Show = ksenya1Vid_108_120; //ksenya1Vid;
 console.log('Using TensorFlow backend: ', tf.getBackend());
 
 export default class PoseNet extends React.Component {
@@ -152,10 +153,18 @@ export default class PoseNet extends React.Component {
     }
     
     return new Promise(resolve => {
+
+      video.onloadeddata = ()=>{
+        setTimeout(()=>{this.setState({ videoLoaded: true })}, 0);
+      } 
       
       video.onloadedmetadata = () => {
         // Once the video metadata is ready, we can start streaming video
-        setTimeout(()=>video.play(), 0)
+        setTimeout(()=>{
+          // video.currentTime = 2*60+20;
+          video.play()
+          
+        }, 0)
         video.muted = true;
 
         console.log('raw video:', video.videoWidth, video.videoHeight)
@@ -242,41 +251,43 @@ export default class PoseNet extends React.Component {
     const poseDetectionFrameInner = async () => {
       let pose;
 
-      switch (algorithm) {
-        case 'single-pose':
-          if (!!this.net){
-            pose = await this.net.estimateSinglePose(
-              video,
-              imageScaleFactor,
-              flipHorizontal,
-              outputStride
-            )
-            if (!!this.props.onEstimate && !!pose){
-                pose = this.props.onEstimate([pose], minPoseConfidence);
-            }
-          }
-          break
-        case 'multi-pose':
-          if (!!this.net){
-            const rawPoses = await this.net.estimateMultiplePoses(
-              video,
-              imageScaleFactor,
-              flipHorizontal,
-              outputStride,
-              maxPoseDetections,
-              minPartConfidence,
-              nmsRadius
-            )
-            if (rawPoses.length>0){
-
-              if (!!this.props.onEstimate){
-                pose = this.props.onEstimate(rawPoses, minPoseConfidence);
+      if (this.state.videoLoaded){
+        switch (algorithm) {
+          case 'single-pose':
+            if (!!this.net){
+              pose = await this.net.estimateSinglePose(
+                video,
+                imageScaleFactor,
+                flipHorizontal,
+                outputStride
+              )
+              if (!!this.props.onEstimate && !!pose){
+                  pose = this.props.onEstimate([pose], minPoseConfidence);
               }
-                
             }
-          }
+            break
+          case 'multi-pose':
+            if (!!this.net){
+              const rawPoses = await this.net.estimateMultiplePoses(
+                video,
+                imageScaleFactor,
+                flipHorizontal,
+                outputStride,
+                maxPoseDetections,
+                minPartConfidence,
+                nmsRadius
+              )
+              if (rawPoses.length>0){
 
-          break
+                if (!!this.props.onEstimate){
+                  pose = this.props.onEstimate(rawPoses, minPoseConfidence);
+                }
+                  
+              }
+            }
+
+            break
+        }
       }
 
       if (process.env.NODE_ENV=='development' && !!pose){

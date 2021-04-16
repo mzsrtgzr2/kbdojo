@@ -134,3 +134,15 @@
 .paddedContainer {
   padding: 4vw;
 }
+
+.poseQualityBox{
+  position: fixed;
+  left: 0;
+  right: 0;
+  text-align: center;
+  top: 40%;
+  font-size: 7vw;
+  color: white;
+  background-color: #EF0B5E;
+  font-weight: 900;
+}

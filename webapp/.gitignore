@@ -9,3 +9,4 @@ firestore-debug.log
 .env
 src/assets/*.mp4
 src/assets/*.mov
+src/assets/*.webm
