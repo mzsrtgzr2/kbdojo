@@ -33,6 +33,12 @@ import './style.scss'
   // import kim5Vid_snatch_problem_double_count from 'assets/kim5_gym_snatch_problem_double_count.mp4';
 // import kim7Vid_double_snatches from 'assets/kim7_doublesnatches.mp4';
 // import moshe1Vid from 'assets/moshe_1.webm'
+// import moshe2Vid from 'assets/moshe2.webm'
+// import moshe3Vid from 'assets/moshe3.webm'
+// import moshe4Vid from 'assets/moshe4.webm'
+// import moshe5Vid from 'assets/moshe5.webm'
+// import moshe6Vid from 'assets/moshe6.webm'
+// import moshe7Vid from 'assets/moshe7.webm'
 const vid2Show = null; //ksenya1Vid;
 console.log('Using TensorFlow backend: ', tf.getBackend());
 

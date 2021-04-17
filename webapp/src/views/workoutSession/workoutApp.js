@@ -9,7 +9,6 @@ import {speak, beep} from './utils';
 import { Mixpanel } from 'mixpanel';
 import { isMobile } from 'components/PoseNet/utils'
 import NoSleep from 'nosleep.js';
-import _ from 'underscore';
 
 import {
   Grid,
