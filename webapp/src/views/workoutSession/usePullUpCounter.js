@@ -3,6 +3,7 @@ import { Mixpanel } from 'mixpanel';
 
 const TICK_MS = 100;
 
+
 function getKeypointsObject(pose) {
   return pose.keypoints.reduce((acc, { part, position }) => {
     acc[part] = position
@@ -206,7 +207,7 @@ export default function(sensitivity = 10) {
         leftWrist,
         rightWrist,
         rightHip,
-          leftHip,
+        leftHip,
         nose,
       } = getKeypointsObject(pose)
 
@@ -233,6 +234,7 @@ export default function(sensitivity = 10) {
         },
         time: now
       });
+
 
       const chestWidth = getDistance(leftShoulder, rightShoulder);
 
@@ -303,19 +305,19 @@ export default function(sensitivity = 10) {
 
         var currentSide = null;
         const areHandsParallel = checkHandsParallel(rightElbow, leftElbow, rightWrist, leftWrist, chestWidth/2);
-        if (
+        if (isLeftSnatch && !(isRightSnatch)){
+          currentSide = 'left';
+        } else if (isRightSnatch && !(isLeftSnatch)){
+          currentSide = 'right';
+        } else if (
           areHandsParallel && 
           (
             ((isRightHandAboveHead || isRightSnatch) && (isLeftHandAboveHead || isLeftSnatch))
           )){
           currentSide = 'both';
-        } else if (isLeftSnatch){
-          currentSide = 'left';
-        } else if (isRightSnatch){
-          currentSide = 'right';
         }
 
-        console.log('side', currentSide, chestWidth, 
+        console.log('side', currentSide, lastPoses.current[lastPoses.current.length-1].pose, chestWidth, 
         isLeftSnatch, isLeftHandAboveHead, isRightSnatch, isRightHandAboveHead, areHandsParallel)
 
         const prevSide = lastSide.current;
@@ -451,8 +453,7 @@ export default function(sensitivity = 10) {
 
         // update time stamp of down event
         upLastTimestamp.current = now;
-        downLastTimestamp.current = 0; //zero other option
-            
+        downLastTimestamp.current = 0; //zero other option  
       }
       else {
         console.log('no lift detected')

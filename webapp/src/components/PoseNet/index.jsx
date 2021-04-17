@@ -23,7 +23,7 @@ import './style.scss'
 // import ksenya1Vid_problem_back_swing_2 from 'assets/ksenya1_back_swing_crazy.mp4';
 // import ksenya1Vid_problem_rep_110_120 from 'assets/ksenya_problem_rep_110_120.mp4';
 // import ksenya1Vid_problem_back_swing_lefts from 'assets/ksenya1_back_swing_crazy_lefts.mp4';
-import ksenya1Vid_108_120 from 'assets/ksenya_1_108_120.mp4';
+// import ksenya1Vid_108_120 from 'assets/ksenya_1_108_120.mp4';
 // import andrFastSnatchVid from 'assets/andr_fast.mp4';
 // import someGuyVid from 'assets/someguy.mp4'
 // import denis1Vid from 'assets/denis1.mp4'
@@ -33,7 +33,7 @@ import ksenya1Vid_108_120 from 'assets/ksenya_1_108_120.mp4';
   // import kim5Vid_snatch_problem_double_count from 'assets/kim5_gym_snatch_problem_double_count.mp4';
 // import kim7Vid_double_snatches from 'assets/kim7_doublesnatches.mp4';
 // import moshe1Vid from 'assets/moshe_1.webm'
-const vid2Show = ksenya1Vid_108_120; //ksenya1Vid;
+const vid2Show = null; //ksenya1Vid;
 console.log('Using TensorFlow backend: ', tf.getBackend());
 
 export default class PoseNet extends React.Component {
