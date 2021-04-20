@@ -103,7 +103,7 @@
   width: 100vw;
   height: 100vh;
   overflow:hidden;
-  object-fit: contain
+  object-fit:cover;
 }
 
 @media only screen and (max-width: 768px) {

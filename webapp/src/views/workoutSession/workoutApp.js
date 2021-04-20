@@ -136,7 +136,7 @@ function App() {
       <div>
       
       <div className="topMenu">
-        <Button
+        {/* <Button
           className="stopButton"
           startIcon={<img src={StopImage} className="blinking"/>}
           onClick={()=>{
@@ -146,7 +146,7 @@ function App() {
           }}
           >
           {t('STOP')}
-          </Button>             
+          </Button>              */}
       </div>
       <div className="bottomMenu">
         <Grid container spacing={3}>

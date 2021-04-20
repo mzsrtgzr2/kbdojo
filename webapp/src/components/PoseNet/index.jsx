@@ -39,7 +39,11 @@ import './style.scss'
 // import moshe5Vid from 'assets/moshe5.webm'
 // import moshe6Vid from 'assets/moshe6.webm'
 // import moshe7Vid from 'assets/moshe7.webm'
-const vid2Show = null; //ksenya1Vid;
+// import moshe8Vid from 'assets/moshe8.webm'
+// import abi1Vid from 'assets/abigail1.mp4';
+// import abi2Vid from 'assets/abigail2.webm';
+
+const vid2Show = null;
 console.log('Using TensorFlow backend: ', tf.getBackend());
 
 export default class PoseNet extends React.Component {
@@ -111,7 +115,7 @@ export default class PoseNet extends React.Component {
     }
 
     this.detectPose()
-    this.recordCanvas()
+    // this.recordCanvas()
   }
 
   async componentWillReceiveProps(nextProps){
@@ -128,7 +132,7 @@ export default class PoseNet extends React.Component {
     if (nextProps.isWorkoutStarted===true){
       if (!this.mediaRecord) {
           // after stop data avilable event run one more time
-          this.mediaRecord = await this.record(this.canvasRecord)
+          // this.mediaRecord = await this.record(this.canvasRecord)
       }
     }
   }
@@ -296,7 +300,7 @@ export default class PoseNet extends React.Component {
         }
       }
 
-      if (process.env.NODE_ENV=='development' && !!pose){
+      if ((process.env.NODE_ENV=='development') && !!pose){
         ctxPose.clearRect(0, 0, videoWidth, videoHeight);
         const { keypoints } = pose;
         if (showPoints) {

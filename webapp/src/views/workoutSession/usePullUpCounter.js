@@ -1,7 +1,7 @@
 import { useRef, useReducer, useCallback } from "react"
 import { Mixpanel } from 'mixpanel';
 
-const TICK_MS = 100;
+const TICK_MS = 50;
 
 
 function getKeypointsObject(pose) {
@@ -118,7 +118,8 @@ function checkHandAboveHand(shoulder, elbow, wrist, nose, sensitivity, lastFixat
 function checkBallDown(shoulder, elbow, wrist, nose, sensitivity=50){
   
   const res = !!elbow && !!wrist && !!shoulder && (
-    (((elbow.y-shoulder.y) >= 0) && (wrist.y-nose.y) >= 0));
+    (((elbow.y-shoulder.y) >= 0)));
+    //  && (wrist.y-nose.y) >= 0));
   // if (res)
     // console.log(
     //   shoulder.y, elbow.y, wrist.y, nose.y, sensitivity
@@ -348,12 +349,12 @@ export default function(sensitivity = 10) {
             // to make sure it's not a back swting
             if (prevSide != currentSide){
               if (diffLifts>10000){
-                upCounter.current =  1; // long time passed. it's ok to require less
+                upCounter.current =  6; // long time passed. it's ok to require less
               } else {
-                upCounter.current =  2; //longer fixation required
+                upCounter.current =  8; //longer fixation required
               }
             } else {
-              upCounter.current =  1;
+              upCounter.current =  5;
             }
             console.log('upCounter is set to', upCounter.current)
             downCounter.current = -1;
@@ -392,7 +393,7 @@ export default function(sensitivity = 10) {
                   (now-lastTimeOfFixation.current) <= 10000 && (
                   !!secondMaxOccSide && 
                     secondMaxOccSide[1]/maxOccSide[1]>0.3)){
-                upCounter.current+=1
+                upCounter.current+=2
                 console.log('side is not confident, adding more time for fixation')
                 fixationTimeSafetyIncreases.current+=1
                 upLastTimestamp.current = now;
@@ -400,7 +401,7 @@ export default function(sensitivity = 10) {
               }
 
               if (currentSide!=maxOccSide[0]){
-                upCounter.current+=1
+                upCounter.current+=2
                 return pose
               }
 
